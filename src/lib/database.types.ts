@@ -902,6 +902,8 @@ export type Database = {
       quran_ayahs: {
         Row: {
           ayah: number
+          end_line: number
+          end_page: number
           juz: number
           line: number
           page: number
@@ -909,6 +911,8 @@ export type Database = {
         }
         Insert: {
           ayah: number
+          end_line: number
+          end_page: number
           juz: number
           line: number
           page: number
@@ -916,6 +920,8 @@ export type Database = {
         }
         Update: {
           ayah?: number
+          end_line?: number
+          end_page?: number
           juz?: number
           line?: number
           page?: number

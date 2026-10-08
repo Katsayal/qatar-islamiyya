@@ -39,6 +39,7 @@ npm run dev          # local dev
 npm run build        # production build
 npm run lint         # eslint
 npm run typecheck    # tsc --noEmit
+npm test             # node --test on src/lib/*.test.ts
 npx supabase login                         # once
 npx supabase link --project-ref <dev-ref>  # once, links the cloud DEV project
 npx supabase migration new <name>          # create a migration file

@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 0b — 0b.2 done, next is 0b.3 Auth
+- **Phase:** Phase 0b done → next is Phase 1, task 1.1 Home (Sonnet)
 - **Last updated:** 2026-10-08
 
 ## Session prompt template
@@ -24,8 +24,8 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 ## Phase 0b — Database & auth  (Opus)
 - [x] **0b.1 Schema migration** — all tables from SCHEMA.md + check constraints + indexes. *(Done: 21 tables pushed to DEV, triggers (context, updated_*, handle_new_user), RLS on with no policies yet, types generated + wired into clients. For 0b.2: lock teacher_id/term_id on update; revoke public execute on term_for_date.)*
 - [x] **0b.2 RLS** — helper functions + policies; test accounts per role; `supabase/rls-checks.sql` for critical rules. *(Done: 54 policies + 5 buckets on DEV, lock_fields trigger, rls-checks.sql passes (self-contained, rolls back, run via `supabase db query`). Persistent role test accounts moved to 0b.3.)*
-- [ ] **0b.3 Auth** — login page (email or admission no.), `getProfile`/`requireRole`, middleware protection, role redirects, seed one owner account.
-- [ ] **0b.4 Qur'an data** — import `quran_ayahs` (page/line data, Madinah mushaf) + `lib/quran.ts` with tests.
+- [x] **0b.3 Auth** — login page (email or admission no.), `getProfile`/`requireRole`, middleware protection, role redirects, seed one owner account. *(Done: login by email or admission no., getProfile/requireRole/homeFor, portal/(staff) + portal/student layouts, logout. Fix migration: profile trigger also on app_metadata update. Test accounts seeded on DEV; verified in browser: wrong pw, teacher, student (TEST001), role bounce, logout, disabled. **Owner not seeded yet**: add OWNER_* to .env.local and run the seed script.)*
+- [x] **0b.4 Qur'an data** — import `quran_ayahs` (page/line data, Madinah mushaf) + `lib/quran.ts` with tests. *(Done: 6,236 ayahs with start+end page/line + juz on DEV via generated migration; lib/surahs.ts; lib/quran.ts + 7 tests (npm test). Owner account seeded.)*
 
 ## Phase 1 — Public website  (Sonnet)
 - [ ] **1.1 Home** page (content file + sections).

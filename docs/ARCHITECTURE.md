@@ -44,7 +44,11 @@ Supabase
 - `lib/auth.ts`:
   - `getProfile()` — current user + profile (cached per request).
   - `requireRole(...roles)` — redirect to `/login` if not allowed. Used at the top of portal layouts/pages.
-- Login redirect: staff/teacher → `/portal`, student → `/portal/student`.
+- Login redirect: staff/teacher → `/portal`, student → `/portal/student`. Wrong role on a page → sent to own home. Disabled (`active = false`) → signed out with a message.
+- Admission no. → email: `admissionToEmail()` in `lib/auth.ts` (lower-case, non `a-z0-9` → `-`, `@students.qatar.local`). Use it everywhere student accounts are created.
+- Portal routes: `portal/(staff)/` (teacher+staff layout) and `portal/student/` (student layout), so `/portal/student` is not caught by the staff check.
+- **Cache Components is on** (Next 16 default direction): anything reading the session (`getProfile`, Supabase server client) must render inside `<Suspense>`. Portal layouts wrap their shell in one `<Suspense>`; pages below are covered by it.
+- Accounts seed: `node --env-file=.env.local scripts/seed-users.mjs [--test]`. Owner from `OWNER_EMAIL/OWNER_PASSWORD/OWNER_NAME`; `--test` makes DEV-only test-staff / test-teacher / TEST001 (password in the script, refuses on non-DEV projects).
 
 ## 4. RLS approach
 SQL helper functions (security definer, stable):
@@ -85,9 +89,10 @@ Context fields are never trusted from forms. Postgres `before insert` triggers s
 - Exam marks and term comments: term chosen in the form (default current term), since they are often entered at term end.
 
 ## 6. Hifz calculation
-- Table `quran_ayahs` (6,236 rows): surah, ayah, page (1–604), line (1–15) for the Madinah 'Uthmani mushaf, juz.
-- Imported once via a seed script from an open dataset (e.g. quran.com API v4 page/line data).
-- `lib/quran.ts`: given a range (surah:ayah → surah:ayah, or page → page) return start/end positions, `pages` (decimal) and `lines` (integer). Values are stored on the hifz row so reports are simple queries.
+- Table `quran_ayahs` (6,236 rows): surah, ayah, start page/line, end page/line, juz — Madinah 15-line mushaf.
+- Data lives in a generated migration (so PROD gets it via `db push`), built once by `scripts/build-quran-data.mjs` from the quran.com API v4 word positions. Same script generates `lib/surahs.ts` (114 names ar/en + ayah counts).
+- `lib/quran.ts` (pure, no imports): `amountForRange(startAyah, endAyah)` and `amountForPages(start, end)` → start/end page, `lines`, `pages` (= lines/15, 2 dp). Line index = (page−1)×15 + line. Ranges crossing a surah include its header/basmalah lines (agreed simplification). End-before-start throws; the 3.2 form should swap reversed Juz 'Amma ranges.
+- Values are stored on the hifz row so reports are simple queries. Tests: `npm test` (Node built-in runner, `src/lib/*.test.ts`).
 
 ## 7. Folder conventions
 ```

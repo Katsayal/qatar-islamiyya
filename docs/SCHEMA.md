@@ -62,7 +62,9 @@ Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timest
 
 ## 3. Qur'an & hifz
 ### quran_ayahs  (reference, 6,236 rows, read-only)
-| surah int | ayah int | page int (1–604) | line int (1–15) | juz int | PK (surah, ayah) |
+| surah int | ayah int | page int (1–604) | line int (1–15) | end_page int | end_line int | juz int | PK (surah, ayah) |
+
+Start and end position of each ayah (long ayahs span lines/pages). Data: generated migration `20261008234915_quran_ayahs_data.sql` from `scripts/build-quran-data.mjs` (quran.com API v4). No Qur'an text stored.
 
 ### hifz_entries
 | column | type | notes |
@@ -154,7 +156,7 @@ Insert fails with a clear error if no term contains the date.
 - `profiles`: `is_owner` only allowed when `role = 'staff'`.
 - `applications.consent` must be true. `school_settings` has exactly one row (`id = 1`), seeded.
 - Deleting a student cascades to hifz, attendance, exams, comments, fees, proofs, correction requests; `applications.student_id` → null. Classes/profiles cannot be deleted while referenced (teachers are disabled via `active`).
-- New auth user → `handle_new_user()` trigger creates the `profiles` row from `raw_app_meta_data` (`role`, `full_name`, `is_owner`). A user without `app_metadata.role` fails to create, by design.
+- New auth user → `handle_new_user()` trigger (after insert **or update** of `raw_app_meta_data`, because Supabase's admin createUser sets app_metadata in a follow-up update) creates the `profiles` row from `role`, `full_name`, `is_owner`. Users without a role get no profile → no portal access. Later role changes go through `profiles`, not metadata.
 - Context triggers use `auth.uid()`, so hifz/attendance/exam/comment inserts need a logged-in user.
 - RLS policies: `20261008214129_rls.sql`. Helpers (`security definer`, false for inactive users, execute = authenticated only): `is_staff()`, `is_owner()`, `is_member()` (active teacher/staff), `teaches_class(id)`, `teaches_student(id)`, `my_student_id()`.
 - `lock_fields()` before-update trigger on hifz/attendance/exams/comments keeps student, class, recorder (and book) unchanged; term recomputed from the date.
