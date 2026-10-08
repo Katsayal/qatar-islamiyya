@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 0 — 0.1 done, next is 0.2 Design base
+- **Phase:** Phase 0 — 0.2 done, next is 0.3 Supabase + Netlify
 - **Last updated:** 2026-10-08
 
 ## Session prompt template
@@ -18,7 +18,7 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 
 ## Phase 0 — Foundation  (Sonnet)
 - [x] **0.1 Scaffold** — `create-next-app` (TS, Tailwind, App Router, src/), shadcn init, eslint, `typecheck` script, git init, push to GitHub. *(Done: Next 16.4, React 19.3, Tailwind 4, shadcn base-nova + button, `typecheck` script, local git only — GitHub push skipped for now. AGENTS.md from create-next-app says read node_modules/next/dist/docs/ before coding: this Next has breaking changes.)*
-- [ ] **0.2 Design base** — fonts (Noto Sans, Noto Naskh Arabic, Amiri Quran), colour tokens (placeholder), mobile layout shell for public site (header, mobile menu, footer).
+- [x] **0.2 Design base** — fonts (Noto Sans, Noto Naskh Arabic, Amiri Quran), colour tokens (placeholder), mobile layout shell for public site (header, mobile menu, footer). *(Done: fonts via next/font, green placeholder primary, (public) layout with <details> mobile menu — no client JS. Footer has no dynamic year: Next 16 cache components forbid new Date() in prerender.)*
 - [ ] **0.3 Supabase + Netlify** — create Supabase cloud DEV project, `supabase login` + `link`, `lib/supabase/*` (server/client/middleware), `.env.local`, deploy empty site to Netlify. (No local Supabase/Docker.)
 
 ## Phase 0b — Database & auth  (Opus)
