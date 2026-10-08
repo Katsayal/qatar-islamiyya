@@ -1,6 +1,6 @@
 # SCHEMA — Qatar Islamiyya Web App
 
-> Draft for Phase 0b. **SIMPLE IS KING**: fewest tables that meet the SPEC. The SQL migrations in `supabase/migrations/` become the source of truth once written; keep this file in sync.
+> **SIMPLE IS KING**: fewest tables that meet the SPEC. Source of truth = `supabase/migrations/` (first: `20261008213115_init_schema.sql`, 21 tables). Keep this file in sync.
 
 Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timestamptz default now()`. Editable tables also have `updated_at timestamptz` and `updated_by uuid → profiles.id`. Enum-like columns use `text` + `check (...)`.
 
@@ -148,21 +148,35 @@ A `before insert` trigger fills these; values sent from forms are ignored:
 - `updated_at` / `updated_by` on every editable table (before update)
 Insert fails with a clear error if no term contains the date.
 
+## 8a. Extra constraints & delete rules (from the init migration)
+- `terms`: no overlapping date ranges (exclusion constraint); `number` unique per year.
+- `hifz_entries`: absent ⇒ lesson/range/pages/lines/grade all null; present ⇒ all required (surah/ayah **and** page range stored).
+- `profiles`: `is_owner` only allowed when `role = 'staff'`.
+- `applications.consent` must be true. `school_settings` has exactly one row (`id = 1`), seeded.
+- Deleting a student cascades to hifz, attendance, exams, comments, fees, proofs, correction requests; `applications.student_id` → null. Classes/profiles cannot be deleted while referenced (teachers are disabled via `active`).
+- New auth user → `handle_new_user()` trigger creates the `profiles` row from `raw_app_meta_data` (`role`, `full_name`, `is_owner`). A user without `app_metadata.role` fails to create, by design.
+- Context triggers use `auth.uid()`, so hifz/attendance/exam/comment inserts need a logged-in user.
+- RLS policies: `20261008214129_rls.sql`. Helpers (`security definer`, false for inactive users, execute = authenticated only): `is_staff()`, `is_owner()`, `is_member()` (active teacher/staff), `teaches_class(id)`, `teaches_student(id)`, `my_student_id()`.
+- `lock_fields()` before-update trigger on hifz/attendance/exams/comments keeps student, class, recorder (and book) unchanged; term recomputed from the date.
+- Teachers cannot delete hifz/attendance (staff only). Teachers/students see only their own profile for now (widen when Phase 3/5 screens need teacher names).
+- Checks: `supabase/rls-checks.sql` (self-contained, rolls back) → `npx supabase db query --linked -f supabase/rls-checks.sql`.
+
 ## 9. RLS summary
 | table | anon | student | teacher | staff |
 |---|---|---|---|---|
-| profiles | – | own | own | all (owner: write teacher/staff) |
+| profiles | – | own | own | read all; edit student profiles only (role locked); owner edits anyone |
 | students | – | own | select where teaches_class(class_id) | all |
 | classes, class_teachers, terms, academic_years | – | select | select | all |
 | quran_ayahs | – | select | select | select |
 | hifz_entries | – | own | select/insert/update own classes | all |
 | attendance, exam_results, report_comments | – | own | select/insert/update own classes | all |
 | books | – | select | select | all |
+| exam_results (teacher write) | – | – | only for books where `books.teacher_id` = them | all |
 | student_fees | – | own | – | all |
 | payment_proofs | – | own (insert/select) | – | all |
 | posts | public only | public + students | public + internal | all |
 | gallery_items | select | select | select | all |
 | documents | – | `students` visibility | `general` + `students` | all incl. vault |
 | applications, contact_messages | none (inserted by server action) | – | – | all |
-| school_settings | bank fields via view | select | select | all |
+| school_settings | select (bank details are public; signature file stays in a private bucket) | select | select | update |
 | correction_requests | – | own (insert/select) | – | all |

@@ -59,7 +59,7 @@ src/
     ui/                # shadcn components (generated)
     *.tsx              # shared app components
   lib/
-    supabase/          # server.ts, client.ts, middleware.ts
+    supabase/          # server.ts, client.ts, proxy.ts (session refresh; src/proxy.ts calls it)
     auth.ts            # getProfile(), requireRole()
     database.types.ts  # generated — never edit by hand
     quran.ts           # hifz range → pages/lines helpers

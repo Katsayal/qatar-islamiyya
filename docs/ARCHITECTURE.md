@@ -12,7 +12,7 @@ Next.js app on Netlify
    ├─ login/             Supabase Auth (email/password)
    ├─ portal/            teacher + staff (role checked)
    └─ portal/student/    student portal (later)
-   │  middleware.ts → refresh session, block /portal for logged-out users
+   │  proxy.ts (Next 16 name for middleware) → refresh session, block /portal for logged-out users
    │  Server Components read data · Server Actions write data
    ▼
 Supabase
@@ -48,7 +48,8 @@ Supabase
 
 ## 4. RLS approach
 SQL helper functions (security definer, stable):
-- `auth_role()` → current user's role.
+- `is_member()` → active teacher or staff.
+- `teaches_student(student_id)` → student is in a class the user teaches.
 - `is_staff()` → role = 'staff' and active.
 - `is_owner()` → staff and is_owner.
 - `teaches_class(class_id)` → exists in `class_teachers` for current user.
@@ -60,7 +61,7 @@ Pattern per table:
 - **Student:** select own rows only (`student_id = my_student_id()`).
 - **Public (anon):** select posts where audience = 'public', gallery. **No** insert/storage rights: application and contact forms go through Server Actions (see §5a).
 
-RLS is checked on the DEV project with one test account per role (owner, staff, teacher, student) for the critical rules: teacher can't see other classes; student sees only self; anon can't read students. Keep the check queries in `supabase/rls-checks.sql` to re-run in the Supabase SQL editor after policy changes.
+RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake owner/staff/teacher/student/inactive users + data, asserts the critical rules per role, then rolls back. Run `npx supabase db query --linked -f supabase/rls-checks.sql` after every policy change. All helpers return false for inactive users, so `active = false` locks an account out of the data.
 
 ## 5. Storage buckets
 | Bucket | Public? | Contents | Access |
@@ -113,7 +114,7 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 - Dev: `npm run dev` on your machine, connected to a free Supabase cloud **DEV project** (`.env.local`).
 - Prod: Netlify (connected to GitHub, auto-deploy `main`, preview deploys for branches) + a separate Supabase **PROD project**, created at go-live.
 - Supabase free tier allows 2 active projects (DEV + PROD). Free projects pause after ~1 week of no activity; just restore from the dashboard.
-- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server only).
+- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` (server only).
 - DB changes go through migrations only: `supabase migration new` → `supabase db push` (to DEV; to PROD at deploy time by re-linking). Never change tables by clicking in the dashboard.
 
 ## 10. Later additions (designed to slot in)

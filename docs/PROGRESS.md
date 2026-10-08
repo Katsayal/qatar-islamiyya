@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 0 — 0.2 done, next is 0.3 Supabase + Netlify
+- **Phase:** Phase 0b — 0b.2 done, next is 0b.3 Auth
 - **Last updated:** 2026-10-08
 
 ## Session prompt template
@@ -19,11 +19,11 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 ## Phase 0 — Foundation  (Sonnet)
 - [x] **0.1 Scaffold** — `create-next-app` (TS, Tailwind, App Router, src/), shadcn init, eslint, `typecheck` script, git init, push to GitHub. *(Done: Next 16.4, React 19.3, Tailwind 4, shadcn base-nova + button, `typecheck` script, local git only — GitHub push skipped for now. AGENTS.md from create-next-app says read node_modules/next/dist/docs/ before coding: this Next has breaking changes.)*
 - [x] **0.2 Design base** — fonts (Noto Sans, Noto Naskh Arabic, Amiri Quran), colour tokens (placeholder), mobile layout shell for public site (header, mobile menu, footer). *(Done: fonts via next/font, green placeholder primary, (public) layout with <details> mobile menu — no client JS. Footer has no dynamic year: Next 16 cache components forbid new Date() in prerender.)*
-- [ ] **0.3 Supabase + Netlify** — create Supabase cloud DEV project, `supabase login` + `link`, `lib/supabase/*` (server/client/middleware), `.env.local`, deploy empty site to Netlify. (No local Supabase/Docker.)
+- [x] **0.3 Supabase + Netlify** — create Supabase cloud DEV project, `supabase login` + `link`, `lib/supabase/*` (server/client/middleware), `.env.local`, deploy empty site to Netlify. (No local Supabase/Docker.) *(Done: DEV project zjhtblrdwjfdzwutjpzs linked, lib/supabase/{client,server,proxy}.ts + src/proxy.ts, env vars use PUBLISHABLE_KEY / SECRET_KEY naming. Netlify deploy deferred until MVP, by decision.)*
 
 ## Phase 0b — Database & auth  (Opus)
-- [ ] **0b.1 Schema migration** — all tables from SCHEMA.md + check constraints + indexes.
-- [ ] **0b.2 RLS** — helper functions + policies; test accounts per role; `supabase/rls-checks.sql` for critical rules.
+- [x] **0b.1 Schema migration** — all tables from SCHEMA.md + check constraints + indexes. *(Done: 21 tables pushed to DEV, triggers (context, updated_*, handle_new_user), RLS on with no policies yet, types generated + wired into clients. For 0b.2: lock teacher_id/term_id on update; revoke public execute on term_for_date.)*
+- [x] **0b.2 RLS** — helper functions + policies; test accounts per role; `supabase/rls-checks.sql` for critical rules. *(Done: 54 policies + 5 buckets on DEV, lock_fields trigger, rls-checks.sql passes (self-contained, rolls back, run via `supabase db query`). Persistent role test accounts moved to 0b.3.)*
 - [ ] **0b.3 Auth** — login page (email or admission no.), `getProfile`/`requireRole`, middleware protection, role redirects, seed one owner account.
 - [ ] **0b.4 Qur'an data** — import `quran_ayahs` (page/line data, Madinah mushaf) + `lib/quran.ts` with tests.
 
