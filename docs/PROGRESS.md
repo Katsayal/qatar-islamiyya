@@ -4,8 +4,8 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 0b done → next is Phase 1, task 1.1 Home (Sonnet)
-- **Last updated:** 2026-10-08
+- **Phase:** Phase 1 in progress → next is task 1.2 About + Contact (Sonnet)
+- **Last updated:** 2026-10-09
 
 ## Session prompt template
 ```
@@ -28,7 +28,7 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 - [x] **0b.4 Qur'an data** — import `quran_ayahs` (page/line data, Madinah mushaf) + `lib/quran.ts` with tests. *(Done: 6,236 ayahs with start+end page/line + juz on DEV via generated migration; lib/surahs.ts; lib/quran.ts + 7 tests (npm test). Owner account seeded.)*
 
 ## Phase 1 — Public website  (Sonnet)
-- [ ] **1.1 Home** page (content file + sections).
+- [x] **1.1 Home** page (content file + sections). *(Done: hero + CTAs, 3 program cards from src/content/home.ts, latest 3 public posts in <Suspense> (src/components/latest-news.tsx). News items are not links yet: /news/[id] comes in 1.5. Program cards link to /programs#slug (page in 1.3).)*
 - [ ] **1.2 About** + **Contact** (map embed, WhatsApp link, contact form → `contact_messages`).
 - [ ] **1.3 Programs** — Tahfiz, Ma'ahad, Barnamaj (Arabic curriculum table).
 - [ ] **1.4 Admissions** — rules (Hausa), fees, schedule, bank details, PDF form download, online application form (+ photo upload, consent).
