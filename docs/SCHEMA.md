@@ -94,7 +94,7 @@ Index: (student_id, entry_date).
 | subject | text | الفن, e.g. الفقه |
 | title | text | Arabic title |
 | author | text | |
-| study_type | text | `hifz` · `istizhar` · `sharh` |
+| study_type | text | `hifz` · `istizhar` · `sharh` · nullable (blank in the school's PDF; migration `20261009100754_books_study_type_nullable.sql`) |
 | teacher_id | uuid → profiles | nullable |
 | started_on, finished_on | date | nullable |
 | sort_order | int | |
@@ -161,6 +161,7 @@ Insert fails with a clear error if no term contains the date.
 - RLS policies: `20261008214129_rls.sql`. Helpers (`security definer`, false for inactive users, execute = authenticated only): `is_staff()`, `is_owner()`, `is_member()` (active teacher/staff), `teaches_class(id)`, `teaches_student(id)`, `my_student_id()`.
 - `lock_fields()` before-update trigger on hifz/attendance/exams/comments keeps student, class, recorder (and book) unchanged; term recomputed from the date.
 - Teachers cannot delete hifz/attendance (staff only). Teachers/students see only their own profile for now (widen when Phase 3/5 screens need teacher names).
+- `hifz_lines_by_student(p_class, p_from, p_to)` (migration `20261009111346_…`, security invoker so RLS applies, execute = authenticated only): per active student of a class, lines of all `new` entries (all time and inside a date range). Used by the class page progress overview (3.3b) and later the staff dashboard (4.5); done in SQL because the API returns at most 1,000 rows.
 - Checks: `supabase/rls-checks.sql` (self-contained, rolls back) → `npx supabase db query --linked -f supabase/rls-checks.sql`.
 
 ## 9. RLS summary

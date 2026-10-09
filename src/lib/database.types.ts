@@ -240,7 +240,7 @@ export type Database = {
           id: string
           sort_order: number
           started_on: string | null
-          study_type: string
+          study_type: string | null
           subject: string
           teacher_id: string | null
           term_number: number
@@ -255,7 +255,7 @@ export type Database = {
           id?: string
           sort_order?: number
           started_on?: string | null
-          study_type: string
+          study_type?: string | null
           subject: string
           teacher_id?: string | null
           term_number: number
@@ -270,7 +270,7 @@ export type Database = {
           id?: string
           sort_order?: number
           started_on?: string | null
-          study_type?: string
+          study_type?: string | null
           subject?: string
           teacher_id?: string | null
           term_number?: number
@@ -1249,6 +1249,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      hifz_lines_by_student: {
+        Args: { p_class: string; p_from: string; p_to: string }
+        Returns: {
+          period_lines: number
+          student_id: string
+          total_lines: number
+        }[]
+      }
       is_member: { Args: never; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }

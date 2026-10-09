@@ -92,6 +92,7 @@ Context fields are never trusted from forms. Postgres `before insert` triggers s
 - Table `quran_ayahs` (6,236 rows): surah, ayah, start page/line, end page/line, juz — Madinah 15-line mushaf.
 - Data lives in a generated migration (so PROD gets it via `db push`), built once by `scripts/build-quran-data.mjs` from the quran.com API v4 word positions. Same script generates `lib/surahs.ts` (114 names ar/en + ayah counts).
 - `lib/quran.ts` (pure, no imports): `amountForRange(startAyah, endAyah)` and `amountForPages(start, end)` → start/end page, `lines`, `pages` (= lines/15, 2 dp). Line index = (page−1)×15 + line. Ranges crossing a surah include its header/basmalah lines (agreed simplification). End-before-start throws; the 3.2 form should swap reversed Juz 'Amma ranges.
+- Hifz entry form (3.2, `classes/[id]/students/[studentId]/hifz`): amount is always computed in the server action from `quran_ayahs`, never from the form. A reversed range (e.g. An-Nas → Ad-Duhaa) is swapped with `swapIfReversed` (pages mode: min/max). **Page mode** still stores surah/ayah (DB check): start = first ayah whose `end_page >= start page`, end = last ayah whose `page <= end page`. "Today" and the date limit use Africa/Lagos (`lib/today.ts`).
 - Values are stored on the hifz row so reports are simple queries. Tests: `npm test` (Node built-in runner, `src/lib/*.test.ts`).
 
 ## 7. Folder conventions

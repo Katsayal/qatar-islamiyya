@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { amountForPages, amountForRange, type AyahPos } from "./quran.ts";
+import { amountForPages, amountForRange, swapIfReversed, type AyahPos } from "./quran.ts";
 
 const pos = (surah: number, ayah: number, page: number, line: number, end_page = page, end_line = line): AyahPos => ({
   surah, ayah, page, line, end_page, end_line,
@@ -39,6 +39,20 @@ test("two pages exactly (Ma'ahad minimum)", () => {
 test("end before start is rejected", () => {
   assert.throws(() => amountForRange(pos(114, 1, 604, 10), pos(112, 1, 604, 2)));
   assert.throws(() => amountForRange(pos(2, 20, 3, 5), pos(2, 19, 3, 4)));
+});
+
+test("reversed ranges are swapped, ordered ones are left alone", () => {
+  const nas = { surah: 114, ayah: 1 };
+  const duha = { surah: 93, ayah: 1 };
+  assert.deepEqual(swapIfReversed(nas, duha), [duha, nas]);
+  assert.deepEqual(swapIfReversed(duha, nas), [duha, nas]);
+  // same surah, ayahs reversed
+  assert.deepEqual(swapIfReversed({ surah: 2, ayah: 20 }, { surah: 2, ayah: 5 }), [
+    { surah: 2, ayah: 5 },
+    { surah: 2, ayah: 20 },
+  ]);
+  // same ayah
+  assert.deepEqual(swapIfReversed(nas, nas), [nas, nas]);
 });
 
 test("page ranges", () => {

@@ -13,7 +13,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
 
   const [{ data: s }, { data: c }] = await Promise.all([
     supabase.from("students").select("*").eq("id", studentId).eq("class_id", id).maybeSingle(),
-    supabase.from("classes").select("name").eq("id", id).maybeSingle(),
+    supabase.from("classes").select("name, program").eq("id", id).maybeSingle(),
   ]);
   if (!s || !c) notFound();
 
@@ -56,6 +56,23 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
           )}
         </div>
       </div>
+
+      {c.program !== "barnamaj" && (
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <Link
+            href={`/portal/classes/${id}/students/${s.id}/hifz`}
+            className="flex h-12 items-center justify-center rounded-md bg-primary font-medium text-primary-foreground"
+          >
+            Record hifz
+          </Link>
+          <Link
+            href={`/portal/classes/${id}/students/${s.id}/hifz/history`}
+            className="flex h-12 items-center justify-center rounded-md border font-medium hover:bg-muted"
+          >
+            Hifz history
+          </Link>
+        </div>
+      )}
 
       <dl className="mt-5 divide-y rounded-lg border">
         {rows

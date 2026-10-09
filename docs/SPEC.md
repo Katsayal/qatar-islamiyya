@@ -52,7 +52,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Full Qur'an memorisation in **one year** (3 terms), students and teachers in the mosque.
 - Students grouped in **Halqas**; one teacher per halqa.
 - Daily hifz entry, unit = pages. **Minimum 2 pages**; entries below 2 pages are flagged.
-- Progress view: pages memorised / 604, % of Qur'an, simple pace indicator.
+- Progress view: pages memorised / 604, % of Qur'an, simple pace indicator. Pages memorised = lines of all *new* entries ÷ 15. Pace (current academic year, calendar days): expected = 604 × days elapsed ÷ days in the year; "on track" at ≥ 90% of expected; projected finish = at the current rate.
 
 ### 5.3 Barnamaj — "Program of Qualifying Students in Basic Islamic Education"
 - **One class**, several teachers. Each teacher teaches a **book**; when finished, another teacher takes the next book.

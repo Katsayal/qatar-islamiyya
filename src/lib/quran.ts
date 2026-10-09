@@ -30,6 +30,13 @@ function toPages(lines: number) {
   return Math.round((lines / LINES_PER_PAGE) * 100) / 100;
 }
 
+// Juz 'Amma is memorised from An-Nas backwards, so teachers often enter the range
+// the other way round. Returns [first, last] in mushaf order.
+export function swapIfReversed<T extends { surah: number; ayah: number }>(a: T, b: T): [T, T] {
+  const reversed = b.surah < a.surah || (b.surah === a.surah && b.ayah < a.ayah);
+  return reversed ? [b, a] : [a, b];
+}
+
 // Range entered by surah/ayah. Lines between two surahs include the
 // surah header + basmalah lines (agreed simplification).
 export function amountForRange(start: AyahPos, end: AyahPos): Amount {
