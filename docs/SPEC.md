@@ -95,7 +95,8 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - **Classes:** create/edit classes (program, level, hifz unit, name), assign teachers.
 - **Promotion:** end-of-year bulk move students to next class.
 - **Barnamaj books:** manage curriculum, assign teacher, mark started/finished.
-- **Applications:** review → accept (creates student) / reject.
+- **Applications:** review → accept (creates student) / reject. Accepting requires confirming the one-off ₦2,000 form fee was received and creates the current term's fee record.
+- **Messages:** read website contact-form messages, mark handled / not handled.
 - **Fees:** per student per term: amount due, amount paid, status (Unpaid / Part-paid / Paid), note.
 - **Report cards:** print-friendly page per student / per class (browser "Save as PDF"), includes teacher comment + director signature image.
 - **Posts:** audience = Public / Internal (teachers+staff) / Students.

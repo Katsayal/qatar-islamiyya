@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { submitApplication, type ApplyState } from "./actions";
 
@@ -21,6 +21,12 @@ export function ApplicationForm() {
     error: null,
   });
 
+  // Submit without React resetting the form, so a validation error keeps what was typed.
+  function keepValues(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    startTransition(() => formAction(new FormData(e.currentTarget)));
+  }
+
   if (state.ok) {
     return (
       <p role="status" className="rounded-lg border bg-muted p-4">
@@ -31,7 +37,7 @@ export function ApplicationForm() {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={keepValues} className="flex flex-col gap-4">
       <Field label="Program *">
         <select name="program" required defaultValue="" className={input}>
           <option value="" disabled>Choose a program</option>

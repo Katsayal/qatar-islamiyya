@@ -29,6 +29,10 @@ export default function AdmissionsPage() {
               </div>
             ))}
           </dl>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Pay at the school or to the account below before the student starts. You can send your
+            application first: the school confirms payment before admission.
+          </p>
           <h3 className="mt-4 font-semibold">Pay to</h3>
           <Suspense fallback={<p className="mt-2 text-sm text-muted-foreground">Loading…</p>}>
             <BankDetails />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { sendMessage, type ContactState } from "./actions";
 
@@ -12,6 +12,12 @@ export function ContactForm() {
     error: null,
   });
 
+  // Submit without React resetting the form, so a validation error keeps what was typed.
+  function keepValues(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    startTransition(() => formAction(new FormData(e.currentTarget)));
+  }
+
   if (state.ok) {
     return (
       <p role="status" className="rounded-lg border bg-muted p-4">
@@ -21,7 +27,7 @@ export function ContactForm() {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={keepValues} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm">
         Your name
         <input name="name" required autoComplete="name" className={`h-11 ${field}`} />

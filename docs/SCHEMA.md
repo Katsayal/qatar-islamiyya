@@ -43,7 +43,7 @@ Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timest
 ### terms
 | id | academic_year_id → academic_years | number (1–3) | starts_on | ends_on |
 
-**Current term = the term whose dates contain today** (single source of truth; no `is_current` flags). Term dates must cover the whole year with no gaps (Aug–Nov, Dec–Mar, Apr–Jul). SQL helper: `term_for_date(date)`.
+**Current term = the term whose dates contain today** (single source of truth; no `is_current` flags). Term dates must cover the whole year with no gaps (Aug–Nov, Dec–Mar, Apr–Jul). SQL helper: `term_for_date(date)`. The academic-setup form takes the year start + the three term end dates and derives each term start (previous end + 1 day), so gaps cannot be created.
 
 ### classes
 | column | type | notes |
@@ -113,7 +113,7 @@ Unique: (student_id, book_id, term_id).
 Unique: (student_id, term_id).
 
 ### student_fees
-| id | student_id | term_id | amount_due int (₦) | amount_paid int (₦) | status (`unpaid` · `part` · `paid`) | note |
+| id | student_id | term_id | amount_due int (₦) | amount_paid int (₦, running total) | status (`unpaid` · `part` · `paid`, **derived by the app on every save**: paid ≥ due and due > 0 → paid; paid > 0 → part; else unpaid) | note |
 Unique: (student_id, term_id).
 
 ### payment_proofs  (student portal phase)

@@ -40,7 +40,7 @@ Supabase
 - Supabase email/password auth. Default password settings (no strength rules, no MFA).
 - `public.profiles` row per user: `role` (`teacher` | `staff` | `student`), `is_owner`, `active`.
 - **Students** log in with admission number: the login form converts `ADM123` → `adm123@students.qatar.local` (synthetic email) behind the scenes.
-- Creating users (teachers/staff/students) is done by a **server action using the service-role key on the server only**, guarded by role checks (staff → students; owner → teachers/staff).
+- Creating users (teachers/staff/students) is done by a **server action using the service-role key on the server only**, guarded by role checks (staff → students; owner → teachers/staff). All of it lives in `portal/(staff)/accounts/actions.ts`.
 - `lib/auth.ts`:
   - `getProfile()` — current user + profile (cached per request).
   - `requireRole(...roles)` — redirect to `/login` if not allowed. Used at the top of portal layouts/pages.

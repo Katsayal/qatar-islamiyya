@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileMenu } from "./mobile-menu";
 import { navLinks } from "./nav-links";
 
 export function SiteHeader() {
@@ -25,7 +26,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Mobile menu: native <details>, no JavaScript needed */}
-        <details className="group relative md:hidden">
+        <MobileMenu>
           <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border text-lg [&::-webkit-details-marker]:hidden">
             <span aria-label="Menu" className="group-open:hidden">☰</span>
             <span aria-label="Close menu" className="hidden group-open:inline">✕</span>
@@ -40,7 +41,7 @@ export function SiteHeader() {
               Login
             </Link>
           </nav>
-        </details>
+        </MobileMenu>
       </div>
     </header>
   );

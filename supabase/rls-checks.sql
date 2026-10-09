@@ -16,6 +16,9 @@ insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data) va
   ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000006', 'authenticated', 'authenticated', 'rls-inactive@test.local', '{"role":"teacher","full_name":"Inactive"}');
 update public.profiles set active = false where id = '00000000-0000-0000-0000-000000000006';
 
+-- Real academic years may exist on DEV; clear them inside this (rolled back) transaction so the test term can cover all dates.
+delete from public.terms;
+delete from public.academic_years;
 insert into public.academic_years (id, name, starts_on, ends_on)
   values ('10000000-0000-0000-0000-000000000001', 'RLS-TEST', '1900-01-01', '2999-12-31');
 insert into public.terms (academic_year_id, number, starts_on, ends_on)

@@ -1,0 +1,69 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { requireRole } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+import { DeleteStudent } from "../delete-student";
+import { setStatus } from "../actions";
+import { StudentForm, type StudentDefaults } from "../student-form";
+
+export default async function EditStudentPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireRole("staff");
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const [{ data: s }, { data: classes }] = await Promise.all([
+    supabase.from("students").select("*").eq("id", id).maybeSingle(),
+    supabase.from("classes").select("id, name, program").eq("active", true).order("sort_order").order("name"),
+  ]);
+  if (!s) notFound();
+
+  const photoUrl = s.photo_path
+    ? (await supabase.storage.from("student-photos").createSignedUrl(s.photo_path, 3600)).data?.signedUrl
+    : null;
+
+  const v = (x: string | number | null) => (x == null ? "" : String(x));
+  const defaults: StudentDefaults = {
+    id: s.id,
+    photoUrl,
+    admission_no: s.admission_no,
+    full_name: s.full_name,
+    full_name_ar: v(s.full_name_ar),
+    gender: s.gender,
+    date_of_birth: v(s.date_of_birth),
+    admitted_on: v(s.admitted_on),
+    class_id: v(s.class_id),
+    status: s.status,
+    address: v(s.address),
+    town: v(s.town),
+    previous_school: v(s.previous_school),
+    entry_level: v(s.entry_level),
+    medical_notes: v(s.medical_notes),
+    notes: v(s.notes),
+    guardian_name: v(s.guardian_name),
+    guardian_phone: v(s.guardian_phone),
+    guardian_address: v(s.guardian_address),
+    guardian_town: v(s.guardian_town),
+  };
+  const archived = s.status === "archived";
+
+  return (
+    <div className="max-w-xl">
+      <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
+        ← Students
+      </Link>
+      <h1 className="mt-2 text-xl font-semibold">{s.full_name}</h1>
+      <div className="mt-4">
+        <StudentForm defaults={defaults} classes={classes ?? []} />
+      </div>
+
+      <div className="mt-8 flex flex-col gap-4">
+        <form action={setStatus.bind(null, s.id, archived ? "active" : "archived")}>
+          <button className="h-11 w-full rounded-md border px-4 text-sm font-medium hover:bg-muted">
+            {archived ? "Restore student" : "Archive student"}
+          </button>
+        </form>
+        <DeleteStudent id={s.id} admissionNo={s.admission_no} />
+      </div>
+    </div>
+  );
+}

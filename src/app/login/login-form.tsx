@@ -1,14 +1,20 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { login } from "./actions";
 
 export function LoginForm() {
   const [error, formAction, pending] = useActionState(login, null);
 
+  // Submit without React resetting the form, so a wrong password keeps the login typed.
+  function keepValues(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    startTransition(() => formAction(new FormData(e.currentTarget)));
+  }
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={keepValues} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm">
         Email or admission number
         <input
