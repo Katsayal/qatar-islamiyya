@@ -7,7 +7,7 @@ type MenuItem = { href: string; label: string; staffOnly?: boolean; soon?: boole
 const items: MenuItem[] = [
   { href: "/portal", label: "Dashboard" },
   { href: "/portal/academic", label: "Academic setup", staffOnly: true },
-  { href: "/portal/classes", label: "My classes", soon: true }, // 3.1
+  { href: "/portal/classes", label: "My classes" },
   { href: "/portal/students", label: "Students", staffOnly: true },
   { href: "/portal/applications", label: "Applications", staffOnly: true },
   { href: "/portal/messages", label: "Messages", staffOnly: true },

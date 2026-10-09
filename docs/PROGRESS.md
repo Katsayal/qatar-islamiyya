@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 2 done → next is Phase 3, task 3.1 My classes (Sonnet)
+- **Phase:** Phase 3 in progress → next is task 3.2 Hifz entry (Opus)
 - **Last updated:** 2026-10-09
 
 ## Session prompt template
@@ -45,7 +45,7 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 - [x] **2.8 Fees** — per student per term status; filter unpaid. *(Done: /portal/fees, staff only. Term picker (defaults to the current term), filters (not fully paid by default, unpaid, part, paid, no record, all + program/class/search), term totals (due/paid/outstanding + counts), 25 per page. Status is derived from the amounts on every save (paid >= due and due > 0 = paid; paid > 0 = part; else unpaid). "Set the fee for everyone" creates unpaid records only for active students with none for the term. Payments are a running total, overpayment counts as paid. Merging done in code, capped at 2,000 students. Tested on DEV (31 students, bulk set run twice, unpaid → part → paid → part, filters and totals checked against hand sums, term switch); test data removed.)*
 
 ## Phase 3 — Teacher tools
-- [ ] **3.1 My classes** — teacher class list → students → profile (read-only).
+- [x] **3.1 My classes** — teacher class list → students → profile (read-only). *(Done: /portal/classes (teacher = assigned classes, staff = all active), /classes/[id] (active students; teachers must be assigned, else 404 because RLS lets teachers read every class row), /classes/[id]/students/[studentId] read-only profile with signed photo, guardian phone as tel: link, staff-only Edit link; 404 if the student is not in that class. No migration. Tested on DEV as teacher + staff at 375px; throwaway data removed. 3.2 can add "Record hifz" on the profile.)*
 - [ ] **3.2 Hifz entry** — by ayah or page, lesson type, grade, absent; computed pages/lines. *(Opus)*
 - [ ] **3.3 Hifz history & Ma'ahad progress** — per student history, pages/604, below-2-pages flag, pace.
 - [ ] **3.4 Barnamaj attendance** — daily roll call screen.
