@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 1 in progress → next is task 1.2 About + Contact (Sonnet)
+- **Phase:** Phase 1 done → next is Phase 2, task 2.1 Portal shell (Sonnet)
 - **Last updated:** 2026-10-09
 
 ## Session prompt template
@@ -29,10 +29,10 @@ When done: typecheck + lint, commit, tick the task here with a short note.
 
 ## Phase 1 — Public website  (Sonnet)
 - [x] **1.1 Home** page (content file + sections). *(Done: hero + CTAs, 3 program cards from src/content/home.ts, latest 3 public posts in <Suspense> (src/components/latest-news.tsx). News items are not links yet: /news/[id] comes in 1.5. Program cards link to /programs#slug (page in 1.3).)*
-- [ ] **1.2 About** + **Contact** (map embed, WhatsApp link, contact form → `contact_messages`).
-- [ ] **1.3 Programs** — Tahfiz, Ma'ahad, Barnamaj (Arabic curriculum table).
-- [ ] **1.4 Admissions** — rules (Hausa), fees, schedule, bank details, PDF form download, online application form (+ photo upload, consent).
-- [ ] **1.5 News & Gallery** — read from `posts` (public) and `gallery_items`; SEO metadata, sitemap.
+- [x] **1.2 About** + **Contact** (map embed, WhatsApp link, contact form → `contact_messages`). *(Done: About text is placeholder in src/content/about.ts until the school sends content; contact form = server action + honeypot + server-only admin client src/lib/supabase/admin.ts; map = plain Google Maps iframe, no API key. Fixed 1.1: dropped new Date() filter in latest-news (RLS already hides drafts). One test row left in DEV contact_messages.)*
+- [x] **1.3 Programs** — Tahfiz, Ma'ahad, Barnamaj (Arabic curriculum table). *(Done: one /programs page with #tahfiz #maahad #barnamaj sections (copy in src/content/programs.ts); curriculum = 43 books copied by eye from the PDF into src/content/barnamaj.ts, shown by components/curriculum-table.tsx. A few authors/types are blank in the PDF itself. Proofread the Arabic with the school before launch.)*
+- [x] **1.4 Admissions** — rules (Hausa), fees, schedule, bank details, PDF form download, online application form (+ photo upload, consent). *(Done: /admissions page = fees, school days, Hausa rules (src/content/admissions.ts), bank details read from school_settings (shows "announced soon" until staff fill them), paper form public/admission-form.pdf (page 7 of the school PDF), online form with optional photo, consent and honeypot via server action + admin client. Tested end to end on DEV (row + photo). next.config: serverActions bodySizeLimit 3mb. Fees amounts/Hausa wording copied from the PDF: confirm with the school. Test application + contact rows left in DEV for staff to delete.)*
+- [x] **1.5 News & Gallery** — read from `posts` (public) and `gallery_items`; SEO metadata, sitemap. *(Done: /news list + /news/[id] (public posts only; body shown as plain paragraphs, markdown renderer comes with 4.1), /gallery grid, images via next/image from the public `site` bucket (remotePatterns in next.config, helper src/lib/site.ts), src/app/sitemap.ts, home news links to posts. Tested on DEV with temporary data (removed). Set NEXT_PUBLIC_SITE_URL at go-live for the sitemap.)*
 
 ## Phase 2 — Staff core  (Sonnet; Opus where noted)
 - [ ] **2.1 Portal shell** — mobile nav, role-based menu, dashboard placeholder.

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 export async function LatestNews() {
@@ -5,8 +6,8 @@ export async function LatestNews() {
   const { data: posts } = await supabase
     .from("posts")
     .select("id, title, published_at")
+    // RLS already hides drafts and future-dated posts.
     .eq("audience", "public")
-    .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false })
     .limit(3);
 
@@ -18,7 +19,9 @@ export async function LatestNews() {
     <ul className="mt-4 grid gap-3 md:grid-cols-3">
       {posts.map((p) => (
         <li key={p.id} className="rounded-lg border p-4">
-          <p className="font-medium">{p.title}</p>
+          <Link href={`/news/${p.id}`} className="font-medium hover:text-primary">
+            {p.title}
+          </Link>
           <p className="mt-1 text-xs text-muted-foreground">
             {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}
           </p>

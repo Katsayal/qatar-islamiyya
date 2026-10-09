@@ -97,7 +97,7 @@ Context fields are never trusted from forms. Postgres `before insert` triggers s
 ## 7. Folder conventions
 ```
 src/app/(public)/page.tsx                 home
-src/app/(public)/programs/[slug]/page.tsx tahfiz | maahad | barnamaj
+src/app/(public)/programs/page.tsx         one page: #tahfiz #maahad #barnamaj
 src/app/(public)/admissions/page.tsx      + actions.ts (application form)
 src/app/portal/layout.tsx                 requireRole('teacher','staff') + mobile nav
 src/app/portal/classes/[id]/page.tsx      teacher class view
