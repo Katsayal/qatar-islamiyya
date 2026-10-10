@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { submitApplication, type ApplyState } from "./actions";
 
 const input = "h-11 rounded-md border bg-background px-3 text-base";
@@ -58,17 +59,28 @@ export function ApplicationForm() {
           <option value="female">Female</option>
         </select>
       </Field>
-      <Field label="Date of birth">
-        <input name="date_of_birth" type="date" className={input} />
+      <Field label="Date of birth *">
+        <input name="date_of_birth" type="date" required className={input} />
       </Field>
-      <Field label="Address">
-        <input name="address" className={input} />
+      <Field label="Blood group *">
+        <select name="blood_group" required defaultValue="" className={input}>
+          <option value="" disabled>Choose (or Unknown)</option>
+          {BLOOD_GROUPS.map((g) => (
+            <option key={g} value={g}>{g}</option>
+          ))}
+        </select>
       </Field>
-      <Field label="Town">
-        <input name="town" className={input} />
+      <Field label="Address *">
+        <input name="address" required className={input} />
       </Field>
-      <Field label="Previous school">
-        <input name="previous_school" className={input} />
+      <Field label="Local government *">
+        <input name="local_government" required className={input} />
+      </Field>
+      <Field label="Previous Islamiyya *">
+        <input name="previous_islamiyya" required className={input} />
+      </Field>
+      <Field label="Student's phone number (optional, if the student has one)">
+        <input name="student_phone" type="tel" autoComplete="off" className={input} />
       </Field>
       <Field label="Level of study">
         <select name="entry_level" defaultValue="" className={input}>
@@ -91,8 +103,8 @@ export function ApplicationForm() {
       <Field label="Address">
         <input name="guardian_address" className={input} />
       </Field>
-      <Field label="Town">
-        <input name="guardian_town" className={input} />
+      <Field label="Local government">
+        <input name="guardian_local_government" className={input} />
       </Field>
       <Field label="Medical condition, if any (larura)">
         <textarea name="medical_notes" rows={2} className={`py-2 ${input} h-auto`} />

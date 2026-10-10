@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createStudentLogin, resetPassword, setActive } from "./actions";
+import { BulkLoginForm } from "./bulk-login-form";
+import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
 
 const PAGE_SIZE = 25;
@@ -31,7 +33,11 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
   if (show === "needs") query = query.is("user_id", null);
   if (show === "has") query = query.not("user_id", "is", null);
   if (q) query = query.or(`full_name.ilike.%${q}%,admission_no.ilike.%${q}%`);
-  const { data: students, count } = await query;
+  const [{ data: students, count }, { count: needLogin }] = await Promise.all([
+    query,
+    supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "active").is("user_id", null),
+  ]);
+  const remaining = needLogin ?? 0;
 
   const lastPage = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
   const pageHref = (n: number) => `/portal/accounts?${new URLSearchParams({ q, show, page: String(n) })}`;
@@ -50,8 +56,28 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
         </p>
       )}
 
+      <section className="mt-4 rounded-lg border p-4">
+        <h2 className="font-semibold">Create logins in bulk</h2>
+        {remaining === 0 ? (
+          <p className="mt-1 text-sm text-muted-foreground">Every active student has a login.</p>
+        ) : (
+          <>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Creates logins for up to {LOGIN_BATCH} students at a time. E.g. password: <em><span className="font-medium text-foreground">qatar999</span></em>.
+              Type the password and press the button.{" "}
+              <strong>
+                {remaining} student{remaining === 1 ? "" : "s"} still need{remaining === 1 ? "s" : ""} a login.
+              </strong>
+            </p>
+            <div className="mt-3">
+              <BulkLoginForm batch={LOGIN_BATCH} remaining={remaining} />
+            </div>
+          </>
+        )}
+      </section>
+
       <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
-        <input name="q" defaultValue={q} placeholder="Name or admission no." className={input} />
+        <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={input} />
         <select name="show" defaultValue={show} className={input}>
           {shows.map((s) => (
             <option key={s.key} value={s.key}>{s.label}</option>

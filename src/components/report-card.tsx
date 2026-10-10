@@ -52,7 +52,7 @@ export function ReportCard({ d }: { d: CardData }) {
         <p className="text-sm text-muted-foreground">{d.termLabel}</p>
       </header>
 
-      <section className="mt-3 grid grid-cols-2 gap-x-6 text-sm">
+      <section className="mt-3 grid gap-x-6 text-sm sm:grid-cols-2">
         <Row label="Student" value={d.studentName} />
         <Row label="Admission no." value={d.admissionNo} />
         <Row label="Class" value={d.className} />

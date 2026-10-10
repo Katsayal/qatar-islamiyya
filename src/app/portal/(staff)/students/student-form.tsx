@@ -2,12 +2,14 @@
 
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { saveStudent } from "./actions";
 
 export type StudentDefaults = Record<
   | "admission_no" | "full_name" | "full_name_ar" | "gender" | "date_of_birth" | "admitted_on"
-  | "class_id" | "status" | "address" | "town" | "previous_school" | "entry_level"
-  | "medical_notes" | "notes" | "guardian_name" | "guardian_phone" | "guardian_address" | "guardian_town",
+  | "class_id" | "status" | "address" | "local_government" | "previous_islamiyya" | "blood_group" | "student_phone"
+  | "entry_level" | "medical_notes" | "notes" | "guardian_name" | "guardian_phone" | "guardian_address"
+  | "guardian_local_government",
   string
 > & { id?: string; photoUrl?: string | null };
 
@@ -57,7 +59,15 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           <option value="female">Female</option>
         </select>
       </Field>
-      {text("date_of_birth", "Date of birth", { type: "date" })}
+      {text("date_of_birth", "Date of birth *", { type: "date", required: true })}
+      <Field label="Blood group *">
+        <select name="blood_group" required defaultValue={d.blood_group} className={input}>
+          <option value="" disabled>Choose</option>
+          {BLOOD_GROUPS.map((g) => (
+            <option key={g} value={g}>{g}</option>
+          ))}
+        </select>
+      </Field>
       <Field label="Class">
         <select name="class_id" defaultValue={d.class_id} className={input}>
           <option value="">No class yet</option>
@@ -80,9 +90,10 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           </select>
         </Field>
       )}
-      {text("address", "Address")}
-      {text("town", "Town")}
-      {text("previous_school", "Previous school")}
+      {text("address", "Address *", { required: true })}
+      {text("local_government", "Local government *", { required: true })}
+      {text("previous_islamiyya", "Previous Islamiyya *", { required: true })}
+      {text("student_phone", "Student phone (optional, e.g. 08012345678)", { type: "tel" })}
       <Field label="Level of study">
         <select name="entry_level" defaultValue={d.entry_level} className={input}>
           <option value="">Not set</option>
@@ -110,7 +121,7 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
       {text("guardian_name", "Name")}
       {text("guardian_phone", "Phone (e.g. 08012345678)", { type: "tel" })}
       {text("guardian_address", "Address")}
-      {text("guardian_town", "Town")}
+      {text("guardian_local_government", "Local government")}
 
       {error && (
         <p role="alert" className="text-sm text-destructive">

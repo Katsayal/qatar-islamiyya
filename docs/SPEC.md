@@ -31,7 +31,8 @@
 | Create / disable teacher & staff accounts | | | | | ✅ |
 
 - No public sign-up. Staff create accounts. Plain passwords, no MFA (for now).
-- Student login = **admission number + password**.
+- Student login = **admission number + password**. Staff create the logins in bulk (one shared starting password typed once, e.g. "qatar999", never stored; done in batches of 10 to stay inside the server time limit). Students can **change their own password** in their profile (plain, min 6 characters); staff can still reset it. Not forced at first login: the student dashboard shows a reminder until the student has set their own password.
+- **Student bio data** (the school's own list): name, admission no., blood group, address, date of birth, gender, local government, previous Islamiyya. All eight are **required** (application form, staff student form, CSV import); admission no. is assigned by staff when the student is created or an application is accepted (the format, e.g. M26TF1023, is decided by the school). Optional: student phone, entry level, class, medical notes, guardian details, Arabic name, staff notes. Blood group is a dropdown (A+, A−, B+, B−, AB+, AB−, O+, O−, Unknown).
 - Guardian accounts: not now (guardian details stored on student record).
 
 ## 4. Academic calendar
@@ -91,17 +92,17 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 
 ## 9. Staff portal (all teacher features +)
 - **Dashboard:** totals by program/class/gender, unpaid fees count, Ma'ahad students below pace.
-- **Students:** list (search/filter), add/edit with photo upload, archive/restore, delete (with confirm), CSV import (template provided), CSV export.
+- **Students:** list (search/filter), add/edit with photo upload, archive/restore, delete (with confirm), CSV import (template provided), CSV export. The CSV has 16 columns: admission_no, full_name, gender, date_of_birth, blood_group, address, local_government, previous_islamiyya, student_phone, class, entry_level, medical_notes, guardian_name, guardian_phone, guardian_address, guardian_local_government. The first 8 are required on every row; import is all-or-nothing and adds active students only (status, admitted-on, Arabic name and staff notes are edited in the student form). Export uses the same columns.
 - **Classes:** create/edit classes (program, level, hifz unit, name), assign teachers.
 - **Promotion:** end-of-year bulk move students to next class.
 - **Barnamaj books:** manage curriculum, assign teacher, mark started/finished.
 - **Applications:** review → accept (creates student) / reject. Accepting requires confirming the one-off ₦2,000 form fee was received and creates the current term's fee record.
-- **Messages:** read website contact-form messages, mark handled / not handled.
-- **Fees:** per student per term: amount due, amount paid, status (Unpaid / Part-paid / Paid), note.
+- **Messages:** read website contact-form messages, mark handled / not handled. Same page has a "Student corrections" view: read students' correction requests, mark done.
+- **Fees:** per student per term: amount due, amount paid, status (Unpaid / Part-paid / Paid), note. **Payment proofs** (receipts uploaded by students) are listed on a sub-page: staff verify / reject them, then record the payment themselves (a proof carries no amount and never changes the balance by itself).
 - **Report cards:** print-friendly page per student / per class (browser "Save as PDF"), includes teacher comment + director signature image.
 - **Posts:** audience = Public / Internal (teachers+staff) / Students.
-- **Documents:** General (teachers+staff) and **Vault** (staff only).
-- **Accounts:** create student accounts; owners also manage teacher/staff accounts.
+- **Documents:** General (teachers+staff), **Students** (also shown to students under "Resources": timetable, notes…) and **Vault** (staff only).
+- **Accounts:** create student logins (one by one, or in bulk with one shared password, 10 students per click); set a new password; disable/enable. Owners also manage teacher/staff accounts.
 - **Settings:** bank details, director signature. (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
 
 ## 10. Student portal (last phase)
@@ -111,7 +112,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Report cards: view/print each term.
 - Fees: status per term, bank details, **upload proof of transfer** (staff verify).
 - Resources: timetable, curriculum, documents shared with students.
-- Profile (read-only) + "request a correction".
+- Profile (read-only) + "request a correction": shows the bio data (incl. blood group and student phone), class, admission no. and guardian details; medical notes and staff notes are hidden. Students change their own password here.
 - Students only see their own data. No leaderboards.
 
 ## 11. Fees & payments

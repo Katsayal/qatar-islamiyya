@@ -39,7 +39,7 @@ export default async function DocumentsPage() {
   const { data } = await supabase
     .from("documents")
     .select("id, title, category, visibility, created_at")
-    .in("visibility", ["general", "vault"])
+    .in("visibility", ["general", "students", "vault"])
     .order("created_at", { ascending: false });
   const rows = data ?? [];
 
@@ -56,6 +56,9 @@ export default async function DocumentsPage() {
 
       <h2 className="mt-6 font-medium">{staff ? "General (teachers & staff)" : "Shared by the school"}</h2>
       <DocumentList rows={rows.filter((d) => d.visibility === "general")} staff={staff} />
+
+      <h2 className="mt-6 font-medium">Shared with students</h2>
+      <DocumentList rows={rows.filter((d) => d.visibility === "students")} staff={staff} />
 
       {staff && (
         <>

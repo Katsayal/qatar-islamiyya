@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
 import { studentSchema } from "@/lib/student-schema";
-import { COLUMNS, fixDate, fixGender, fixPhone, parseCsv } from "@/lib/students-csv";
+import { COLUMNS, REQUIRED_COLUMNS, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv } from "@/lib/students-csv";
 import { createClient } from "@/lib/supabase/server";
 
 const MAX_ROWS = 500;
@@ -21,7 +21,7 @@ async function validate(text: string) {
   if (!header) return { rowCount: 0, errors: ["The file is empty."], valid };
 
   const cols = header.map((h) => h.trim().toLowerCase());
-  const missing = ["admission_no", "full_name", "gender"].filter((c) => !cols.includes(c));
+  const missing = REQUIRED_COLUMNS.filter((c) => !cols.includes(c));
   if (missing.length) return { rowCount: 0, errors: [`Missing column(s): ${missing.join(", ")}.`], valid };
   if (data.length > MAX_ROWS) return { rowCount: data.length, errors: [`Too many rows: the limit is ${MAX_ROWS} per file.`], valid };
 
@@ -56,12 +56,17 @@ async function validate(text: string) {
     const parsed = studentSchema.safeParse({
       ...rec,
       gender: fixGender(rec.gender),
-      date_of_birth: fixDate(rec.date_of_birth) || null,
-      admitted_on: fixDate(rec.admitted_on) || null,
+      date_of_birth: fixDate(rec.date_of_birth),
+      blood_group: fixBloodGroup(rec.blood_group),
       class_id: ids?.[0] ?? null,
       entry_level: rec.entry_level.toLowerCase() || null,
-      status: rec.status.toLowerCase() || "active",
+      student_phone: fixPhone(rec.student_phone),
       guardian_phone: fixPhone(rec.guardian_phone),
+      // Not CSV columns: everyone imported is active; the rest is edited in the student form.
+      status: "active",
+      admitted_on: null,
+      full_name_ar: "",
+      notes: "",
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "row");

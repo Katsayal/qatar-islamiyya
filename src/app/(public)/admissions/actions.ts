@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const text = (max: number) =>
@@ -10,14 +11,21 @@ const schema = z.object({
   program: z.enum(["tahfiz", "maahad", "barnamaj"]),
   full_name: z.string().trim().min(2).max(120),
   gender: z.enum(["male", "female"]),
-  date_of_birth: text(10),
-  address: text(200),
-  town: text(100),
-  previous_school: text(150),
+  date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  blood_group: z.enum(BLOOD_GROUPS),
+  address: z.string().trim().min(1).max(200),
+  local_government: z.string().trim().min(1).max(100),
+  previous_islamiyya: z.string().trim().min(1).max(150),
+  student_phone: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/[\s-]/g, ""))
+    .pipe(z.union([z.literal(""), z.string().regex(/^(\+234|0)\d{10}$/)]))
+    .transform((v) => v || null),
   entry_level: z.enum(["hadda", "sauka"]).nullable(),
   guardian_name: z.string().trim().min(2).max(120),
   guardian_address: text(200),
-  guardian_town: text(100),
+  guardian_local_government: text(100),
   guardian_phone: z
     .string()
     .trim()
@@ -41,7 +49,7 @@ export async function submitApplication(_prev: ApplyState, formData: FormData): 
   const raw = Object.fromEntries(formData);
   const parsed = schema.safeParse({ ...raw, entry_level: raw.entry_level || null });
   if (!parsed.success) {
-    return { ok: false, error: "Please check the form: fill the required fields, use a Nigerian phone number and tick the consent box." };
+    return { ok: false, error: "Please check the form: fill all the required fields, use Nigerian phone numbers and tick the consent box." };
   }
   const { consent, ...fields } = parsed.data;
 

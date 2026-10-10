@@ -5,6 +5,7 @@ import { z } from "zod";
 import { admissionToEmail, requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { LOGIN_BATCH, LOGIN_CHUNK } from "./constants";
 
 export type Result = { ok: boolean; message: string | null };
 
@@ -16,6 +17,34 @@ const done = (message: string): Result => ({ ok: true, message });
 // Everything here runs on the server. The service-role client is used only below,
 // after requireRole; who may do what is also enforced by RLS on profiles.
 
+type LoginStudent = { id: string; admission_no: string; full_name: string };
+
+// Creates the auth login for one student and links it. Returns an error message, or null on success.
+// Used by "Create login" (one student) and by the bulk button.
+async function createLoginFor(
+  admin: ReturnType<typeof createAdminClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  s: LoginStudent,
+  pw: string,
+): Promise<string | null> {
+  const { data, error } = await admin.auth.admin.createUser({
+    email: admissionToEmail(s.admission_no),
+    password: pw,
+    email_confirm: true,
+    app_metadata: { role: "student", full_name: s.full_name }, // read by the handle_new_user trigger
+  });
+  if (error) {
+    return error.code === "email_exists" ? "A login for this admission number already exists." : "Could not create the login.";
+  }
+
+  const { error: linkError } = await supabase.from("students").update({ user_id: data.user.id }).eq("id", s.id);
+  if (linkError) {
+    await admin.auth.admin.deleteUser(data.user.id); // no orphan login
+    return "Could not link the login to the student. Nothing was saved.";
+  }
+  return null;
+}
+
 export async function createStudentLogin(_prev: Result, formData: FormData): Promise<Result> {
   await requireRole("staff");
   const parsed = z.object({ studentId: z.string().uuid(), password }).safeParse(Object.fromEntries(formData));
@@ -24,34 +53,63 @@ export async function createStudentLogin(_prev: Result, formData: FormData): Pro
   const supabase = await createClient();
   const { data: s } = await supabase
     .from("students")
-    .select("admission_no, full_name, user_id")
+    .select("id, admission_no, full_name, user_id")
     .eq("id", parsed.data.studentId)
     .maybeSingle();
   if (!s) return fail("Student not found.");
   if (s.user_id) return fail("This student already has a login.");
 
-  const admin = createAdminClient();
-  const { data, error } = await admin.auth.admin.createUser({
-    email: admissionToEmail(s.admission_no),
-    password: parsed.data.password,
-    email_confirm: true,
-    app_metadata: { role: "student", full_name: s.full_name }, // read by the handle_new_user trigger
-  });
-  if (error) {
-    return fail(error.code === "email_exists" ? "A login for this admission number already exists." : "Could not create the login.");
-  }
-
-  const { error: linkError } = await supabase
-    .from("students")
-    .update({ user_id: data.user.id })
-    .eq("id", parsed.data.studentId);
-  if (linkError) {
-    await admin.auth.admin.deleteUser(data.user.id); // no orphan login
-    return fail("Could not link the login to the student. Nothing was saved.");
-  }
+  const problem = await createLoginFor(createAdminClient(), supabase, s, parsed.data.password);
+  if (problem) return fail(problem);
 
   revalidatePath("/portal/accounts");
   return done(`Login created. The student signs in with admission number ${s.admission_no} and the password you set.`);
+}
+
+export type BatchResult = { ok: boolean; message: string; failures: string[] } | null;
+
+// One click = the next LOGIN_BATCH active students without a login, all with the same starting password.
+// Small batches keep each request short; staff press the button again until nobody is left.
+export async function createStudentLoginsBatch(_prev: BatchResult, formData: FormData): Promise<BatchResult> {
+  await requireRole("staff");
+  const parsed = z.object({ password }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Enter a password.", failures: [] };
+
+  const supabase = await createClient();
+  const { data: students } = await supabase
+    .from("students")
+    .select("id, admission_no, full_name")
+    .eq("status", "active")
+    .is("user_id", null)
+    .order("admission_no")
+    .limit(LOGIN_BATCH);
+  if (!students?.length) return { ok: true, message: "Every active student already has a login.", failures: [] };
+
+  const admin = createAdminClient();
+  const failures: string[] = [];
+  let created = 0;
+  for (let i = 0; i < students.length; i += LOGIN_CHUNK) {
+    const chunk = students.slice(i, i + LOGIN_CHUNK);
+    const results = await Promise.all(chunk.map((s) => createLoginFor(admin, supabase, s, parsed.data.password)));
+    results.forEach((problem, j) => (problem ? failures.push(`${chunk[j].admission_no}: ${problem}`) : created++));
+  }
+
+  const { count } = await supabase
+    .from("students")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active")
+    .is("user_id", null);
+
+  revalidatePath("/portal/accounts");
+  const left = count ?? 0;
+  return {
+    ok: failures.length === 0,
+    message:
+      `Created ${created} login${created === 1 ? "" : "s"}` +
+      (failures.length ? `, ${failures.length} failed.` : ".") +
+      ` ${left} student${left === 1 ? "" : "s"} still need${left === 1 ? "s" : ""} a login.`,
+    failures: failures.slice(0, 10),
+  };
 }
 
 export async function createStaffAccount(_prev: Result, formData: FormData): Promise<Result> {
@@ -111,6 +169,8 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
 
   const { error } = await createAdminClient().auth.admin.updateUserById(parsed.data.userId, {
     password: parsed.data.password,
+    // A student whose password staff reset sees the "set your own password" reminder again.
+    ...(target.role === "student" ? { user_metadata: { password_changed: false } } : {}),
   });
   return error ? fail("Could not change the password.") : done("Password changed.");
 }

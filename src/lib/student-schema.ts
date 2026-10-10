@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BLOOD_GROUPS } from "./blood-groups.ts";
 
 // One set of rules for the student form and the CSV import.
 // YYYY-MM-DD that is a real calendar date (rejects 2015-31-31).
@@ -11,29 +12,37 @@ const isoDate = z
   });
 
 const text = (max: number) => z.string().trim().max(max).transform((v) => v || null);
+const required = (max: number) => z.string().trim().min(1).max(max);
 
+// Nigerian number, or empty. Used for the guardian's and the student's own phone.
+const phone = z
+  .string()
+  .trim()
+  .transform((v) => v.replace(/[\s-]/g, ""))
+  .pipe(z.union([z.literal(""), z.string().regex(/^(\+234|0)\d{10}$/)]))
+  .transform((v) => v || null);
+
+// The school's bio data: name, admission no., blood group, address, date of birth, gender,
+// local government and previous Islamiyya are required (SPEC §3). The rest is optional.
 export const studentSchema = z.object({
   admission_no: z.string().trim().min(1).max(30).transform((v) => v.toUpperCase()),
   full_name: z.string().trim().min(2).max(120),
   full_name_ar: text(120),
   gender: z.enum(["male", "female"]),
-  date_of_birth: isoDate.nullable(),
+  date_of_birth: isoDate,
+  blood_group: z.enum(BLOOD_GROUPS),
+  address: required(200),
+  local_government: required(100),
+  previous_islamiyya: required(150),
+  student_phone: phone,
   admitted_on: isoDate.nullable(),
   class_id: z.string().uuid().nullable(),
   status: z.enum(["active", "graduated", "withdrawn", "archived"]),
-  address: text(200),
-  town: text(100),
-  previous_school: text(150),
   entry_level: z.enum(["hadda", "sauka"]).nullable(),
   medical_notes: text(500),
   notes: text(500),
   guardian_name: text(120),
-  guardian_phone: z
-    .string()
-    .trim()
-    .transform((v) => v.replace(/[\s-]/g, ""))
-    .pipe(z.union([z.literal(""), z.string().regex(/^(\+234|0)\d{10}$/)]))
-    .transform((v) => v || null),
+  guardian_phone: phone,
   guardian_address: text(200),
-  guardian_town: text(100),
+  guardian_local_government: text(100),
 });

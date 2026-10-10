@@ -2,9 +2,14 @@
 // Pure (no imports) so `npm test` can run it.
 
 export const COLUMNS = [
-  "admission_no", "full_name", "full_name_ar", "gender", "date_of_birth", "class", "status",
-  "admitted_on", "address", "town", "previous_school", "entry_level", "medical_notes", "notes",
-  "guardian_name", "guardian_phone", "guardian_address", "guardian_town",
+  "admission_no", "full_name", "gender", "date_of_birth", "blood_group", "address", "local_government",
+  "previous_islamiyya", "student_phone", "class", "entry_level", "medical_notes",
+  "guardian_name", "guardian_phone", "guardian_address", "guardian_local_government",
+] as const;
+
+// Columns every row must fill (SPEC §3). The others may be empty.
+export const REQUIRED_COLUMNS = [
+  "admission_no", "full_name", "gender", "date_of_birth", "blood_group", "address", "local_government", "previous_islamiyya",
 ] as const;
 
 export type Column = (typeof COLUMNS)[number];
@@ -62,4 +67,10 @@ export function fixDate(v: string): string {
 export function fixGender(v: string): string {
   const s = v.trim().toLowerCase();
   return s === "m" ? "male" : s === "f" ? "female" : s;
+}
+
+// "o+", "AB -", "ab−" (unicode minus) and "unknown" -> the stored value. Anything else is returned as is (the schema rejects it).
+export function fixBloodGroup(v: string): string {
+  const s = v.trim().toUpperCase().replace(/[\s]/g, "").replace(/[−–‒]/g, "-");
+  return s === "UNKNOWN" ? "Unknown" : s;
 }

@@ -17,6 +17,7 @@ insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data) va
 update public.profiles set active = false where id = '00000000-0000-0000-0000-000000000006';
 
 -- Real academic years may exist on DEV; clear them inside this (rolled back) transaction so the test term can cover all dates.
+delete from public.student_fees; -- real fee rows would block clearing the terms; all of this is rolled back
 delete from public.terms;
 delete from public.academic_years;
 insert into public.academic_years (id, name, starts_on, ends_on)
@@ -101,6 +102,7 @@ begin
 
   -- cannot see fees
   if (select count(*) from public.student_fees) <> 0 then raise exception 'FAIL: teacher can see fees'; end if;
+  if (select count(*) from public.my_class_teacher_names()) <> 0 then raise exception 'FAIL: teacher got student teacher names'; end if;
 end $$;
 reset role;
 
@@ -127,6 +129,145 @@ do $$ begin
     raise exception 'FAIL: student recorded hifz';
   exception when insufficient_privilege then null;
   end;
+
+  -- my teachers: only the active teachers of own class (Teacher A; not the inactive one, not class B's)
+  if (select count(*) from public.my_class_teacher_names()) <> 1
+     or (select * from public.my_class_teacher_names()) <> 'Teacher A' then
+    raise exception 'FAIL: student should see exactly their class teacher names';
+  end if;
+
+  -- correction requests: own only, must start open
+  insert into public.correction_requests (student_id, message)
+    values ('30000000-0000-0000-0000-000000000001', 'test');
+  begin
+    insert into public.correction_requests (student_id, message)
+      values ('30000000-0000-0000-0000-000000000002', 'for someone else');
+    raise exception 'FAIL: student sent a correction for another student';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+-- ---------- student: juz progress (needs a "new" entry, inserted as the recorder) ----------
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
+insert into public.hifz_entries (student_id, entry_date, lesson_type, start_surah, start_ayah, end_surah, end_ayah, start_page, end_page, pages, lines, grade)
+  values ('30000000-0000-0000-0000-000000000001', current_date, 'new', 1, 1, 1, 7, 1, 1, 0.47, 7, 'jayyid'),
+         ('30000000-0000-0000-0000-000000000001', current_date, 'new', 1, 1, 1, 3, 1, 1, 0.2, 3, 'jayyid'); -- repeat of the same ayahs
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.my_juz_progress()) <> 30 then raise exception 'FAIL: student should get 30 juz rows'; end if;
+  if (select done_ayahs from public.my_juz_progress() where juz = 1) <> 7 then raise exception 'FAIL: juz 1 should have 7 ayahs done (repeat not double counted)'; end if;
+  if (select sum(done_ayahs) from public.my_juz_progress()) <> 7 then raise exception 'FAIL: only juz 1 should have progress'; end if;
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.my_juz_progress()) <> 0 then raise exception 'FAIL: teacher got juz progress'; end if;
+end $$;
+reset role;
+
+-- ---------- student: attendance + exam marks are own-only (rows inserted as the recorder) ----------
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
+insert into public.attendance (student_id, att_date, status) values
+  ('30000000-0000-0000-0000-000000000001', current_date, 'present'),
+  ('30000000-0000-0000-0000-000000000002', current_date, 'absent');
+insert into public.exam_results (student_id, book_id, term_id, score) values
+  ('30000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', public.term_for_date(current_date), 80),
+  ('30000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000001', public.term_for_date(current_date), 90);
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.attendance) <> 1 then raise exception 'FAIL: student should see only own attendance'; end if;
+  if (select count(*) from public.exam_results) <> 1 or (select score from public.exam_results) <> 80 then raise exception 'FAIL: student should see only own exam marks'; end if;
+  if (select count(*) from public.books where id = '40000000-0000-0000-0000-000000000001') <> 1 then raise exception 'FAIL: student should read books'; end if;
+  begin
+    insert into public.attendance (student_id, att_date, status) values ('30000000-0000-0000-0000-000000000001', current_date - 1, 'present');
+    raise exception 'FAIL: student recorded attendance';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+-- ---------- storage: signature + proof files in the `private` bucket ----------
+update public.school_settings set signature_path = 'signature/rls.png' where id = 1;
+insert into storage.objects (bucket_id, name) values
+  ('private', 'signature/rls.png'),
+  ('private', 'proofs/30000000-0000-0000-0000-000000000001/a.jpg'),
+  ('private', 'proofs/30000000-0000-0000-0000-000000000002/b.jpg'),
+  ('private', 'other/x.jpg');
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$
+declare n int;
+begin
+  if (select count(*) from storage.objects where bucket_id = 'private') <> 2 then
+    raise exception 'FAIL: student should see only the signature and their own proof file';
+  end if;
+  insert into storage.objects (bucket_id, name) values ('private', 'proofs/30000000-0000-0000-0000-000000000001/new.jpg');
+  begin
+    insert into storage.objects (bucket_id, name) values ('private', 'proofs/30000000-0000-0000-0000-000000000002/new.jpg');
+    raise exception 'FAIL: student uploaded into another student''s proof folder';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into storage.objects (bucket_id, name) values ('private', 'signature/evil.png');
+    raise exception 'FAIL: student uploaded outside proofs/';
+  exception when insufficient_privilege then null;
+  end;
+  -- (deleting is blocked for everyone by Supabase's own storage.protect_delete trigger; students have no delete policy either)
+  update storage.objects set name = 'proofs/30000000-0000-0000-0000-000000000001/z.jpg'
+    where bucket_id = 'private' and name = 'proofs/30000000-0000-0000-0000-000000000001/a.jpg';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: student changed a proof file'; end if;
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from storage.objects where bucket_id = 'private') <> 0 then raise exception 'FAIL: teacher can read the private bucket'; end if;
+end $$;
+reset role;
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$ begin
+  if (select count(*) from storage.objects where bucket_id = 'private') <> 0 then raise exception 'FAIL: anon can read the private bucket'; end if;
+end $$;
+reset role;
+
+-- ---------- documents: general / students / vault ----------
+insert into public.documents (id, title, file_path, visibility) values
+  ('50000000-0000-0000-0000-000000000001', 'doc general',  'general.pdf',  'general'),
+  ('50000000-0000-0000-0000-000000000002', 'doc students', 'students.pdf', 'students'),
+  ('50000000-0000-0000-0000-000000000003', 'doc vault',    'vault.pdf',    'vault');
+insert into storage.objects (bucket_id, name) values
+  ('documents', 'general.pdf'), ('documents', 'students.pdf'), ('vault', 'vault.pdf');
+
+-- (the checks look only at the fixture rows, so real documents on the DEV project do not matter)
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.documents where id::text like '50000000-%') <> 1
+     or (select visibility from public.documents where id::text like '50000000-%') <> 'students' then
+    raise exception 'FAIL: student should see only documents shared with students';
+  end if;
+  if (select count(*) from storage.objects where bucket_id = 'documents' and name in ('general.pdf', 'students.pdf')) <> 1 then raise exception 'FAIL: student should open only the students file'; end if;
+  if (select count(*) from storage.objects where bucket_id = 'vault' and name = 'vault.pdf') <> 0 then raise exception 'FAIL: student can read the vault bucket'; end if;
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.documents where id::text like '50000000-%' and visibility in ('general', 'students')) <> 2 then raise exception 'FAIL: teacher should see general + students documents'; end if;
+  if (select count(*) from public.documents where id::text like '50000000-%' and visibility = 'vault') <> 0 then raise exception 'FAIL: teacher can see vault documents'; end if;
+  if (select count(*) from storage.objects where bucket_id = 'documents' and name in ('general.pdf', 'students.pdf')) <> 2 then raise exception 'FAIL: teacher should open general + students files'; end if;
+  if (select count(*) from storage.objects where bucket_id = 'vault' and name = 'vault.pdf') <> 0 then raise exception 'FAIL: teacher can read the vault bucket'; end if;
 end $$;
 reset role;
 

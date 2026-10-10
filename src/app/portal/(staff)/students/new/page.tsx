@@ -17,8 +17,9 @@ export default async function NewStudentPage() {
     admission_no: "", full_name: "", full_name_ar: "", gender: "", date_of_birth: "",
     // Safe to read the clock: the session check above already made this request-time.
     admitted_on: new Date().toISOString().slice(0, 10),
-    class_id: "", status: "active", address: "", town: "", previous_school: "", entry_level: "",
-    medical_notes: "", notes: "", guardian_name: "", guardian_phone: "", guardian_address: "", guardian_town: "",
+    class_id: "", status: "active", address: "", local_government: "", previous_islamiyya: "",
+    blood_group: "", student_phone: "", entry_level: "", medical_notes: "", notes: "",
+    guardian_name: "", guardian_phone: "", guardian_address: "", guardian_local_government: "",
   };
 
   return (

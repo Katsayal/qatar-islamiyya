@@ -80,6 +80,7 @@ export type Database = {
       applications: {
         Row: {
           address: string | null
+          blood_group: string | null
           consent: boolean
           created_at: string
           date_of_birth: string | null
@@ -87,23 +88,25 @@ export type Database = {
           full_name: string
           gender: string
           guardian_address: string | null
+          guardian_local_government: string | null
           guardian_name: string
           guardian_phone: string
-          guardian_town: string | null
           id: string
+          local_government: string | null
           medical_notes: string | null
           notes: string | null
           photo_path: string | null
-          previous_school: string | null
+          previous_islamiyya: string | null
           program: string
           status: string
           student_id: string | null
-          town: string | null
+          student_phone: string | null
           updated_at: string | null
           updated_by: string | null
         }
         Insert: {
           address?: string | null
+          blood_group?: string | null
           consent: boolean
           created_at?: string
           date_of_birth?: string | null
@@ -111,23 +114,25 @@ export type Database = {
           full_name: string
           gender: string
           guardian_address?: string | null
+          guardian_local_government?: string | null
           guardian_name: string
           guardian_phone: string
-          guardian_town?: string | null
           id?: string
+          local_government?: string | null
           medical_notes?: string | null
           notes?: string | null
           photo_path?: string | null
-          previous_school?: string | null
+          previous_islamiyya?: string | null
           program: string
           status?: string
           student_id?: string | null
-          town?: string | null
+          student_phone?: string | null
           updated_at?: string | null
           updated_by?: string | null
         }
         Update: {
           address?: string | null
+          blood_group?: string | null
           consent?: boolean
           created_at?: string
           date_of_birth?: string | null
@@ -135,18 +140,19 @@ export type Database = {
           full_name?: string
           gender?: string
           guardian_address?: string | null
+          guardian_local_government?: string | null
           guardian_name?: string
           guardian_phone?: string
-          guardian_town?: string | null
           id?: string
+          local_government?: string | null
           medical_notes?: string | null
           notes?: string | null
           photo_path?: string | null
-          previous_school?: string | null
+          previous_islamiyya?: string | null
           program?: string
           status?: string
           student_id?: string | null
-          town?: string | null
+          student_phone?: string | null
           updated_at?: string | null
           updated_by?: string | null
         }
@@ -1098,6 +1104,7 @@ export type Database = {
           address: string | null
           admission_no: string
           admitted_on: string | null
+          blood_group: string | null
           class_id: string | null
           created_at: string
           date_of_birth: string | null
@@ -1106,16 +1113,17 @@ export type Database = {
           full_name_ar: string | null
           gender: string
           guardian_address: string | null
+          guardian_local_government: string | null
           guardian_name: string | null
           guardian_phone: string | null
-          guardian_town: string | null
           id: string
+          local_government: string | null
           medical_notes: string | null
           notes: string | null
           photo_path: string | null
-          previous_school: string | null
+          previous_islamiyya: string | null
           status: string
-          town: string | null
+          student_phone: string | null
           updated_at: string | null
           updated_by: string | null
           user_id: string | null
@@ -1124,6 +1132,7 @@ export type Database = {
           address?: string | null
           admission_no: string
           admitted_on?: string | null
+          blood_group?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
@@ -1132,16 +1141,17 @@ export type Database = {
           full_name_ar?: string | null
           gender: string
           guardian_address?: string | null
+          guardian_local_government?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
-          guardian_town?: string | null
           id?: string
+          local_government?: string | null
           medical_notes?: string | null
           notes?: string | null
           photo_path?: string | null
-          previous_school?: string | null
+          previous_islamiyya?: string | null
           status?: string
-          town?: string | null
+          student_phone?: string | null
           updated_at?: string | null
           updated_by?: string | null
           user_id?: string | null
@@ -1150,6 +1160,7 @@ export type Database = {
           address?: string | null
           admission_no?: string
           admitted_on?: string | null
+          blood_group?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
@@ -1158,16 +1169,17 @@ export type Database = {
           full_name_ar?: string | null
           gender?: string
           guardian_address?: string | null
+          guardian_local_government?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
-          guardian_town?: string | null
           id?: string
+          local_government?: string | null
           medical_notes?: string | null
           notes?: string | null
           photo_path?: string | null
-          previous_school?: string | null
+          previous_islamiyya?: string | null
           status?: string
-          town?: string | null
+          student_phone?: string | null
           updated_at?: string | null
           updated_by?: string | null
           user_id?: string | null
@@ -1260,6 +1272,15 @@ export type Database = {
       is_member: { Args: never; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      my_class_teacher_names: { Args: never; Returns: string[] }
+      my_juz_progress: {
+        Args: never
+        Returns: {
+          done_ayahs: number
+          juz: number
+          total_ayahs: number
+        }[]
+      }
       my_student_id: { Args: never; Returns: string }
       teaches_class: { Args: { cid: string }; Returns: boolean }
       teaches_student: { Args: { sid: string }; Returns: boolean }

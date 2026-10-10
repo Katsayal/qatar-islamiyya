@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 // Short-lived signed link. The row is read with the user's own client, so RLS decides who may open it.
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const profile = await getProfile();
-  if (!profile || profile.role === "student") return new NextResponse("Not found", { status: 404 });
+  if (!profile) return new NextResponse("Not found", { status: 404 });
 
   const id = z.string().uuid().safeParse((await params).id);
   if (!id.success) return new NextResponse("Not found", { status: 404 });

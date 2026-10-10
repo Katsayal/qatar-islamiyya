@@ -102,9 +102,19 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
     return `/portal/fees?${params}`;
   };
 
+  const { count: pendingProofs } = await supabase
+    .from("payment_proofs")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+
   return (
     <div>
-      <h1 className="text-xl font-semibold">Fees</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold">Fees</h1>
+        <Link href="/portal/fees/proofs" className="flex h-10 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted">
+          Payment proofs ({pendingProofs ?? 0})
+        </Link>
+      </div>
 
       <form className="mt-4 grid gap-3 md:grid-cols-6">
         <select name="term" defaultValue={term.id} className={`${input} md:col-span-2`}>
@@ -131,7 +141,7 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
-        <input name="q" defaultValue={q} placeholder="Name or admission no." className={`${input} md:col-span-4`} />
+        <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-4`} />
         <div className="flex gap-2 md:col-span-2">
           <button className="h-11 flex-1 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
           <Link href="/portal/fees" className="flex h-11 items-center rounded-md border px-5">Reset</Link>

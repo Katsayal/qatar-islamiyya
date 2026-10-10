@@ -23,6 +23,19 @@ const items: MenuItem[] = [
   { href: "/portal/settings", label: "Settings", staffOnly: true },
 ];
 
+// Students have their own short list; more items arrive with 5.2–5.5.
+const studentItems: MenuItem[] = [
+  { href: "/portal/student", label: "Dashboard" },
+  { href: "/portal/student/hifz", label: "Hifz" },
+  { href: "/portal/student/barnamaj", label: "Barnamaj" },
+  { href: "/portal/student/report-cards", label: "Report card" },
+  { href: "/portal/student/fees", label: "Fees" },
+  { href: "/portal/student/news", label: "News" },
+  { href: "/portal/student/resources", label: "Resources" },
+  { href: "/portal/student/profile", label: "Profile" },
+];
+
 export function menuFor(profile: Profile) {
+  if (profile.role === "student") return studentItems;
   return items.filter((i) => !i.staffOnly || profile.role === "staff");
 }

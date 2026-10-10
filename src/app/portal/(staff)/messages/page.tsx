@@ -2,12 +2,14 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { setHandled } from "./actions";
+import { Corrections } from "./corrections";
 
 const filters = ["open", "handled", "all"];
 
-export default async function MessagesPage({ searchParams }: { searchParams: Promise<{ show?: string }> }) {
+export default async function MessagesPage({ searchParams }: { searchParams: Promise<{ show?: string; kind?: string }> }) {
   await requireRole("staff");
   const sp = await searchParams;
+  const corrections = sp.kind === "corrections";
   const show = filters.includes(sp.show ?? "") ? sp.show! : "open";
   const supabase = await createClient();
 
@@ -17,15 +19,43 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
     .order("created_at", { ascending: false })
     .limit(100);
   if (show !== "all") query = query.eq("handled", show === "handled");
-  const [{ data: messages }, { count: openCount }] = await Promise.all([
+  const [{ data: messages }, { count: openCount }, { count: openCorrections }] = await Promise.all([
     query,
     supabase.from("contact_messages").select("id", { count: "exact", head: true }).eq("handled", false),
+    supabase.from("correction_requests").select("id", { count: "exact", head: true }).eq("status", "open"),
   ]);
+
+  const tab = (active: boolean) => `rounded-md border px-3 py-2 text-sm ${active ? "bg-primary text-primary-foreground" : ""}`;
+  const heading = (
+    <>
+      <h1 className="text-xl font-semibold">Messages</h1>
+      <nav className="mt-3 flex gap-2">
+        <Link href="/portal/messages" className={tab(!corrections)}>
+          Website ({openCount ?? 0})
+        </Link>
+        <Link href="/portal/messages?kind=corrections" className={tab(corrections)}>
+          Student corrections ({openCorrections ?? 0})
+        </Link>
+      </nav>
+    </>
+  );
+
+  if (corrections) {
+    return (
+      <div className="max-w-2xl">
+        {heading}
+        <p className="mt-3 text-sm text-muted-foreground">
+          Requests from students to correct their details. Fix the student record, then mark it done.
+        </p>
+        <Corrections show={sp.show} />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-semibold">Messages</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      {heading}
+      <p className="mt-3 text-sm text-muted-foreground">
         From the website contact form. {openCount ?? 0} not handled yet.
       </p>
 

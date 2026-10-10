@@ -23,14 +23,16 @@ Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timest
 | full_name | text | |
 | full_name_ar | text | nullable |
 | gender | text | `male` · `female` |
-| date_of_birth | date | nullable |
+| date_of_birth | date | nullable in the DB (old rows); required by forms/CSV |
 | photo_path | text | path in private `student-photos` bucket: `students/<id>.jpg`, or `applications/<application_id>.jpg` when created from an application (file is reused, not copied) |
-| address, town | text | |
-| previous_school | text | nullable |
+| address, local_government | text | required by forms/CSV (was `town`) |
+| previous_islamiyya | text | required by forms/CSV (was `previous_school`) |
+| blood_group | text | `A+` `A-` `B+` `B-` `AB+` `AB-` `O+` `O-` `Unknown`; required by forms/CSV |
+| student_phone | text | optional |
 | entry_level | text | `hadda` · `sauka` · nullable |
 | medical_notes | text | "larura" |
 | notes | text | special notes |
-| guardian_name, guardian_phone, guardian_address, guardian_town | text | |
+| guardian_name, guardian_phone, guardian_address, guardian_local_government | text | (was `guardian_town`) |
 | class_id | uuid → classes | current class (one class = one program) |
 | status | text | `active` · `graduated` · `withdrawn` · `archived` |
 | admitted_on | date | |
@@ -131,7 +133,7 @@ Unique: (student_id, term_id).
 
 ## 7. Public intake & settings
 ### applications  (mirrors the paper form)
-| id | program | full_name | date_of_birth | gender | address | town | previous_school | entry_level | photo_path (`student-photos` bucket, `applications/<id>.jpg`) | guardian_name | guardian_address | guardian_town | guardian_phone | medical_notes | notes | consent boolean | status (`new` · `accepted` · `rejected`) | student_id (set on accept) |
+| id | program | full_name | date_of_birth | gender | blood_group | address | local_government | previous_islamiyya | student_phone (optional) | entry_level | photo_path (`student-photos` bucket, `applications/<id>.jpg`) | guardian_name | guardian_address | guardian_local_government | guardian_phone | medical_notes | notes | consent boolean | status (`new` · `accepted` · `rejected`) | student_id (set on accept) |
 
 ### contact_messages
 | id | name | phone | message | handled boolean |
@@ -163,6 +165,9 @@ Insert fails with a clear error if no term contains the date.
 - Teachers cannot delete hifz/attendance (staff only). Teachers/students see only their own profile for now (widen when Phase 3/5 screens need teacher names).
 - `hifz_lines_by_student(p_class, p_from, p_to)` (migration `20261009111346_…`, security invoker so RLS applies, execute = authenticated only): per active student of a class, lines of all `new` entries (all time and inside a date range). Used by the class page progress overview (3.3b) and later the staff dashboard (4.5); done in SQL because the API returns at most 1,000 rows.
 - `term_report_stats(p_class, p_term)` (migration `20261010054453_term_report_stats.sql`, security invoker, execute = authenticated only): per active student of a class, all-time and in-term lines of new hifz, present/absent hifz days, grade counts on new lessons, and Barnamaj attendance counts for the term. Used by the report cards (4.4).
+- `my_class_teacher_names()` (migration `…_student_class_teachers.sql`, security definer, execute = authenticated only): names of the active teachers of the logged-in student's class (empty for everyone else). Students cannot read other `profiles` rows, so the student dashboard (5.1) uses this instead of widening the profiles policy.
+- `my_juz_progress()` (migration `20261010110553_student_juz_progress.sql`, security invoker, execute = authenticated only): 30 rows (juz, total_ayahs, done_ayahs) for the logged-in student; done = distinct ayahs covered by their own new, non-absent hifz entries (repeats not double counted). Empty for non-students. Used by the student hifz page (5.2). Totals/term/pace there reuse `hifz_lines_by_student` and `term_report_stats` (invoker, so a student gets only their own row).
+- Storage policies for students (migration `20261010122749_student_storage_policies.sql`, bucket `private`): `student_read_signature` (select the object whose name = `school_settings.signature_path`), `student_proofs_insert` / `student_proofs_read` (name starts `proofs/<my_student_id()>/`). `payment_proofs.file_path` holds that path; the server action builds it, never the form.
 - Checks: `supabase/rls-checks.sql` (self-contained, rolls back) → `npx supabase db query --linked -f supabase/rls-checks.sql`.
 
 ## 9. RLS summary

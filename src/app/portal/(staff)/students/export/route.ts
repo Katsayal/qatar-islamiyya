@@ -2,7 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { COLUMNS, toCsv } from "@/lib/students-csv";
 
-// GET /portal/students/export          -> every student, every status
+// GET /portal/students/export          -> every student, every status (same columns as the import)
 // GET /portal/students/export?template=1 -> header row + one example row
 export async function GET(request: Request) {
   await requireRole("staff");
@@ -10,9 +10,10 @@ export async function GET(request: Request) {
   const rows: string[][] = [[...COLUMNS]];
 
   if (template) {
+    // One example row, in the same order as COLUMNS.
     rows.push([
-      "EXAMPLE001", "Aminu Bello Musa", "", "male", "2015-03-21", "", "active", "2026-08-01",
-      "Zango Road", "Daura", "", "hadda", "", "", "Bello Musa", "08012345678", "", "Daura",
+      "EXAMPLE001", "Aminu Bello Musa", "male", "2015-03-21", "O+", "Zango Road", "Daura",
+      "Islamiyya Daura", "", "", "hadda", "", "Bello Musa", "08012345678", "", "Daura",
     ]);
   } else {
     const supabase = await createClient();

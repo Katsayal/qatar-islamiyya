@@ -40,6 +40,7 @@ export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
           <Field label="Who can open it">
             <select name="visibility" defaultValue="general" className={input}>
               <option value="general">General: teachers &amp; staff</option>
+              <option value="students">Students: shared with students (teachers &amp; staff can open it too)</option>
               <option value="vault">Vault: staff only</option>
             </select>
           </Field>

@@ -95,7 +95,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
       </ul>
 
       <form className="mt-4 grid gap-3 md:grid-cols-5">
-        <input name="q" defaultValue={q} placeholder="Name or admission no." className={`${input} md:col-span-2`} />
+        <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-2`} />
         <select name="program" defaultValue={program ?? ""} className={input}>
           <option value="">All programs</option>
           {programs.map((p) => (

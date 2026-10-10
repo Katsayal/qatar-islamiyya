@@ -26,9 +26,10 @@ export async function saveStudent(_prev: string | null, formData: FormData): Pro
   });
   if (!parsed.success) {
     const field = parsed.error.issues[0]?.path[0];
-    return field === "guardian_phone"
-      ? "Guardian phone must be a Nigerian number, e.g. 08012345678."
-      : "Please check the form: admission number, name and gender are required.";
+    if (field === "guardian_phone" || field === "student_phone") {
+      return "Phone numbers must be Nigerian numbers, e.g. 08012345678.";
+    }
+    return "Please check the form: admission number, name, gender, date of birth, blood group, address, local government and previous Islamiyya are required.";
   }
 
   const photo = formData.get("photo");

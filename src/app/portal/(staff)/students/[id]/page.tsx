@@ -34,15 +34,17 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
     class_id: v(s.class_id),
     status: s.status,
     address: v(s.address),
-    town: v(s.town),
-    previous_school: v(s.previous_school),
+    local_government: v(s.local_government),
+    previous_islamiyya: v(s.previous_islamiyya),
+    blood_group: v(s.blood_group),
+    student_phone: v(s.student_phone),
     entry_level: v(s.entry_level),
     medical_notes: v(s.medical_notes),
     notes: v(s.notes),
     guardian_name: v(s.guardian_name),
     guardian_phone: v(s.guardian_phone),
     guardian_address: v(s.guardian_address),
-    guardian_town: v(s.guardian_town),
+    guardian_local_government: v(s.guardian_local_government),
   };
   const archived = s.status === "archived";
 

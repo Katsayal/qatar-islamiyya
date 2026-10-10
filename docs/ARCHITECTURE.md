@@ -40,6 +40,7 @@ Supabase
 - Supabase email/password auth. Default password settings (no strength rules, no MFA).
 - `public.profiles` row per user: `role` (`teacher` | `staff` | `student`), `is_owner`, `active`.
 - **Students** log in with admission number: the login form converts `ADM123` → `adm123@students.qatar.local` (synthetic email) behind the scenes.
+- **Student passwords:** staff create student logins in bulk (`accounts`: next 10 students without a login per click, one shared password typed by staff, never stored) or one by one. A student changes their own password in the profile (`supabase.auth.updateUser` with their own session); doing so sets `user_metadata.password_changed = true`, which the dashboard reminder reads; a staff reset clears it. Nothing is forced.
 - Creating users (teachers/staff/students) is done by a **server action using the service-role key on the server only**, guarded by role checks (staff → students; owner → teachers/staff). All of it lives in `portal/(staff)/accounts/actions.ts`.
 - `lib/auth.ts`:
   - `getProfile()` — current user + profile (cached per request).
@@ -74,7 +75,7 @@ RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake o
 | `student-photos` | private | student photos (`students/…`) and application photos (`applications/…`) | staff: all · teacher: only if the path is the `photo_path` of a student in a class they teach (signed URLs) · anon: none |
 | `documents` | private | general documents | teachers + staff |
 | `vault` | private | sensitive docs | staff only |
-| `private` | private | director signature, payment proofs | staff (+ student own proof later) |
+| `private` | private | director signature (`signature/…`), payment proofs (`proofs/<student_id>/<uuid>.<ext>`: jpg, png, webp or pdf, ≤ 2 MB) | staff: all · students: read the one signature file named in `school_settings`, add + read files in their own `proofs/<own id>/` folder (no update/delete) |
 
 ## 5a. Public forms (application, contact)
 1. Form posts to a Server Action. Zod validates fields; photo must be jpg/png/webp, max 2 MB. Simple honeypot field against bots.

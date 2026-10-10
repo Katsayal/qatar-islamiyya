@@ -1,0 +1,40 @@
+import Link from "next/link";
+import { requireRole } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function StudentNewsPage() {
+  await requireRole("student");
+  const supabase = await createClient();
+  // RLS: a student only gets published posts for the public or for students.
+  const { data } = await supabase
+    .from("posts")
+    .select("id, title, audience, published_at")
+    .in("audience", ["public", "students"])
+    .not("published_at", "is", null)
+    .order("published_at", { ascending: false })
+    .limit(50);
+  const posts = data ?? [];
+
+  return (
+    <div className="max-w-xl">
+      <h1 className="text-xl font-semibold">News</h1>
+      {posts.length === 0 ? (
+        <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">No news yet.</p>
+      ) : (
+        <ul className="mt-4 divide-y rounded-lg border">
+          {posts.map((p) => (
+            <li key={p.id}>
+              <Link href={`/portal/student/news/${p.id}`} className="block p-3 hover:bg-muted">
+                <p className="font-medium">{p.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                  {p.audience === "students" && " · For students"}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

@@ -52,15 +52,17 @@ export async function acceptApplication(_prev: string | null, formData: FormData
       gender: a.gender,
       date_of_birth: a.date_of_birth,
       address: a.address,
-      town: a.town,
-      previous_school: a.previous_school,
+      local_government: a.local_government,
+      previous_islamiyya: a.previous_islamiyya,
+      blood_group: a.blood_group,
+      student_phone: a.student_phone,
       entry_level: a.entry_level,
       medical_notes: a.medical_notes,
       notes: a.notes,
       guardian_name: a.guardian_name,
       guardian_phone: a.guardian_phone,
       guardian_address: a.guardian_address,
-      guardian_town: a.guardian_town,
+      guardian_local_government: a.guardian_local_government,
       photo_path: a.photo_path, // same file, not copied
     })
     .select("id")

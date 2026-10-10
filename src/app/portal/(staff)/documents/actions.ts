@@ -14,7 +14,7 @@ const schema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1, "Please enter a title.").max(120, "The title is too long (max 120)."),
   category: z.string().trim().max(60, "The category is too long (max 60).").transform((v) => v || null),
-  visibility: z.enum(["general", "vault"]).optional(),
+  visibility: z.enum(["general", "students", "vault"]).optional(),
 });
 
 export async function saveDocument(_prev: string | null, formData: FormData): Promise<string | null> {

@@ -27,14 +27,17 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
     ["Status", s.status],
     ["Gender", s.gender],
     ["Date of birth", s.date_of_birth],
+    ["Blood group", s.blood_group],
     ["Admitted on", s.admitted_on],
-    ["Address", [s.address, s.town].filter(Boolean).join(", ")],
-    ["Previous school", s.previous_school],
+    ["Address", s.address],
+    ["Local government", s.local_government],
+    ["Previous Islamiyya", s.previous_islamiyya],
+    ["Student phone", s.student_phone],
     ["Entry level", s.entry_level],
     ["Medical notes", s.medical_notes],
     ["Notes", s.notes],
     ["Guardian", s.guardian_name],
-    ["Guardian address", [s.guardian_address, s.guardian_town].filter(Boolean).join(", ")],
+    ["Guardian address", [s.guardian_address, s.guardian_local_government].filter(Boolean).join(", ")],
   ];
 
   return (

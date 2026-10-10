@@ -1,6 +1,21 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
+import { COLUMNS, REQUIRED_COLUMNS, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
+
+test("the template has the 16 agreed columns and the 8 required ones are among them", () => {
+  assert.equal(COLUMNS.length, 16);
+  assert.equal(REQUIRED_COLUMNS.length, 8);
+  for (const c of REQUIRED_COLUMNS) assert.ok((COLUMNS as readonly string[]).includes(c), c);
+  for (const gone of ["status", "admitted_on", "full_name_ar", "notes"]) assert.ok(!(COLUMNS as readonly string[]).includes(gone), gone);
+});
+
+test("fixBloodGroup normalises case, spaces, unicode minus and unknown", () => {
+  assert.equal(fixBloodGroup("o+"), "O+");
+  assert.equal(fixBloodGroup(" ab - "), "AB-");
+  assert.equal(fixBloodGroup("A−"), "A-");
+  assert.equal(fixBloodGroup("unknown"), "Unknown");
+  assert.equal(fixBloodGroup("C+"), "C+");
+});
 
 test("parses quotes, embedded comma/newline and escaped quotes", () => {
   const rows = parseCsv('a,b,c\r\n"x, y","line1\nline2","say ""hi"""\r\n');
