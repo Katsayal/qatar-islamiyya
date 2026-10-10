@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 3 done and committed. 3.3 reviewed: keep staff-only delete, whole-year calendar pace, 90% tolerance. 3.3b class progress overview done. Phase 4 (4.1–4.7) done and committed. Phase 5 (5.1–5.5) and Phase 5b (B.1–B.6, student bio data & logins) done and committed; Phase 5c C.1 (teacher & staff accounts) and C.2 (salary tracking) done, NOT committed yet. Next: Final pass, F.1 Review: RLS re-check + security review (Opus)
+- **Phase:** Phase 3 done and committed. 3.3 reviewed: keep staff-only delete, whole-year calendar pace, 90% tolerance. 3.3b class progress overview done. Phase 4 (4.1–4.7) done and committed. Phase 5 (5.1–5.5) and Phase 5b (B.1–B.6, student bio data & logins) done and committed; Phase 5c C.1 (teacher & staff accounts) and C.2 (salary tracking) done and committed. Next: Final pass, F.1 Review: RLS re-check + security review (Opus)
 - **Last updated:** 2026-10-10
 
 ## Session prompt template
