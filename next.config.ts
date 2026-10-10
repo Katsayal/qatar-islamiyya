@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   experimental: {
-    // Admission form photo (max 2 MB) + multipart overhead.
-    serverActions: { bodySizeLimit: "3mb" },
+    // Largest upload is a document (max 5 MB) + multipart overhead. Netlify's own request limit is ~6 MB.
+    serverActions: { bodySizeLimit: "6mb" },
   },
   partialPrefetching: true,
   reactCompiler: true,

@@ -8,7 +8,7 @@ export function PortalHeader({ profile }: { profile: Profile }) {
   const menu = menuFor(profile);
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <header className="sticky top-0 z-40 border-b bg-background print:hidden">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4">
         <div className="min-w-0 leading-tight">
           <p className="truncate text-sm font-semibold">{profile.full_name}</p>

@@ -102,7 +102,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - **Posts:** audience = Public / Internal (teachers+staff) / Students.
 - **Documents:** General (teachers+staff) and **Vault** (staff only).
 - **Accounts:** create student accounts; owners also manage teacher/staff accounts.
-- **Settings:** school info, bank details, director signature. (Current term is automatic from term dates.)
+- **Settings:** bank details, director signature. (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
 
 ## 10. Student portal (last phase)
 - Dashboard: photo, class, teacher(s), term, fee status, announcements.

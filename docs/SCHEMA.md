@@ -162,6 +162,7 @@ Insert fails with a clear error if no term contains the date.
 - `lock_fields()` before-update trigger on hifz/attendance/exams/comments keeps student, class, recorder (and book) unchanged; term recomputed from the date.
 - Teachers cannot delete hifz/attendance (staff only). Teachers/students see only their own profile for now (widen when Phase 3/5 screens need teacher names).
 - `hifz_lines_by_student(p_class, p_from, p_to)` (migration `20261009111346_…`, security invoker so RLS applies, execute = authenticated only): per active student of a class, lines of all `new` entries (all time and inside a date range). Used by the class page progress overview (3.3b) and later the staff dashboard (4.5); done in SQL because the API returns at most 1,000 rows.
+- `term_report_stats(p_class, p_term)` (migration `20261010054453_term_report_stats.sql`, security invoker, execute = authenticated only): per active student of a class, all-time and in-term lines of new hifz, present/absent hifz days, grade counts on new lessons, and Barnamaj attendance counts for the term. Used by the report cards (4.4).
 - Checks: `supabase/rls-checks.sql` (self-contained, rolls back) → `npx supabase db query --linked -f supabase/rls-checks.sql`.
 
 ## 9. RLS summary

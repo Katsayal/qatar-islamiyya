@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { DashboardFees } from "@/components/dashboard-fees";
+import { DashboardPace } from "@/components/dashboard-pace";
+import { DashboardTotals } from "@/components/dashboard-totals";
 import { requireRole } from "@/lib/auth";
 import { menuFor } from "@/components/portal-menu";
 
-// Placeholder dashboard: greeting + shortcuts. Real totals come in 4.5.
+const loading = <p className="text-sm text-muted-foreground">Loading…</p>;
+
+// Greeting, staff-only totals, and shortcuts to every page.
 export default async function PortalHome() {
   const profile = await requireRole("teacher", "staff");
   const shortcuts = menuFor(profile).filter((m) => m.href !== "/portal");
@@ -14,7 +20,21 @@ export default async function PortalHome() {
         {profile.role === "staff" ? "Staff portal" : "Teacher portal"}
       </p>
 
-      <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
+      {profile.role === "staff" && (
+        <div className="mt-6 flex flex-col gap-8">
+          <Suspense fallback={loading}>
+            <DashboardTotals />
+          </Suspense>
+          <Suspense fallback={loading}>
+            <DashboardFees />
+          </Suspense>
+          <Suspense fallback={loading}>
+            <DashboardPace />
+          </Suspense>
+        </div>
+      )}
+
+      <ul className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3">
         {shortcuts.map((s) => (
           <li key={s.href}>
             {s.soon ? (

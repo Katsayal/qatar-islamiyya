@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { PostBody } from "@/components/post-body";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,7 +30,6 @@ async function Post({ params }: Props) {
   const post = await getPost((await params).id);
   if (!post) notFound();
 
-  const rtl = post.lang === "ar";
   return (
     <article>
       {post.cover_path && (
@@ -46,14 +46,7 @@ async function Post({ params }: Props) {
       <p className="mt-1 text-sm text-muted-foreground">
         {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
       </p>
-      {/* Plain paragraphs for now; markdown rendering comes with post authoring (4.1). */}
-      <div
-        lang={post.lang}
-        dir={rtl ? "rtl" : undefined}
-        className={`mt-4 whitespace-pre-line leading-relaxed ${rtl ? "font-arabic text-lg" : ""}`}
-      >
-        {post.body}
-      </div>
+      <PostBody body={post.body} lang={post.lang} />
     </article>
   );
 }

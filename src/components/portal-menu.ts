@@ -13,10 +13,14 @@ const items: MenuItem[] = [
   { href: "/portal/applications", label: "Applications", staffOnly: true },
   { href: "/portal/messages", label: "Messages", staffOnly: true },
   { href: "/portal/fees", label: "Fees", staffOnly: true },
-  { href: "/portal/posts", label: "News posts", staffOnly: true, soon: true }, // 4.1
-  { href: "/portal/documents", label: "Documents", soon: true }, // 4.2
+  { href: "/portal/reports", label: "Report cards", staffOnly: true },
+  { href: "/portal/promotion", label: "Promotion", staffOnly: true },
+  { href: "/portal/news", label: "News" },
+  { href: "/portal/posts", label: "Manage news", staffOnly: true },
+  { href: "/portal/documents", label: "Documents" },
+  { href: "/portal/gallery", label: "Gallery", staffOnly: true },
   { href: "/portal/accounts", label: "Accounts", staffOnly: true },
-  { href: "/portal/settings", label: "Settings", staffOnly: true, soon: true }, // 4.7
+  { href: "/portal/settings", label: "Settings", staffOnly: true },
 ];
 
 export function menuFor(profile: Profile) {

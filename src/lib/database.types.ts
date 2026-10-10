@@ -1264,6 +1264,22 @@ export type Database = {
       teaches_class: { Args: { cid: string }; Returns: boolean }
       teaches_student: { Args: { sid: string }; Returns: boolean }
       term_for_date: { Args: { d: string }; Returns: string }
+      term_report_stats: {
+        Args: { p_class: string; p_term: string }
+        Returns: {
+          absent_days: number
+          att_absent: number
+          att_excused: number
+          att_present: number
+          jayyid: number
+          jayyid_jiddan: number
+          mumtaz: number
+          present_days: number
+          student_id: string
+          term_lines: number
+          total_lines: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
