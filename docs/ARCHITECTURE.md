@@ -41,7 +41,7 @@ Supabase
 - `public.profiles` row per user: `role` (`teacher` | `staff` | `student`), `is_owner`, `active`.
 - **Students** log in with admission number: the login form converts `ADM123` → `adm123@students.qatar.local` (synthetic email) behind the scenes.
 - **Student passwords:** staff create student logins in bulk (`accounts`: next 10 students without a login per click, one shared password typed by staff, never stored) or one by one. A student changes their own password in the profile (`supabase.auth.updateUser` with their own session); doing so sets `user_metadata.password_changed = true`, which the dashboard reminder reads; a staff reset clears it. Nothing is forced.
-- Creating users (teachers/staff/students) is done by a **server action using the service-role key on the server only**, guarded by role checks (staff → students; owner → teachers/staff). All of it lives in `portal/(staff)/accounts/actions.ts`.
+- Creating users (teachers/staff/students) is done by a **server action using the service-role key on the server only**, guarded by role checks (staff → students and teachers; owner → teachers, staff and the owner row). Everyone changes their own password with their own session (`supabase.auth.updateUser`): students on their profile, teachers/staff/owner on `/portal/account`. All of it lives in `portal/(staff)/accounts/actions.ts`.
 - `lib/auth.ts`:
   - `getProfile()` — current user + profile (cached per request).
   - `requireRole(...roles)` — redirect to `/login` if not allowed. Used at the top of portal layouts/pages.
@@ -64,6 +64,7 @@ Pattern per table:
 - **Staff:** full access (`is_staff()`).
 - **Teacher:** select students where `teaches_class(students.class_id)`; insert/update hifz/attendance/exams/comments only for students in classes they teach.
 - **Student:** select own rows only (`student_id = my_student_id()`).
+- **Owner only:** `salary_rates` and `salary_months` (`is_owner()`): not even other staff see a row. Their amounts are in separate tables, not columns on `profiles`, because RLS works per row and staff may read every profile.
 - **Public (anon):** select posts where audience = 'public', gallery. **No** insert/storage rights: application and contact forms go through Server Actions (see §5a).
 
 RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake owner/staff/teacher/student/inactive users + data, asserts the critical rules per role, then rolls back. Run `npx supabase db query --linked -f supabase/rls-checks.sql` after every policy change. All helpers return false for inactive users, so `active = false` locks an account out of the data.

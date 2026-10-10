@@ -87,7 +87,8 @@ docs/
 ## 7. Roles (summary — full matrix in SPEC.md)
 - `teacher`: own classes' students, record hifz / attendance / exam marks / comments, read posts & documents.
 - `staff`: everything teacher can + all students, CRUD records, classes, posts, documents, vault, fees, applications, report cards.
-- `is_owner` flag (staff only): manage teacher/staff accounts.
+- `staff` also creates teacher accounts and resets/disables teachers.
+- `is_owner` flag (staff only): manage staff accounts (create, reset, disable) and everything staff can do.
 - `student`: own data only (portal phase).
 - No public sign-up. Staff create all accounts. Plain passwords (no strength rules, no MFA for now).
 

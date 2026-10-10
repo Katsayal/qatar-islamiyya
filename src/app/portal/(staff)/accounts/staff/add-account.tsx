@@ -6,7 +6,8 @@ import { createStaffAccount, type Result } from "../actions";
 
 const input = "h-11 rounded-md border bg-background px-3 text-base";
 
-export function AddAccount() {
+// Staff can add teachers only; the owner can also add staff (the server checks this too).
+export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
   const [state, formAction, pending] = useActionState<Result, FormData>(createStaffAccount, { ok: false, message: null });
 
   return (
@@ -33,7 +34,7 @@ export function AddAccount() {
         Role *
         <select name="role" required defaultValue="teacher" className={input}>
           <option value="teacher">Teacher</option>
-          <option value="staff">Staff</option>
+          {canCreateStaff && <option value="staff">Staff</option>}
         </select>
       </label>
       <label className="flex flex-col gap-1 text-sm">

@@ -121,6 +121,14 @@ Unique: (student_id, term_id).
 ### payment_proofs  (student portal phase)
 | id | student_id | term_id | file_path | status (`pending` · `verified` · `rejected`) | verified_by |
 
+### salary_rates  (**owner only**, one row per teacher/staff/owner)
+| profile_id → profiles (PK) | monthly_amount int (₦, ≥ 0) |
+The fixed monthly salary. Kept in its own table, **not on `profiles`**, because staff can read every profile row and RLS is per row.
+
+### salary_months  (**owner only**, one row per person per month)
+| id | profile_id → profiles | month date (always the 1st) | amount_due int (₦, copied from the rate when the month is set, editable) | amount_paid int (₦, running total) | status (`unpaid` · `part` · `paid`, **derived by the app on every save** like `student_fees`) | note |
+Unique: (profile_id, month). Profiles are never deleted (accounts are disabled), so history stays.
+
 ## 6. Content
 ### posts
 | id | title | body (markdown) | lang (`en` · `ar` · `ha`) | audience (`public` · `internal` · `students`) | cover_path | published_at | author_id |
@@ -173,7 +181,7 @@ Insert fails with a clear error if no term contains the date.
 ## 9. RLS summary
 | table | anon | student | teacher | staff |
 |---|---|---|---|---|
-| profiles | – | own | own | read all; edit student profiles only (role locked); owner edits anyone |
+| profiles | – | own | own | read all; edit student and teacher profiles only (role locked: `staff_update_teachers`, migration `…_staff_manage_teachers.sql`); owner edits anyone |
 | students | – | own | select where teaches_class(class_id) | all |
 | classes, class_teachers, terms, academic_years | – | select | select | all |
 | quran_ayahs | – | select | select | select |
@@ -189,3 +197,4 @@ Insert fails with a clear error if no term contains the date.
 | applications, contact_messages | none (inserted by server action) | – | – | all |
 | school_settings | select (bank details are public; signature file stays in a private bucket) | select | select | update |
 | correction_requests | – | own (insert/select) | – | all |
+| salary_rates, salary_months | – | – | – | **owner only** (`is_owner()`); non-owner staff get nothing |

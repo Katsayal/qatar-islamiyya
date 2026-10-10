@@ -114,7 +114,6 @@ export async function createStudentLoginsBatch(_prev: BatchResult, formData: For
 
 export async function createStaffAccount(_prev: Result, formData: FormData): Promise<Result> {
   const me = await requireRole("staff");
-  if (!me.is_owner) return fail("Only the owner can create teacher and staff accounts.");
 
   const parsed = z
     .object({
@@ -139,6 +138,8 @@ export async function createStaffAccount(_prev: Result, formData: FormData): Pro
     );
   }
   const v = parsed.data;
+  // Staff create teachers; only the owner creates staff accounts (a staff member must not be able to mint more staff).
+  if (v.role === "staff" && !me.is_owner) return fail("Only the owner can create staff accounts.");
 
   const { data, error } = await createAdminClient().auth.admin.createUser({
     email: v.email,
@@ -165,7 +166,8 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
   const supabase = await createClient();
   const { data: target } = await supabase.from("profiles").select("role").eq("id", parsed.data.userId).maybeSingle();
   if (!target) return fail("Account not found.");
-  if (target.role !== "student" && !me.is_owner) return fail("Only the owner can change a teacher or staff password.");
+  // Staff reset students and teachers; staff and owner passwords are the owner's to reset.
+  if (target.role === "staff" && !me.is_owner) return fail("Only the owner can change a staff password.");
 
   const { error } = await createAdminClient().auth.admin.updateUserById(parsed.data.userId, {
     password: parsed.data.password,
@@ -175,7 +177,7 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
   return error ? fail("Could not change the password.") : done("Password changed.");
 }
 
-// Disable / enable. RLS decides who may touch which profile (staff: students, owner: anyone).
+// Disable / enable. RLS decides who may touch which profile (staff: students and teachers, owner: anyone).
 export async function setActive(userId: string, active: boolean) {
   const me = await requireRole("staff");
   if (userId === me.id) return; // never lock yourself out

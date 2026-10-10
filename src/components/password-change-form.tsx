@@ -1,12 +1,15 @@
 "use client";
 
 import { startTransition, useActionState, useEffect, useRef } from "react";
-import { changePassword } from "./actions";
+
+type Result = { ok: boolean; message: string } | null;
 
 const input = "h-11 rounded-md border bg-background px-3 text-base";
 
-export function PasswordForm() {
-  const [result, formAction, pending] = useActionState(changePassword, null);
+// "New password + type it again" for the signed-in user. Used on the student profile and on /portal/account;
+// the action decides who may call it (see changePassword / changeOwnPassword).
+export function PasswordChangeForm({ action }: { action: (prev: Result, formData: FormData) => Promise<Result> }) {
+  const [result, formAction, pending] = useActionState(action, null);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Clear the boxes after a successful change; after an error they keep what was typed.

@@ -28,7 +28,11 @@
 | Staff-only vault documents | | | | ✅ | ✅ |
 | Applications, fee status, report cards | | | | ✅ | ✅ |
 | Create student accounts | | | | ✅ | ✅ |
-| Create / disable teacher & staff accounts | | | | | ✅ |
+| Create teacher accounts; reset password / disable a teacher | | | | ✅ | ✅ |
+| View the teacher & staff directory (read-only) | | | | ✅ | ✅ |
+| Create staff accounts; reset password / disable staff | | | | | ✅ |
+| Change own password | | ✅ | ✅ | ✅ | ✅ |
+| Salary records (rates, monthly payments, CSV) | | | | | ✅ (owner only) |
 
 - No public sign-up. Staff create accounts. Plain passwords, no MFA (for now).
 - Student login = **admission number + password**. Staff create the logins in bulk (one shared starting password typed once, e.g. "qatar999", never stored; done in batches of 10 to stay inside the server time limit). Students can **change their own password** in their profile (plain, min 6 characters); staff can still reset it. Not forced at first login: the student dashboard shows a reminder until the student has set their own password.
@@ -102,7 +106,8 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - **Report cards:** print-friendly page per student / per class (browser "Save as PDF"), includes teacher comment + director signature image.
 - **Posts:** audience = Public / Internal (teachers+staff) / Students.
 - **Documents:** General (teachers+staff), **Students** (also shown to students under "Resources": timetable, notes…) and **Vault** (staff only).
-- **Accounts:** create student logins (one by one, or in bulk with one shared password, 10 students per click); set a new password; disable/enable. Owners also manage teacher/staff accounts.
+- **Accounts:** two tabs. **Student logins:** create (one by one, or in bulk with one shared password, 10 students per click), set a new password, disable/enable. **Teachers & staff:** a directory of everyone (filter by role, active/disabled, search; teachers show their classes; email and phone visible); staff can create teacher accounts and reset password / disable a teacher; only the owner creates staff accounts and manages staff and the owner. Teachers, staff and the owner change their own password on "My account" (plain, min 6 characters); a forgotten password is reset by staff (teachers) or the owner (staff).
+- **Salaries (owner only):** record-keeping for teachers, staff and the owner, not payroll (no tax, pension, deductions or payslips). Each person has a **fixed monthly salary** the owner can change (a change affects future months only). Per month: amount due, total paid so far (part payments allowed, overpaying counts as paid), status Unpaid / Part-paid / Paid (derived), and a note. "Set salaries for this month" creates unpaid records for active people who have a salary and no record yet. Totals per month, filters, CSV export. Staff and teachers cannot see any of it, not even their own.
 - **Settings:** bank details, director signature. (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
 
 ## 10. Student portal (last phase)

@@ -103,6 +103,11 @@ begin
   -- cannot see fees
   if (select count(*) from public.student_fees) <> 0 then raise exception 'FAIL: teacher can see fees'; end if;
   if (select count(*) from public.my_class_teacher_names()) <> 0 then raise exception 'FAIL: teacher got student teacher names'; end if;
+
+  -- a teacher cannot edit any profile, not even a colleague's
+  update public.profiles set phone = '0800' where id <> auth.uid();
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: teacher edited another profile'; end if;
 end $$;
 reset role;
 
@@ -271,6 +276,53 @@ do $$ begin
 end $$;
 reset role;
 
+-- ---------- salaries: owner only ----------
+-- fixtures as the owner (is_owner() needs a signed-in owner), then every other role must see nothing
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
+do $$ begin
+  insert into public.salary_rates (profile_id, monthly_amount) values ('00000000-0000-0000-0000-000000000003', 50000);
+  insert into public.salary_months (profile_id, month, amount_due, amount_paid, status)
+    values ('00000000-0000-0000-0000-000000000003', '2026-10-01', 50000, 20000, 'part');
+  if (select count(*) from public.salary_rates) <> 1 or (select count(*) from public.salary_months) <> 1 then
+    raise exception 'FAIL: owner should read and write salary records';
+  end if;
+end $$;
+reset role;
+
+-- non-owner staff, teacher A (a rated person herself), the student: nothing visible, nothing writable
+do $$
+declare uid text; n int;
+begin
+  foreach uid in array array['00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005'] loop
+    perform set_config('request.jwt.claims', json_build_object('sub', uid, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    if (select count(*) from public.salary_rates) <> 0 or (select count(*) from public.salary_months) <> 0 then
+      raise exception 'FAIL: % can see salary records', uid;
+    end if;
+    update public.salary_months set amount_paid = 0;
+    get diagnostics n = row_count;
+    if n <> 0 then raise exception 'FAIL: % changed a salary record', uid; end if;
+    begin
+      insert into public.salary_rates (profile_id, monthly_amount) values (uid::uuid, 1);
+      raise exception 'FAIL: % created a salary rate', uid;
+    exception when insufficient_privilege then null;
+    end;
+    reset role;
+  end loop;
+end $$;
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$ begin
+  begin
+    -- zero rows (RLS) or a privilege error are both fine
+    if (select count(*) from public.salary_months) <> 0 then raise exception 'FAIL: anon can read salary records'; end if;
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
 -- ---------- staff (not owner) ----------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
@@ -283,9 +335,22 @@ begin
     raise exception 'FAIL: staff promoted a student to staff';
   exception when insufficient_privilege then null;
   end;
-  update public.profiles set active = false where id = '00000000-0000-0000-0000-000000000003';
+  -- staff manage teachers: active/phone yes, role never
+  update public.profiles set phone = '08011112222' where id = '00000000-0000-0000-0000-000000000003';
   get diagnostics n = row_count;
-  if n <> 0 then raise exception 'FAIL: non-owner staff edited a teacher profile'; end if;
+  if n <> 1 then raise exception 'FAIL: staff could not edit a teacher profile'; end if;
+  update public.profiles set active = false where id = '00000000-0000-0000-0000-000000000004';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: staff could not disable a teacher'; end if;
+  begin
+    update public.profiles set role = 'staff' where id = '00000000-0000-0000-0000-000000000003';
+    raise exception 'FAIL: staff promoted a teacher to staff';
+  exception when insufficient_privilege then null;
+  end;
+  -- ...but never another staff member or the owner
+  update public.profiles set active = false where id in ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002');
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: non-owner staff edited the owner or a staff profile'; end if;
 end $$;
 reset role;
 

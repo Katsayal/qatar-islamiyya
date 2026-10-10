@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createStudentLogin, resetPassword, setActive } from "./actions";
+import { AccountsTabs } from "./accounts-tabs";
 import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
@@ -17,7 +18,7 @@ const input = "h-11 rounded-md border bg-background px-3 text-base";
 type Search = { q?: string; show?: string; page?: string };
 
 export default async function AccountsPage({ searchParams }: { searchParams: Promise<Search> }) {
-  const me = await requireRole("staff");
+  await requireRole("staff");
   const sp = await searchParams;
   const q = (sp.q ?? "").replace(/[%,()*]/g, " ").trim();
   const show = shows.some((s) => s.key === sp.show) ? sp.show! : "needs";
@@ -44,17 +45,11 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="max-w-2xl">
+      <AccountsTabs active="students" />
       <h1 className="text-xl font-semibold">Student logins</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         A student signs in with their admission number and the password you set here.
       </p>
-      {me.is_owner && (
-        <p className="mt-2 text-sm">
-          <Link href="/portal/accounts/staff" className="text-primary underline-offset-4 hover:underline">
-            Teacher and staff accounts →
-          </Link>
-        </p>
-      )}
 
       <section className="mt-4 rounded-lg border p-4">
         <h2 className="font-semibold">Create logins in bulk</h2>

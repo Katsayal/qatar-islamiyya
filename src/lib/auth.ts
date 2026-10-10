@@ -44,6 +44,13 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   };
 });
 
+// Owner-only pages, actions and routes (salaries). Anyone else goes back to the portal home.
+export async function requireOwner(): Promise<Profile> {
+  const profile = await requireRole("staff");
+  if (!profile.is_owner) redirect("/portal");
+  return profile;
+}
+
 // Use at the top of protected layouts/pages. Wrong role → that user's own home.
 export async function requireRole(...roles: Role[]): Promise<Profile> {
   const profile = await getProfile();

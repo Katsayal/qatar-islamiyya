@@ -997,6 +997,99 @@ export type Database = {
           },
         ]
       }
+      salary_months: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          created_at: string
+          id: string
+          month: string
+          note: string | null
+          profile_id: string
+          status: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          amount_due: number
+          amount_paid?: number
+          created_at?: string
+          id?: string
+          month: string
+          note?: string | null
+          profile_id: string
+          status: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          created_at?: string
+          id?: string
+          month?: string
+          note?: string | null
+          profile_id?: string
+          status?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_months_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salary_months_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salary_rates: {
+        Row: {
+          created_at: string
+          monthly_amount: number
+          profile_id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          monthly_amount: number
+          profile_id: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          monthly_amount?: number
+          profile_id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_rates_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salary_rates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       school_settings: {
         Row: {
           account_name: string | null

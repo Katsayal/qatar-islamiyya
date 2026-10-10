@@ -2,7 +2,8 @@ import Image from "next/image";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CorrectionForm } from "./correction-form";
-import { PasswordForm } from "./password-form";
+import { PasswordChangeForm } from "@/components/password-change-form";
+import { changePassword } from "./actions";
 
 export default async function StudentProfilePage() {
   await requireRole("student");
@@ -71,7 +72,7 @@ export default async function StudentProfilePage() {
         <p className="mb-3 mt-1 text-sm text-muted-foreground">
           Set your own password so nobody else can sign in as you. If you forget it, ask the office to reset it.
         </p>
-        <PasswordForm />
+        <PasswordChangeForm action={changePassword} />
       </section>
 
       <section>
