@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { HomeAdmission } from "@/components/home-admission";
-import { HomeCta } from "@/components/home-cta";
+import { CtaBand } from "@/components/cta-band";
 import { HomeDonate } from "@/components/home-donate";
 import { HomeHero } from "@/components/home-hero";
 import { HomePrograms } from "@/components/home-programs";
@@ -28,7 +28,7 @@ export default function Home() {
         </Suspense>
       </section>
 
-      <HomeCta />
+      <CtaBand />
       <HomeDonate />
     </>
   );

@@ -24,7 +24,7 @@ export const programs: { slug: string; name: string; nameAr: string; text: strin
 export const facts = [
   { value: "3", label: "Programs" },
   { value: "Ethical", label: "Guidance & Counselling" },
-  { value: "All Week", label: "Mon to Sun" },
+  { value: "All Week", label: "Sat ot Fri" },
   { value: "Daura", label: "Katsina State, Nigeria" },
 ];
 

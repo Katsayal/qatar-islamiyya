@@ -77,7 +77,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 |---|---|
 | Home | Hero/welcome (some Arabic), three programs, latest news, apply CTA |
 | About | History, vision, mission, leadership (content pending) |
-| Programs | Tahfiz, Ma'ahad, Barnamaj (Barnamaj shows Arabic curriculum table) |
+| Programs | Tahfiz, Ma'ahad, Barnamaj: what each one is, how it works, and an Apply button. No curriculum table on the site (the curriculum stays in the portal's Barnamaj books). Ends with the same Apply / WhatsApp / Call band as the home page. |
 | Admissions | Requirements & rules (Hausa), fees, schedule, **online application**, downloadable PDF form, bank details |
 | News & Events | Posts with audience = public |
 | Gallery | Images uploaded by staff |

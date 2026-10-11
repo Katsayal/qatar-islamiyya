@@ -53,7 +53,7 @@
 
 :root {
   /* Brand colours from the school logo: green ring #006907, gold #E0A321 */
-  --background: oklch(0.985 0.006 95);
+  --background: oklch(0.962 0.012 100);
   --foreground: oklch(0.22 0.03 150);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.03 150);
@@ -63,7 +63,7 @@
   --primary-foreground: oklch(0.985 0.006 95);
   --secondary: oklch(0.955 0.02 140);
   --secondary-foreground: oklch(0.3 0.08 148);
-  --muted: oklch(0.96 0.012 95);
+  --muted: oklch(0.935 0.015 100);
   --muted-foreground: oklch(0.5 0.03 150);
   --accent: oklch(0.955 0.02 140);
   --accent-foreground: oklch(0.3 0.08 148);
