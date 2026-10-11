@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const programs = [
   { key: "tahfiz", label: "Tahfiz" },
   { key: "maahad", label: "Ma'ahad" },

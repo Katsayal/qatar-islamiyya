@@ -6,6 +6,9 @@ import { Attendance } from "./attendance";
 import { Books } from "./books";
 import { Marks } from "./marks";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const input = "h-11 rounded-md border bg-background px-3 text-base";
 
 export default async function StudentBarnamajPage({ searchParams }: { searchParams: Promise<{ term?: string }> }) {

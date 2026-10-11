@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { loadCurriculum } from "./actions";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const status = (b: { started_on: string | null; finished_on: string | null }) =>
   b.finished_on ? "Finished" : b.started_on ? "In progress" : "Not started";
 

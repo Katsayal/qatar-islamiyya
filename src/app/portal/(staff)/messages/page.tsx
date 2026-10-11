@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { setHandled } from "./actions";
 import { Corrections } from "./corrections";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const filters = ["open", "handled", "all"];
 
 export default async function MessagesPage({ searchParams }: { searchParams: Promise<{ show?: string; kind?: string }> }) {

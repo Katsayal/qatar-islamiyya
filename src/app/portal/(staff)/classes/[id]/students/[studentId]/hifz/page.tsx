@@ -6,6 +6,9 @@ import { surahs } from "@/lib/surahs";
 import { todayInLagos } from "@/lib/today";
 import { HifzForm } from "./hifz-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const gradeLabel: Record<string, string> = { jayyid: "Jayyid", jayyid_jiddan: "Jayyid Jiddan", mumtaz: "Mumtaz" };
 
 export default async function RecordHifzPage({ params }: { params: Promise<{ id: string; studentId: string }> }) {

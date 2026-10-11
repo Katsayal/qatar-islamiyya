@@ -7,6 +7,9 @@ import { TOTAL_PAGES } from "@/lib/quran";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 export default async function ClassPage({ params }: { params: Promise<{ id: string }> }) {
   const profile = await requireRole("teacher", "staff");
   const { id } = await params;

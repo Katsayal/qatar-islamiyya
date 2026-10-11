@@ -8,6 +8,9 @@ import { surahs } from "@/lib/surahs";
 import { todayInLagos } from "@/lib/today";
 import { DeleteEntry } from "./delete-entry";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const PAGE_SIZE = 25;
 const gradeLabel: Record<string, string> = { jayyid: "Jayyid", jayyid_jiddan: "Jayyid Jiddan", mumtaz: "Mumtaz" };
 const surahName = (n: number | null) => surahs.find((s) => s.number === n)?.name ?? "?";

@@ -5,6 +5,9 @@ import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { UploadForm } from "./upload-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 export default async function GalleryAdminPage() {
   await requireRole("staff");
   const supabase = await createClient();

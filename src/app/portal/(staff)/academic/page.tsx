@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { YearForm } from "./year-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const fmt = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { dateStyle: "medium", timeZone: "UTC" });
 

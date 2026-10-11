@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // Largest upload is a document (max 5 MB) + multipart overhead. Netlify's own request limit is ~6 MB.
     serverActions: { bodySizeLimit: "6mb" },
+    // Dev "instant navigation" checks only for pages that export `instant` (the busy pages with a loading skeleton).
+    instantInsights: { validationLevel: "manual-warning" },
   },
   // Basic security headers: no framing (clickjacking on login/portal), no MIME sniffing, short referrers.
   async headers() {

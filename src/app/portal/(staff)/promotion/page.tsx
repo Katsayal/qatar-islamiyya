@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PromoteForm } from "./promote-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const input = "h-11 rounded-md border bg-background px-3 text-base";
 
 export default async function PromotionPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {

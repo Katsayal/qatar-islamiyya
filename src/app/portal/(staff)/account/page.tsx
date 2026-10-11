@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { changeOwnPassword } from "./actions";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 // "My account" for teachers, staff and the owner.
 export default async function MyAccountPage() {
   const me = await requireRole("teacher", "staff");

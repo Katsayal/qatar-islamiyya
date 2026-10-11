@@ -5,6 +5,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const FEE_LABEL: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Unpaid", className: "text-destructive" },
   part: { text: "Part-paid", className: "text-amber-600" },

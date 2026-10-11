@@ -6,6 +6,9 @@ import { AccountsTabs } from "../accounts-tabs";
 import { PasswordForm } from "../password-form";
 import { AddAccount } from "./add-account";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const roles = [
   { key: "all", label: "Teachers & staff" },
   { key: "teacher", label: "Teachers" },

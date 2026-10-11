@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { FeeForm } from "./fee-form";
 import { TermFeeForm } from "./term-fee-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const PAGE_SIZE = 25;
 const programs = [
   { key: "tahfiz", label: "Tahfiz" },

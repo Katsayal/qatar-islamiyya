@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { BankForm } from "./bank-form";
 import { SignatureForm } from "./signature-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 export default async function SettingsPage() {
   await requireRole("staff");
   const supabase = await createClient();

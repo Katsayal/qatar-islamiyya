@@ -2,6 +2,9 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const cols = "id, name, program, level, hifz_unit, sort_order";
 
 export default async function MyClassesPage() {

@@ -7,6 +7,9 @@ import { DeleteStudent } from "../delete-student";
 import { setStatus } from "../actions";
 import { StudentForm, type StudentDefaults } from "../student-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 export default async function EditStudentPage({ params }: { params: Promise<{ id: string }> }) {
   await requireRole("staff");
   const { id } = await params;

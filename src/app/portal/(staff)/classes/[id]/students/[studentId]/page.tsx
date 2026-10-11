@@ -5,6 +5,9 @@ import { requireRole } from "@/lib/auth";
 import { STUDENT_COLUMNS } from "@/lib/student-schema";
 import { createClient } from "@/lib/supabase/server";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 type Params = { id: string; studentId: string };
 
 export default async function StudentProfilePage({ params }: { params: Promise<Params> }) {

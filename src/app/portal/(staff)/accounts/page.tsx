@@ -7,6 +7,9 @@ import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const PAGE_SIZE = 25;
 const shows = [
   { key: "needs", label: "Needs login" },

@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { ProofForm } from "./proof-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
 const statusLabel: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Unpaid", className: "text-destructive" },

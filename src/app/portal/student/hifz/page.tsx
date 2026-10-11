@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Juz, Recent } from "./recent";
 import { Summary } from "./summary";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 export default async function StudentHifzPage() {
   await requireRole("student");
   const supabase = await createClient();

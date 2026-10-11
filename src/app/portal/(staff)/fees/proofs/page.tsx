@@ -4,6 +4,9 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { setProofStatus } from "./actions";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const PAGE_SIZE = 25;
 const filters = ["pending", "verified", "rejected", "all"];
 const statusLabel: Record<string, { text: string; className: string }> = {

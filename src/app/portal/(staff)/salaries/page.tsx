@@ -6,6 +6,9 @@ import { todayInLagos } from "@/lib/today";
 import { SalaryForm } from "./salary-form";
 import { SetMonthForm } from "./set-month-form";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const filters = [
   { key: "notpaid", label: "Not fully paid" },
   { key: "unpaid", label: "Unpaid" },

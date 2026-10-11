@@ -2,6 +2,9 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const audienceLabel = { public: "Public", internal: "Teachers & staff", students: "Students" } as const;
 
 export default async function PostsPage() {

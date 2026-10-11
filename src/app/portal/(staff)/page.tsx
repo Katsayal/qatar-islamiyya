@@ -6,6 +6,9 @@ import { DashboardTotals } from "@/components/dashboard-totals";
 import { requireRole } from "@/lib/auth";
 import { menuFor } from "@/components/portal-menu";
 
+// Navigations here must show the loading skeleton at once (checked in dev).
+export const instant = true;
+
 const loading = <p className="text-sm text-muted-foreground">Loading…</p>;
 
 // Greeting, staff-only totals, and shortcuts to every page.
