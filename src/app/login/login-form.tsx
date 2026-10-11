@@ -1,7 +1,7 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
+import { Field, inputClass } from "@/components/form-parts";
 import { login } from "./actions";
 
 export function LoginForm() {
@@ -15,34 +15,36 @@ export function LoginForm() {
 
   return (
     <form onSubmit={keepValues} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
-        Email or admission number
+      <Field label="Email or admission number">
         <input
           name="login"
           required
           autoComplete="username"
           autoCapitalize="none"
-          className="h-11 rounded-md border bg-background px-3 text-base"
+          className={inputClass}
         />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Password
+      </Field>
+      <Field label="Password">
         <input
           name="password"
           type="password"
           required
           autoComplete="current-password"
-          className="h-11 rounded-md border bg-background px-3 text-base"
+          className={inputClass}
         />
-      </label>
+      </Field>
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-11">
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex h-14 w-full items-center justify-center rounded-lg bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+      >
         {pending ? "Logging in…" : "Log in"}
-      </Button>
+      </button>
     </form>
   );
 }
