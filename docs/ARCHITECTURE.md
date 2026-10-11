@@ -126,6 +126,7 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 ## 9. Environments & deploy
 - **No local Supabase / Docker** (simpler on Windows).
 - Dev: `npm run dev` on your machine, connected to a free Supabase cloud **DEV project** (`.env.local`).
+- Phone testing: open the "Network:" address the dev server prints (e.g. `http://192.168.x.x:3000`) on a phone on the same Wi-Fi/hotspot. `allowedDevOrigins` in `next.config.ts` allows the private ranges (`192.168.*.*`, `172.*.*.*`, `10.*.*.*`); without it Next blocks the dev scripts and client features (menu outside-tap, forms) don't run. Restart the dev server after changing it.
 - Prod: Netlify (connected to GitHub, auto-deploy `main`, preview deploys for branches) + a separate Supabase **PROD project**, created at go-live.
 - Supabase free tier allows 2 active projects (DEV + PROD). Free projects pause after ~1 week of no activity; just restore from the dashboard.
 - Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` (server only).

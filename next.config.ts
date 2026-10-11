@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   images: { remotePatterns: [{ protocol: "https", hostname: supabaseHost }] },
   /* config options here */
   cacheComponents: true,
+  // Dev only: let phones on the local network (e.g. http://192.168.x.x:3000) load the dev scripts, so client JS runs there.
+  allowedDevOrigins: ["192.168.*.*", "172.*.*.*", "10.*.*.*"],
   experimental: {
     // Largest upload is a document (max 5 MB) + multipart overhead. Netlify's own request limit is ~6 MB.
     serverActions: { bodySizeLimit: "6mb" },
