@@ -13,13 +13,13 @@ export const admissionRulesHa = [
 ];
 
 export const fees = [
-  { label: "Application form (once, new students)", amount: "₦2,000" },
-  { label: "School fees (every term)", amount: "₦10,000" },
+  { label: "Application form", amount: "₦2,000" },
+  { label: "School fees", amount: "₦10,000" },
 ];
 
 export const schedule = [
-  { days: "Saturday and Sunday", time: "8:30am to 4:00pm" },
-  { days: "Tuesday and Wednesday", time: "3:00pm to 6:00pm" },
+  { days: "Saturday and Sunday", time: "8:00am to 6:00pm" },
+  { days: "Monday to Friday", time: "3:00pm to 6:00pm" },
 ];
 
 // Default term fee when accepting an application (staff can change it on the Accept screen).

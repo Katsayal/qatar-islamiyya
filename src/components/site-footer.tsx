@@ -31,6 +31,11 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/donate" className="text-primary-foreground/80 hover:text-gold">
+                Donate
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

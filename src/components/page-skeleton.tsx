@@ -34,7 +34,7 @@ export function CardsSkeleton({ count, grid, image = false }: { count: number; g
   return (
     <Busy className={`grid gap-4 ${grid}`}>
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="overflow-hidden rounded-lg border">
+        <div key={i} className="overflow-hidden rounded-xl border bg-card">
           {image && <div className="aspect-video w-full bg-muted" />}
           <div className="p-4">
             <div className={`h-4 w-3/4 ${bar}`} />

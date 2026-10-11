@@ -82,6 +82,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 | News & Events | Posts with audience = public |
 | Gallery | Images uploaded by staff |
 | Contact | Phones, WhatsApp link, Google Maps embed (Zango Road), contact form |
+| Donate | Linked from the last home-page section and the footer (not in the main menu). Shows the school bank details (same Settings record) and a WhatsApp / call link so donors can tell us about their gift. No online payment (see §11). |
 | Login | One login page → redirects by role |
 
 - Page text lives in the code (simple TS/MD content files). News/gallery come from the database.
@@ -122,6 +123,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 
 ## 11. Fees & payments
 - Now: bank account details shown on site/portal; staff mark fee status manually.
+- Donations (`/donate`): same bank account, same manual approach; no donation records are kept in the app.
 - Later: Paystack/Flutterwave (Stripe does not serve Nigerian merchants directly). Add a `payments` table then; nothing else changes.
 
 ## 12. Non-functional
