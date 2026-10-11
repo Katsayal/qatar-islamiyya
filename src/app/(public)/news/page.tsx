@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { PageHeader } from "@/components/page-header";
 import { CardsSkeleton } from "@/components/page-skeleton";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
@@ -18,13 +19,13 @@ async function NewsList() {
     .order("published_at", { ascending: false });
 
   if (!posts?.length) {
-    return <p className="mt-6 text-muted-foreground">No news yet. Please check back soon.</p>;
+    return <p className="rounded-xl border bg-card p-6 text-muted-foreground">No news yet. Please check back soon.</p>;
   }
 
   return (
-    <ul className="mt-6 grid gap-4 md:grid-cols-2">
+    <ul className="grid gap-4 md:grid-cols-2">
       {posts.map((p) => (
-        <li key={p.id} className="overflow-hidden rounded-lg border">
+        <li key={p.id} className="overflow-hidden rounded-xl border bg-card shadow-sm">
           {p.cover_path && (
             <Image
               src={siteImageUrl(p.cover_path)}
@@ -51,11 +52,13 @@ async function NewsList() {
 
 export default function NewsPage() {
   return (
-    <section className="mx-auto max-w-4xl px-4 py-10">
-      <h1 className="text-3xl font-semibold">News &amp; events</h1>
-      <Suspense fallback={<div className="mt-6"><CardsSkeleton count={4} grid="md:grid-cols-2" image /></div>}>
-        <NewsList />
-      </Suspense>
-    </section>
+    <>
+      <PageHeader label="What's happening" title="News & events" />
+      <section className="mx-auto max-w-4xl px-4 pt-8 pb-12">
+        <Suspense fallback={<CardsSkeleton count={4} grid="md:grid-cols-2" image />}>
+          <NewsList />
+        </Suspense>
+      </section>
+    </>
   );
 }

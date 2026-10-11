@@ -40,10 +40,10 @@ async function Post({ params }: Props) {
           width={960}
           height={540}
           priority
-          className="aspect-video w-full rounded-lg object-cover"
+          className="aspect-video w-full rounded-xl object-cover shadow-sm"
         />
       )}
-      <h1 className="mt-4 text-3xl font-semibold">{post.title}</h1>
+      <h1 className="mt-5 text-3xl font-semibold">{post.title}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
       </p>
@@ -54,8 +54,11 @@ async function Post({ params }: Props) {
 
 export default function PostPage({ params }: Props) {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/news" className="text-sm text-primary underline-offset-4 hover:underline">
+    <section className="mx-auto max-w-3xl px-4 pt-8 pb-12">
+      <Link
+        href="/news"
+        className="inline-flex h-10 items-center rounded-full border bg-card px-4 text-sm font-medium text-primary hover:border-primary"
+      >
         ← All news
       </Link>
       <div className="mt-4">
