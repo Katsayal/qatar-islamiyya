@@ -3,6 +3,7 @@
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { resizeImage } from "@/lib/resize-image";
 import { uploadPhotos } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export function UploadForm() {
   const [result, formAction, pending] = useActionState(uploadPhotos, null);
@@ -29,7 +30,7 @@ export function UploadForm() {
         setResizing(false);
         startTransition(() => formAction(data));
       }}
-      className="flex flex-col gap-3 rounded-lg border p-4"
+      className="flex flex-col gap-3 rounded-xl border p-4 bg-card shadow-sm"
     >
       <label className="flex flex-col gap-1 text-sm">
         Photos (up to 10)
@@ -38,14 +39,14 @@ export function UploadForm() {
       </label>
       <label className="flex flex-col gap-1 text-sm">
         Caption for these photos (optional)
-        <input name="caption" maxLength={150} className="h-11 rounded-md border bg-background px-3 text-base" />
+        <input name="caption" maxLength={150} className={controlClass} />
       </label>
       {result && (
-        <p role="alert" className={`text-sm ${result.ok ? "text-primary" : "text-destructive"}`}>
+        <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {result.message}
         </p>
       )}
-      <button disabled={pending || resizing} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending || resizing} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {resizing ? "Preparing…" : pending ? "Uploading…" : "Upload photos"}
       </button>
     </form>

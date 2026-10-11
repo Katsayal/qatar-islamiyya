@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 import { surahs } from "@/lib/surahs";
 import { todayInLagos } from "@/lib/today";
 import { DeleteEntry } from "./delete-entry";
+import { controlClass } from "@/components/form-parts";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -14,7 +16,7 @@ export const instant = true;
 const PAGE_SIZE = 25;
 const gradeLabel: Record<string, string> = { jayyid: "Jayyid", jayyid_jiddan: "Jayyid Jiddan", mumtaz: "Mumtaz" };
 const surahName = (n: number | null) => surahs.find((s) => s.number === n)?.name ?? "?";
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 type Search = { term?: string; page?: string };
 
@@ -72,7 +74,7 @@ export default async function HifzHistoryPage({
       <Link href={`/portal/classes/${id}/students/${studentId}/hifz`} className="text-sm text-primary underline-offset-4 hover:underline">
         ← Record hifz
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Hifz history</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Hifz history</h1>
       <p className="text-sm text-muted-foreground">
         {student.full_name} · {c.name}
       </p>
@@ -115,19 +117,19 @@ export default async function HifzHistoryPage({
             <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
           ))}
         </select>
-        <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
+        <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
       </form>
 
       <p className="mt-4 text-sm text-muted-foreground">{shown.length} entr{shown.length === 1 ? "y" : "ies"}</p>
-      <ul className="mt-2 divide-y rounded-lg border text-sm">
+      <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
         {rows.map((e) => (
           <li key={e.id} className="flex items-start justify-between gap-3 p-3">
             <div className="min-w-0">
               <p className="font-medium">
                 {e.entry_date} · {e.absent ? "Absent" : e.lesson_type === "new" ? "New hifz" : "Muraja'ah"}
                 {c.program === "maahad" && isBelowMinimum(e) && (
-                  <span className="ms-2 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
-                    Below {MAAHAD_MIN_PAGES} pages
+                  <span className="ms-2">
+                    <StatusBadge tone="bad">Below {MAAHAD_MIN_PAGES} pages</StatusBadge>
                   </span>
                 )}
               </p>
@@ -147,9 +149,9 @@ export default async function HifzHistoryPage({
 
       {lastPage > 1 && (
         <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="rounded-md border px-4 py-2">← Newer</Link> : <span />}
+          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Newer</Link> : <span />}
           <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="rounded-md border px-4 py-2">Older →</Link> : <span />}
+          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Older →</Link> : <span />}
         </nav>
       )}
     </div>

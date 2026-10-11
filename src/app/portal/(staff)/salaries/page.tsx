@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { SalaryForm } from "./salary-form";
 import { SetMonthForm } from "./set-month-form";
+import { controlClass } from "@/components/form-parts";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -23,14 +25,14 @@ const roles = [
   { key: "staff", label: "Staff" },
 ];
 const statusLabel: Record<string, string> = { paid: "Paid", part: "Part-paid", unpaid: "Unpaid", none: "No record" };
-const statusColour: Record<string, string> = {
-  paid: "text-primary",
-  part: "text-amber-600",
-  unpaid: "text-destructive",
-  none: "text-muted-foreground",
+const statusTone: Record<string, "good" | "warn" | "bad" | "muted"> = {
+  paid: "good",
+  part: "warn",
+  unpaid: "bad",
+  none: "muted",
 };
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 type Search = { month?: string; status?: string; role?: string; q?: string };
 
@@ -69,8 +71,8 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Salaries</h1>
-        <Link href="/portal/salaries/rates" className="flex h-10 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted">
+        <h1 className="text-2xl font-semibold gold-bar">Salaries</h1>
+        <Link href="/portal/salaries/rates" className="flex h-10 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
           Salary amounts
         </Link>
       </div>
@@ -90,15 +92,15 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
         </select>
         <input name="q" defaultValue={sp.q ?? ""} placeholder="Search by name" className={`${input} md:col-span-4`} />
         <div className="flex gap-2 md:col-span-2">
-          <button className="h-11 flex-1 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
-          <Link href="/portal/salaries" className="flex h-11 items-center rounded-md border px-5">Reset</Link>
+          <button className="h-11 flex-1 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
+          <Link href="/portal/salaries" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
         </div>
       </form>
 
       <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
-        <div className="rounded-lg border p-3"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>
-        <div className="rounded-lg border p-3"><dt className="text-muted-foreground">Paid</dt><dd className="font-medium">{naira(totalPaid)}</dd></div>
-        <div className="rounded-lg border p-3"><dt className="text-muted-foreground">Outstanding</dt><dd className="font-medium">{naira(outstanding)}</dd></div>
+        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>
+        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Paid</dt><dd className="font-medium">{naira(totalPaid)}</dd></div>
+        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Outstanding</dt><dd className="font-medium">{naira(outstanding)}</dd></div>
       </dl>
       <p className="mt-2 text-sm text-muted-foreground">
         {monthLabel(month)}: {count("paid")} paid · {count("part")} part-paid · {count("unpaid")} unpaid · {count("none")} no record
@@ -111,7 +113,7 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
         {/* A file download, not a page: a plain <a> is correct here. */}
         <a href={`/portal/salaries/export?month=${month}`} className="text-sm text-primary underline-offset-4 hover:underline">Export {monthLabel(month)} (CSV)</a>
       </div>
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {shown.map(({ p, rec, key }) => (
           <li key={p.id} className="p-3">
             <details>
@@ -123,7 +125,7 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
                   </span>
                 </span>
                 <span className="shrink-0 text-end text-sm">
-                  <span className={`block font-medium ${statusColour[key]}`}>{statusLabel[key]}</span>
+                  <span className="mb-1 block"><StatusBadge tone={statusTone[key]}>{statusLabel[key]}</StatusBadge></span>
                   {rec && <span className="text-xs text-muted-foreground">{naira(rec.amount_paid)} of {naira(rec.amount_due)}</span>}
                 </span>
               </summary>

@@ -36,14 +36,14 @@ export function AttendanceForm({
       <input type="hidden" name="class_id" value={classId} />
       <input type="hidden" name="att_date" value={date} />
 
-      <ul className="divide-y rounded-lg border">
+      <ul className="divide-y rounded-xl border bg-card shadow-sm">
         {students.map((s) => (
           <li key={s.id} className="p-3">
             <p className="font-medium">{s.full_name}</p>
             <p className="text-sm text-muted-foreground">{s.admission_no}</p>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {STATUSES.map((st) => (
-                <label key={st.value} className={`flex h-11 items-center justify-center rounded-md border text-sm ${tone[st.value]}`}>
+                <label key={st.value} className={`flex h-11 items-center justify-center rounded-lg border text-sm ${tone[st.value]}`}>
                   <input
                     type="radio"
                     name={`status_${s.id}`}
@@ -59,11 +59,11 @@ export function AttendanceForm({
         ))}
       </ul>
 
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Saving…" : "Save attendance"}
       </button>
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+        <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {state.message}
         </p>
       )}

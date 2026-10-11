@@ -20,11 +20,11 @@ export default async function NewsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">News</h1>
+      <h1 className="text-2xl font-semibold gold-bar">News</h1>
       {posts.length === 0 ? (
-        <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">No news yet.</p>
+        <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No news yet.</p>
       ) : (
-        <ul className="mt-4 divide-y rounded-lg border">
+        <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
           {posts.map((p) => (
             <li key={p.id}>
               <Link href={`/portal/news/${p.id}`} className="block p-3 hover:bg-muted">

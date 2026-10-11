@@ -17,7 +17,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
       <Link href="/portal/posts" className="text-sm text-primary underline-offset-4 hover:underline">
         ← News posts
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Edit post</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Edit post</h1>
       <div className="mt-4">
         <PostForm
           defaults={{

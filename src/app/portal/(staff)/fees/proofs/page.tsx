@@ -3,18 +3,19 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { setProofStatus } from "./actions";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
 const PAGE_SIZE = 25;
 const filters = ["pending", "verified", "rejected", "all"];
-const statusLabel: Record<string, { text: string; className: string }> = {
-  pending: { text: "Pending", className: "text-amber-600" },
-  verified: { text: "Verified", className: "text-primary" },
-  rejected: { text: "Rejected", className: "text-destructive" },
+const statusLabel: Record<string, { text: string; tone: "warn" | "good" | "bad" }> = {
+  pending: { text: "Pending", tone: "warn" },
+  verified: { text: "Verified", tone: "good" },
+  rejected: { text: "Rejected", tone: "bad" },
 };
-const button = "h-10 rounded-md border px-4 text-sm hover:bg-muted";
+const button = "h-10 rounded-lg border bg-card px-4 text-sm hover:bg-muted";
 
 export default async function PaymentProofsPage({ searchParams }: { searchParams: Promise<{ show?: string; page?: string }> }) {
   await requireRole("staff");
@@ -46,7 +47,7 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
   return (
     <div className="max-w-2xl">
       <Link href="/portal/fees" className="text-sm text-primary underline-offset-4 hover:underline">← Fees</Link>
-      <h1 className="mt-2 text-xl font-semibold">Payment proofs</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Payment proofs</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Receipts uploaded by students. Check the receipt against the bank, mark it, then record the payment on the Fees page.
       </p>
@@ -56,7 +57,7 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
           <Link
             key={f}
             href={`/portal/fees/proofs?show=${f}`}
-            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : ""}`}
+            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : "bg-card hover:border-primary"}`}
           >
             {f}
           </Link>
@@ -69,7 +70,7 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
           const isPdf = p.file_path.endsWith(".pdf");
           const st = statusLabel[p.status];
           return (
-            <li key={p.id} className="rounded-lg border p-4">
+            <li key={p.id} className="rounded-xl border p-4 bg-card shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   {p.students ? (
@@ -86,15 +87,15 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
                     {new Date(p.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                   </p>
                 </div>
-                <span className={`shrink-0 text-sm font-medium ${st?.className ?? ""}`}>{st?.text ?? p.status}</span>
+                <StatusBadge tone={st?.tone ?? "warn"}>{st?.text ?? p.status}</StatusBadge>
               </div>
 
               {url && (
                 <a href={url} target="_blank" rel="noreferrer" className="mt-3 block">
                   {isPdf ? (
-                    <span className="inline-flex h-10 items-center rounded-md border px-4 text-sm font-medium hover:bg-muted">Open PDF</span>
+                    <span className="inline-flex h-10 items-center rounded-lg border px-4 text-sm font-medium hover:bg-muted bg-card">Open PDF</span>
                   ) : (
-                    <Image src={url} alt="Proof of payment" width={320} height={320} unoptimized className="max-h-64 w-auto rounded-md border object-contain" />
+                    <Image src={url} alt="Proof of payment" width={320} height={320} unoptimized className="max-h-64 w-auto rounded-lg border object-contain bg-card" />
                   )}
                 </a>
               )}
@@ -129,9 +130,9 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
 
       {lastPage > 1 && (
         <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="rounded-md border px-4 py-2">← Newer</Link> : <span />}
+          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Newer</Link> : <span />}
           <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="rounded-md border px-4 py-2">Older →</Link> : <span />}
+          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Older →</Link> : <span />}
         </nav>
       )}
     </div>

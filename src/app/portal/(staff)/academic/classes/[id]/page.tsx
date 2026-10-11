@@ -52,7 +52,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
       <Link href="/portal/academic/classes" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Classes
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">{id === "new" ? "Add class" : "Edit class"}</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">{id === "new" ? "Add class" : "Edit class"}</h1>
       <div className="mt-4">
         <ClassForm defaults={defaults} teachers={teachers ?? []} />
       </div>

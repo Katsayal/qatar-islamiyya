@@ -1,4 +1,5 @@
 import { JuzGrid } from "@/components/juz-grid";
+import { StatusBadge } from "@/components/status-badge";
 import { createClient } from "@/lib/supabase/server";
 import { surahs } from "@/lib/surahs";
 
@@ -23,12 +24,15 @@ export async function Recent() {
 
   return (
     <section>
-      <h2 className="font-semibold">Recent entries</h2>
-      <ul className="mt-2 divide-y rounded-lg border text-sm">
+      <h2 className="text-lg font-semibold">Recent entries</h2>
+      <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
         {(entries ?? []).map((e) => (
           <li key={e.id} className="p-3">
-            <p className="font-medium">
-              {e.entry_date} · {e.absent ? "Absent" : e.lesson_type === "new" ? "New hifz" : "Muraja'ah"}
+            <p className="flex flex-wrap items-center gap-2 font-medium">
+              {e.entry_date}
+              <StatusBadge tone={e.absent ? "bad" : e.lesson_type === "new" ? "good" : "muted"}>
+                {e.absent ? "Absent" : e.lesson_type === "new" ? "New hifz" : "Muraja'ah"}
+              </StatusBadge>
             </p>
             {!e.absent && (
               <p className="text-muted-foreground">

@@ -3,6 +3,7 @@
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveClass } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export type ClassDefaults = {
   id?: string;
@@ -16,7 +17,7 @@ export type ClassDefaults = {
   teacher_ids: string[];
 };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -97,7 +98,7 @@ export function ClassForm({
       </label>
 
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}

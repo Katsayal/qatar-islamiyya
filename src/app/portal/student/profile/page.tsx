@@ -2,6 +2,7 @@ import Image from "next/image";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CorrectionForm } from "./correction-form";
+import { StatusBadge } from "@/components/status-badge";
 import { PasswordChangeForm } from "@/components/password-change-form";
 import { changePassword } from "./actions";
 
@@ -50,10 +51,10 @@ export default async function StudentProfilePage() {
     <div className="max-w-xl space-y-6">
       <div className="flex items-center gap-4">
         {photoUrl && (
-          <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-lg object-cover" />
+          <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-xl border-2 border-gold object-cover" />
         )}
         <div>
-          <h1 className="text-xl font-semibold">{s.full_name}</h1>
+          <h1 className="text-2xl font-semibold gold-bar">{s.full_name}</h1>
           {s.full_name_ar && (
             <p lang="ar" dir="rtl" className="font-arabic text-lg">
               {s.full_name_ar}
@@ -62,7 +63,7 @@ export default async function StudentProfilePage() {
         </div>
       </div>
 
-      <dl className="divide-y rounded-lg border">
+      <dl className="divide-y rounded-xl border bg-card shadow-sm">
         {rows
           .filter(([, v]) => v)
           .map(([label, value]) => (
@@ -74,7 +75,7 @@ export default async function StudentProfilePage() {
       </dl>
 
       <section id="password">
-        <h2 className="font-semibold">My password</h2>
+        <h2 className="text-lg font-semibold">My password</h2>
         <p className="mb-3 mt-1 text-sm text-muted-foreground">
           Set your own password so nobody else can sign in as you. If you forget it, ask the office to reset it.
         </p>
@@ -82,7 +83,7 @@ export default async function StudentProfilePage() {
       </section>
 
       <section>
-        <h2 className="font-semibold">Something wrong?</h2>
+        <h2 className="text-lg font-semibold">Something wrong?</h2>
         <p className="mb-3 mt-1 text-sm text-muted-foreground">
           You cannot edit your details here. Tell the office what to correct and they will fix it.
         </p>
@@ -91,17 +92,17 @@ export default async function StudentProfilePage() {
 
       {!!requests?.length && (
         <section>
-          <h2 className="font-semibold">My requests</h2>
-          <ul className="mt-2 divide-y rounded-lg border">
+          <h2 className="text-lg font-semibold">My requests</h2>
+          <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
             {requests.map((r) => (
               <li key={r.id} className="p-3 text-sm">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-xs text-muted-foreground">
                     {new Date(r.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                   </span>
-                  <span className={`text-xs font-medium ${r.status === "done" ? "text-primary" : "text-amber-600"}`}>
+                  <StatusBadge tone={r.status === "done" ? "good" : "warn"}>
                     {r.status === "done" ? "Done" : "Open"}
-                  </span>
+                  </StatusBadge>
                 </div>
                 <p className="mt-1 whitespace-pre-line">{r.message}</p>
               </li>

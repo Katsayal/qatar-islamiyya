@@ -15,8 +15,8 @@ export default async function MyAccountPage() {
   return (
     <div className="max-w-md space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">My account</h1>
-        <dl className="mt-3 divide-y rounded-lg border text-sm">
+        <h1 className="text-2xl font-semibold gold-bar">My account</h1>
+        <dl className="mt-3 divide-y rounded-xl border text-sm bg-card shadow-sm">
           <div className="grid grid-cols-3 gap-2 p-3">
             <dt className="text-muted-foreground">Name</dt>
             <dd className="col-span-2">{me.full_name}</dd>

@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { saveComments, type Result } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 type Student = { id: string; full_name: string; admission_no: string };
 
@@ -31,7 +32,7 @@ export function CommentsForm({
       <input type="hidden" name="class_id" value={classId} />
       <input type="hidden" name="term_id" value={termId} />
 
-      <ul className="divide-y rounded-lg border">
+      <ul className="divide-y rounded-xl border bg-card shadow-sm">
         {students.map((s) => (
           <li key={s.id} className="p-3">
             <label className="flex flex-col gap-1">
@@ -43,18 +44,18 @@ export function CommentsForm({
                 maxLength={maxLength}
                 defaultValue={initial[s.id] ?? ""}
                 placeholder="Comment for the report card"
-                className="mt-1 rounded-md border bg-background px-3 py-2 text-base"
+                className={`${controlClass} mt-1 h-auto py-2`}
               />
             </label>
           </li>
         ))}
       </ul>
 
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Saving…" : "Save comments"}
       </button>
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+        <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {state.message}
         </p>
       )}

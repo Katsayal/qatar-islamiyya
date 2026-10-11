@@ -3,6 +3,7 @@
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveYear, type YearState } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 type Defaults = {
   id?: string;
@@ -13,7 +14,7 @@ type Defaults = {
   term3_end: string;
 };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -56,7 +57,7 @@ export function YearForm({ defaults }: { defaults: Defaults }) {
       </Field>
       <div className="flex flex-col justify-end gap-2">
         {state.error && (
-          <p role="alert" className="text-sm text-destructive">
+          <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
             {state.error}
           </p>
         )}

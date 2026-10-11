@@ -32,7 +32,7 @@ export default async function AcademicPage() {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <h1 className="text-xl font-semibold">Academic setup</h1>
+        <h1 className="text-2xl font-semibold gold-bar">Academic setup</h1>
         <Link href="/portal/academic/classes" className="text-sm text-primary underline-offset-4 hover:underline">
           Classes →
         </Link>
@@ -47,7 +47,7 @@ export default async function AcademicPage() {
         {(years ?? []).map((yr) => {
           const terms = [...yr.terms].sort((a, b) => a.number - b.number);
           return (
-            <li key={yr.id} className="rounded-lg border p-4">
+            <li key={yr.id} className="rounded-xl border p-4 bg-card shadow-sm">
               <p className="font-medium">{yr.name}</p>
               <ul className="mt-2 space-y-1 text-sm">
                 {terms.map((t) => {
@@ -82,7 +82,7 @@ export default async function AcademicPage() {
       </ul>
 
       <h2 className="mt-8 font-semibold">Add an academic year</h2>
-      <div className="mt-3 rounded-lg border p-4">
+      <div className="mt-3 rounded-xl border p-4 bg-card shadow-sm">
         <YearForm defaults={newDefaults} />
       </div>
     </div>

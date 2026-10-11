@@ -8,7 +8,7 @@ import { removeSignature, uploadSignature } from "./actions";
 function Message({ result }: { result: { ok: boolean; message: string } | null }) {
   if (!result) return null;
   return (
-    <p role="alert" className={`text-sm ${result.ok ? "text-primary" : "text-destructive"}`}>
+    <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
       {result.message}
     </p>
   );
@@ -27,7 +27,7 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex h-24 items-center justify-center rounded-lg border bg-background p-2">
+      <div className="flex h-24 items-center justify-center rounded-xl border bg-background p-2">
         {currentUrl ? (
           <Image src={currentUrl} alt="Director's signature" width={240} height={80} unoptimized className="max-h-20 w-auto object-contain" />
         ) : (
@@ -55,7 +55,7 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
           <span className="text-xs text-muted-foreground">A photo or scan of the signature on white paper. JPG, PNG or WebP.</span>
         </label>
         <Message result={uploadResult} />
-        <button disabled={uploading || preparing} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+        <button disabled={uploading || preparing} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
           {preparing ? "Preparing…" : uploading ? "Uploading…" : "Save signature"}
         </button>
       </form>
@@ -68,7 +68,7 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
             startTransition(() => removeAction());
           }}
         >
-          <button disabled={removing} className="h-11 w-full rounded-md border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
+          <button disabled={removing} className="h-11 w-full rounded-lg border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
             {removing ? "Removing…" : "Remove signature"}
           </button>
         </form>

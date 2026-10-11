@@ -39,7 +39,7 @@ export default async function RecordHifzPage({ params }: { params: Promise<{ id:
       <Link href={`/portal/classes/${id}/students/${studentId}`} className="text-sm text-primary underline-offset-4 hover:underline">
         ← {student.full_name}
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Record hifz</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Record hifz</h1>
       <p className="text-sm text-muted-foreground">
         {student.full_name} · {c.name}
       </p>
@@ -49,7 +49,7 @@ export default async function RecordHifzPage({ params }: { params: Promise<{ id:
       </div>
 
       {nextId && (
-        <Link href={`/portal/classes/${id}/students/${nextId}/hifz`} className="mt-4 flex h-11 items-center justify-center rounded-md border text-sm font-medium hover:bg-muted">
+        <Link href={`/portal/classes/${id}/students/${nextId}/hifz`} className="mt-4 flex h-11 items-center justify-center rounded-lg border text-sm font-medium hover:bg-muted bg-card">
           Next student →
         </Link>
       )}
@@ -60,7 +60,7 @@ export default async function RecordHifzPage({ params }: { params: Promise<{ id:
           View all →
         </Link>
       </div>
-      <ul className="mt-2 divide-y rounded-lg border text-sm">
+      <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
         {(entries ?? []).map((e) => (
           <li key={e.id} className="p-3">
             <p className="font-medium">

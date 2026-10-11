@@ -3,8 +3,9 @@
 import { startTransition, useActionState, useState } from "react";
 import { surahs } from "@/lib/surahs";
 import { saveHifz, type Result } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 const label = "flex flex-col gap-1 text-sm";
 
 function AyahPicker({ prefix, title }: { prefix: "start" | "end"; title: string }) {
@@ -59,7 +60,7 @@ export function HifzForm({
           <fieldset className="grid grid-cols-2 gap-2">
             <legend className="mb-1 text-sm">Lesson</legend>
             {[["new", "New hifz"], ["murajaah", "Muraja'ah"]].map(([v, text], i) => (
-              <label key={v} className="flex h-11 items-center gap-2 rounded-md border px-3 has-[:checked]:border-primary has-[:checked]:bg-muted">
+              <label key={v} className="flex h-11 items-center gap-2 rounded-lg border px-3 has-[:checked]:border-primary has-[:checked]:bg-muted bg-card">
                 <input type="radio" name="lesson_type" value={v} required defaultChecked={i === 0} />
                 {text}
               </label>
@@ -69,7 +70,7 @@ export function HifzForm({
           <fieldset className="grid grid-cols-2 gap-2">
             <legend className="mb-1 text-sm">Enter range</legend>
             {[["ayah", "By ayah"], ["page", "By page"]].map(([v, text]) => (
-              <label key={v} className="flex h-11 items-center gap-2 rounded-md border px-3 has-[:checked]:border-primary has-[:checked]:bg-muted">
+              <label key={v} className="flex h-11 items-center gap-2 rounded-lg border px-3 has-[:checked]:border-primary has-[:checked]:bg-muted bg-card">
                 <input type="radio" name="mode" value={v} checked={mode === v} onChange={() => setMode(v as "ayah" | "page")} />
                 {text}
               </label>
@@ -97,7 +98,7 @@ export function HifzForm({
           <fieldset className="grid grid-cols-3 gap-2">
             <legend className="mb-1 text-sm">Grade</legend>
             {[["jayyid", "Jayyid"], ["jayyid_jiddan", "Jayyid Jiddan"], ["mumtaz", "Mumtaz"]].map(([v, text]) => (
-              <label key={v} className="flex min-h-11 items-center justify-center gap-1 rounded-md border px-2 py-1 text-center text-sm has-[:checked]:border-primary has-[:checked]:bg-muted">
+              <label key={v} className="flex min-h-11 items-center justify-center gap-1 rounded-lg border px-2 py-1 text-center text-sm has-[:checked]:border-primary has-[:checked]:bg-muted bg-card">
                 <input type="radio" name="grade" value={v} required className="sr-only" />
                 {text}
               </label>
@@ -111,11 +112,11 @@ export function HifzForm({
         <input name="note" maxLength={300} className={input} />
       </label>
 
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Saving…" : "Save"}
       </button>
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+        <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {state.message}
         </p>
       )}

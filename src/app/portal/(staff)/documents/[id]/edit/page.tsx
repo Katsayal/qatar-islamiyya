@@ -17,7 +17,7 @@ export default async function EditDocumentPage({ params }: { params: Promise<{ i
       <Link href="/portal/documents" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Documents
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Edit document</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Edit document</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {d.visibility === "vault" ? "Vault (staff only)" : "General (teachers & staff)"}. To move it to the other list, delete it and upload it again.
       </p>

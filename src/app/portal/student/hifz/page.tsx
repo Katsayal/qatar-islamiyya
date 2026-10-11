@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Juz, Recent } from "./recent";
@@ -17,13 +18,10 @@ export default async function StudentHifzPage() {
 
   return (
     <div className="max-w-xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">My hifz</h1>
-        {s?.classes && <p className="text-sm text-muted-foreground">{s.classes.name}</p>}
-      </div>
+      <PortalTitle title="My hifz" subtitle={s?.classes?.name} />
 
       {!s?.class_id || (program !== "tahfiz" && program !== "maahad") ? (
-        <p className="text-sm text-muted-foreground">Hifz progress is for Tahfiz and Ma&apos;ahad students.</p>
+        <p className="rounded-xl border bg-card p-4 text-sm text-muted-foreground shadow-sm">Hifz progress is for Tahfiz and Ma&apos;ahad students.</p>
       ) : (
         <>
           <Suspense fallback={null}>

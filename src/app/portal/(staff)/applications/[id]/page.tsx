@@ -53,7 +53,7 @@ export default async function ApplicationPage({ params }: { params: Promise<{ id
       <Link href="/portal/applications" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Applications
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">{a.full_name}</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">{a.full_name}</h1>
       <p className="text-sm capitalize text-muted-foreground">{a.status}</p>
 
       {photo?.data?.signedUrl && (
@@ -81,7 +81,7 @@ export default async function ApplicationPage({ params }: { params: Promise<{ id
 
       {a.status === "new" && (
         <div className="mt-8 flex flex-col gap-4">
-          <div className="rounded-lg border p-4">
+          <div className="rounded-xl border p-4 bg-card shadow-sm">
             <h2 className="mb-3 font-semibold">Accept</h2>
             <AcceptForm
               id={a.id}
@@ -91,10 +91,10 @@ export default async function ApplicationPage({ params }: { params: Promise<{ id
               termFee={TERM_FEE_NAIRA}
             />
           </div>
-          <details className="rounded-lg border border-destructive/40 p-4">
+          <details className="rounded-xl border border-destructive/40 p-4">
             <summary className="cursor-pointer text-sm font-medium text-destructive">Reject this application…</summary>
             <form action={rejectApplication.bind(null, a.id)} className="mt-3">
-              <button className="h-11 w-full rounded-md bg-destructive px-4 text-sm font-medium text-white">
+              <button className="h-11 w-full rounded-lg bg-destructive px-4 text-sm font-medium text-white">
                 Reject application
               </button>
             </form>

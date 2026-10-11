@@ -19,7 +19,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Settings</h1>
 
       <section className="mt-6">
         <h2 className="font-semibold">Bank details</h2>

@@ -1,14 +1,16 @@
 import { PrintButton } from "@/components/print-button";
 import { ReportCard } from "@/components/report-card";
+import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { loadCards } from "@/lib/report-cards";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export default async function StudentReportCardsPage({ searchParams }: { searchParams: Promise<{ term?: string }> }) {
   await requireRole("student");
@@ -35,8 +37,7 @@ export default async function StudentReportCardsPage({ searchParams }: { searchP
   return (
     <div className="space-y-4">
       <div className="print:hidden">
-        <h1 className="text-xl font-semibold">My report card</h1>
-        <p className="text-sm text-muted-foreground">Pick a term, then print it or save it as a PDF.</p>
+        <PortalTitle title="My report card" subtitle="Pick a term, then print it or save it as a PDF." />
       </div>
 
       {!s?.classes ? (
@@ -52,7 +53,7 @@ export default async function StudentReportCardsPage({ searchParams }: { searchP
                   <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
                 ))}
               </select>
-              <button className="h-11 rounded-md border px-4 text-sm hover:bg-muted">Show</button>
+              <button className="h-11 rounded-lg border px-4 text-sm hover:bg-muted bg-card">Show</button>
             </form>
             <PrintButton />
           </div>

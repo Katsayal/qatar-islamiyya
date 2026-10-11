@@ -13,7 +13,7 @@ export default async function NewBookPage() {
       <Link href="/portal/books" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Books
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Add book</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Add book</h1>
       <div className="mt-4">
         <BookForm
           teachers={teachers ?? []}

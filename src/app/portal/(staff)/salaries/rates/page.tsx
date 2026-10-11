@@ -2,9 +2,10 @@ import Link from "next/link";
 import { requireOwner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { RateForm } from "./rate-form";
+import { controlClass } from "@/components/form-parts";
 
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 // Owner only: the fixed monthly salary of every teacher, staff member and the owner.
 export default async function SalaryRatesPage({ searchParams }: { searchParams: Promise<{ show?: string; q?: string }> }) {
@@ -25,7 +26,7 @@ export default async function SalaryRatesPage({ searchParams }: { searchParams: 
   return (
     <div className="max-w-2xl">
       <Link href="/portal/salaries" className="text-sm text-primary underline-offset-4 hover:underline">← Salaries</Link>
-      <h1 className="mt-2 text-xl font-semibold">Salary amounts</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Salary amounts</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         The fixed monthly salary of each person. {missing > 0 ? `${missing} active ${missing === 1 ? "person has" : "people have"} no salary set yet.` : "Everyone listed has a salary set."}
       </p>
@@ -36,10 +37,10 @@ export default async function SalaryRatesPage({ searchParams }: { searchParams: 
           <option value="active">Active accounts</option>
           <option value="all">Including disabled</option>
         </select>
-        <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
+        <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
       </form>
 
-      <ul className="mt-4 divide-y rounded-lg border">
+      <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
         {list.map((p) => (
           <li key={p.id} className="p-3">
             <details>

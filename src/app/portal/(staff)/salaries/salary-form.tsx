@@ -2,8 +2,9 @@
 
 import { startTransition, useActionState } from "react";
 import { saveSalary, type Result } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 // One person's record for one month: amount due, total paid so far, note.
 export function SalaryForm({
@@ -44,11 +45,11 @@ export function SalaryForm({
         <input name="note" defaultValue={note} className={input} />
       </label>
       <div className="flex items-center gap-3 sm:col-span-2">
-        <button disabled={pending} className="h-11 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50">
+        <button disabled={pending} className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
           {pending ? "Saving…" : "Save"}
         </button>
         {state.message && (
-          <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+          <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
             {state.message}
           </p>
         )}

@@ -2,12 +2,13 @@
 
 import { startTransition, useActionState } from "react";
 import { setTermFee, type Result } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export function TermFeeForm({ termId }: { termId: string }) {
   const [state, formAction, pending] = useActionState<Result, FormData>(setTermFee, { ok: false, message: null });
 
   return (
-    <details className="mt-4 rounded-lg border p-4">
+    <details className="mt-4 rounded-xl border p-4 bg-card shadow-sm">
       <summary className="cursor-pointer text-sm font-medium">Set the fee for everyone…</summary>
       <p className="mt-2 text-sm text-muted-foreground">
         Creates an unpaid record for every active student who has none for this term. Existing records are not changed.
@@ -28,14 +29,14 @@ export function TermFeeForm({ termId }: { termId: string }) {
           inputMode="numeric"
           required
           placeholder="Amount due (₦)"
-          className="h-11 flex-1 rounded-md border bg-background px-3 text-base"
+          className={`${controlClass} flex-1`}
         />
-        <button disabled={pending} className="h-11 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50">
+        <button disabled={pending} className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
           {pending ? "Creating…" : "Create records"}
         </button>
       </form>
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`mt-2 text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+        <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 mt-2 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {state.message}
         </p>
       )}

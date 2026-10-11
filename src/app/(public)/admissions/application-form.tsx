@@ -1,12 +1,9 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Field, FormSection, inputClass, textareaClass } from "@/components/form-parts";
+import { Field, FormSection, fileInputClass, inputClass, textareaClass } from "@/components/form-parts";
 import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { submitApplication, type ApplyState } from "./actions";
-
-const fileClass =
-  "w-full rounded-lg border border-input bg-white p-2 text-sm file:me-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:font-medium file:text-primary";
 
 export function ApplicationForm() {
   const [state, formAction, pending] = useActionState<ApplyState, FormData>(submitApplication, {
@@ -89,7 +86,7 @@ export function ApplicationForm() {
           <input name="student_phone" type="tel" autoComplete="off" className={inputClass} />
         </Field>
         <Field label="Passport photo (JPG, PNG or WebP, max 2 MB)" className="md:col-span-2">
-          <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className={fileClass} />
+          <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className={fileInputClass} />
         </Field>
       </FormSection>
 

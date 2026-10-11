@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { createStudentLoginsBatch } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 // One password box + one button for the next batch of students without a login.
 export function BulkLoginForm({ batch, remaining }: { batch: number; remaining: number }) {
@@ -22,13 +23,13 @@ export function BulkLoginForm({ batch, remaining }: { batch: number; remaining: 
         minLength={6}
         autoComplete="off"
         placeholder="Enter the password"
-        className="h-11 rounded-md border bg-background px-3 text-base"
+        className={controlClass}
       />
-      <button disabled={pending} className="h-11 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Creating logins… please wait" : `Create logins for the next ${next} student${next === 1 ? "" : "s"}`}
       </button>
       {result && (
-        <div role={result.ok ? "status" : "alert"} className={`text-sm ${result.ok ? "text-primary" : "text-destructive"}`}>
+        <div role={result.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           <p>{result.message}</p>
           {result.failures.length > 0 && (
             <ul className="mt-1 list-disc ps-5">

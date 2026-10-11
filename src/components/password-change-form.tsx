@@ -1,10 +1,11 @@
 "use client";
 
 import { startTransition, useActionState, useEffect, useRef } from "react";
+import { controlClass } from "@/components/form-parts";
 
 type Result = { ok: boolean; message: string } | null;
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 // "New password + type it again" for the signed-in user. Used on the student profile and on /portal/account;
 // the action decides who may call it (see changePassword / changeOwnPassword).
@@ -39,7 +40,7 @@ export function PasswordChangeForm({ action }: { action: (prev: Result, formData
           {result.message}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Saving…" : "Change password"}
       </button>
     </form>

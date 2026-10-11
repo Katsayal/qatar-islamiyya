@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { PortalBanner } from "@/components/portal-banner";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
@@ -35,7 +36,7 @@ export default async function StudentHome() {
   return (
     <div className="max-w-xl space-y-6">
       {!ownPassword && (
-        <p className="rounded-lg border border-amber-500/50 bg-green-500/10 p-3 text-sm">
+        <p className="rounded-xl border border-gold/60 bg-gold/15 p-4 text-sm">
           You are using the password the school gave you. You can set your own in{" "}
           <Link href="/portal/student/profile#password" className="font-medium text-primary underline-offset-4 hover:underline">
             your profile
@@ -43,15 +44,22 @@ export default async function StudentHome() {
           .
         </p>
       )}
-      <div className="flex items-center gap-4">
-        {photoUrl && (
-          <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-lg object-cover" />
-        )}
-        <div className="min-w-0">
-          <h1 className="text-xl font-semibold">Assalamu alaykum, {profile.full_name}</h1>
-          {s && <p className="text-sm text-muted-foreground">Admission no. {s.admission_no}</p>}
-        </div>
-      </div>
+      <PortalBanner
+        title={`Assalamu alaykum, ${profile.full_name}`}
+        subtitle={s ? `Admission no. ${s.admission_no}` : undefined}
+        photo={
+          photoUrl ? (
+            <Image
+              src={photoUrl}
+              alt=""
+              width={80}
+              height={80}
+              unoptimized
+              className="size-20 shrink-0 rounded-lg border-2 border-gold object-cover"
+            />
+          ) : undefined
+        }
+      />
 
       {!s && <p className="text-sm text-muted-foreground">Your student record is not linked yet. Please ask the office.</p>}
 
@@ -69,7 +77,7 @@ export default async function StudentHome() {
           {(s.classes?.program === "tahfiz" || s.classes?.program === "maahad") && (
             <Link
               href="/portal/student/hifz"
-              className="flex h-11 items-center justify-center rounded-md bg-primary text-sm font-medium text-primary-foreground"
+              className="flex h-12 items-center justify-center rounded-lg bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
             >
               My hifz progress
             </Link>
@@ -77,14 +85,14 @@ export default async function StudentHome() {
           {s.classes?.program === "barnamaj" && (
             <Link
               href="/portal/student/barnamaj"
-              className="flex h-11 items-center justify-center rounded-md bg-primary text-sm font-medium text-primary-foreground"
+              className="flex h-12 items-center justify-center rounded-lg bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
             >
               My Barnamaj record
             </Link>
           )}
           <Link
             href="/portal/student/profile"
-            className="flex h-11 items-center justify-center rounded-md border text-sm font-medium hover:bg-muted"
+            className="flex h-12 items-center justify-center rounded-xl border bg-card font-medium text-primary hover:border-primary"
           >
             My profile
           </Link>
@@ -99,7 +107,7 @@ async function ClassCard({ name, program }: { name: string | null; program: stri
   const { data: names } = await supabase.rpc("my_class_teacher_names");
 
   return (
-    <section className="rounded-lg border p-4">
+    <section className="rounded-xl border bg-card p-4 shadow-sm">
       <h2 className="font-semibold">My class</h2>
       <p className="mt-1 text-sm">
         {name ?? "No class yet"}
@@ -126,7 +134,7 @@ async function TermAndFees({ studentId }: { studentId: string }) {
 
   if (!term) {
     return (
-      <section className="rounded-lg border p-4">
+      <section className="rounded-xl border bg-card p-4 shadow-sm">
         <h2 className="font-semibold">This term</h2>
         <p className="mt-1 text-sm text-muted-foreground">No term is running today.</p>
       </section>
@@ -142,7 +150,7 @@ async function TermAndFees({ studentId }: { studentId: string }) {
   const label = fee ? FEE_LABEL[fee.status] : null;
 
   return (
-    <section className="rounded-lg border p-4">
+    <section className="rounded-xl border bg-card p-4 shadow-sm">
       <h2 className="font-semibold">
         Term {term.number} · {term.academic_years?.name}
       </h2>
@@ -176,12 +184,12 @@ async function Announcements() {
   return (
     <section>
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-semibold">Announcements</h2>
+        <h2 className="text-lg font-semibold">Announcements</h2>
         <Link href="/portal/student/news" className="text-sm text-primary underline-offset-4 hover:underline">
           All news
         </Link>
       </div>
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {(posts ?? []).map((p) => (
           <li key={p.id} className="flex items-start justify-between gap-3 p-3 text-sm">
             <Link href={`/portal/student/news/${p.id}`} className="min-w-0 text-primary underline-offset-4 hover:underline">

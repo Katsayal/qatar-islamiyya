@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { savePost } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export type PostDefaults = {
   id?: string;
@@ -13,7 +14,7 @@ export type PostDefaults = {
   hasCover: boolean;
 };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -56,7 +57,7 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
         </Field>
       </div>
       <Field label="Text">
-        <textarea name="body" rows={12} defaultValue={defaults.body} className="rounded-md border bg-background p-3 text-base" />
+        <textarea name="body" rows={12} defaultValue={defaults.body} className={`${controlClass} h-auto p-3 text-base`} />
         <span className="text-xs text-muted-foreground">
           Markdown: **bold**, *italic*, # Heading, - list item, [link text](https://…). A blank line starts a new paragraph.
         </span>
@@ -76,11 +77,11 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
         Published (untick to keep as a draft)
       </label>
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Saving…" : "Save post"}
       </button>
     </form>

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
+import { controlClass } from "@/components/form-parts";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -16,7 +18,7 @@ const statuses = ["active", "graduated", "withdrawn", "archived", "all"];
 
 type Search = { q?: string; program?: string; class?: string; status?: string; page?: string };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export default async function StudentsPage({ searchParams }: { searchParams: Promise<Search> }) {
   await requireRole("staff");
@@ -70,7 +72,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Students</h1>
+        <h1 className="text-2xl font-semibold gold-bar">Students</h1>
         <Link href="/portal/students/new" className={buttonVariants() + " h-10 px-4"}>
           Add student
         </Link>
@@ -117,8 +119,8 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
           ))}
         </select>
         <div className="flex gap-2 md:col-span-5">
-          <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
-          <Link href="/portal/students" className="flex h-11 items-center rounded-md border px-5">Reset</Link>
+          <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
+          <Link href="/portal/students" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
         </div>
       </form>
 
@@ -126,7 +128,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         {total} student{total === 1 ? "" : "s"} found
       </p>
 
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {(students ?? []).map((s) => {
           const c = s.class_id ? classById.get(s.class_id) : undefined;
           return (
@@ -140,7 +142,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
               </div>
               <div className="shrink-0 text-end text-xs capitalize text-muted-foreground">
                 <p>{s.gender}</p>
-                {s.status !== "active" && <p>{s.status}</p>}
+                {s.status !== "active" && <StatusBadge tone="muted">{s.status}</StatusBadge>}
               </div>
             </Link>
           </li>
@@ -155,9 +157,9 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
 
       {lastPage > 1 && (
         <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="rounded-md border px-4 py-2">← Previous</Link> : <span />}
+          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
           <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="rounded-md border px-4 py-2">Next →</Link> : <span />}
+          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
         </nav>
       )}
     </div>

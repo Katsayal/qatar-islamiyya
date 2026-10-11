@@ -120,12 +120,18 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 ## 8. Styling
 - Tailwind + shadcn/ui, mobile-first.
 - Fonts via `next/font/google`: **Noto Sans** (supports Hausa ɓ ɗ ƙ ƴ), **Noto Naskh Arabic** (`font-arabic`), **Amiri Quran** (`font-quran`).
-- Brand colours as CSS variables (placeholders until the logo arrives).
+- **Brand tokens** (`globals.css`, taken from the logo): `--primary` deep green, `--gold` (`bg-gold`, `text-gold`), `--deep` (`bg-deep`, the darkest green), warm page background (`--background` ≈ `oklch(0.962 0.012 100)`, `--muted` a step darker; cards are white `bg-card`). No dark mode (the `.dark` block is unused). Two CSS helpers: `.pattern-star` (faint gold eight-point star on dark green; put it on its own layer if the element also has a gradient, both use `background-image`) and `.gold-bar` (short gold bar under a page title: add it to every portal `<h1>`).
+- **Card look:** `rounded-xl border bg-card shadow-sm`. Primary button: `rounded-lg bg-primary ... hover:bg-primary/90`. Secondary: `rounded-lg border bg-card`.
+- **Shared pieces** (`src/components/`): `form-parts.tsx` (`inputClass` = public forms, full width, h-12; `controlClass` = portal fields, no width, h-11, so filter bars keep their layout; `textareaClass`, `fileInputClass`, `Field`, `FormSection`; use these, do not hand-write field classes), `status-badge.tsx` (coloured pill for any status: tone good / warn / bad / muted, text always says the status), `progress-bar.tsx`, `portal-title.tsx`, `portal-banner.tsx` (green greeting band on the portal homes), `page-header.tsx` (green title band on public pages), `section-heading.tsx` (gold label + title), `cta-band.tsx` (Apply / WhatsApp / Call), `nav-link.tsx` (active-page link: `bar` public, `menu` phone card, `pill` portal bar; the home links `/`, `/portal`, `/portal/student` match exactly, others match the path and its children).
+- **Public pages:** `PageHeader` band first, outside any `<Suspense>` (so the title renders instantly), then cards; 32px (`gap-8`, `pt-8`) between the band and the first card. **Portal shell:** deep-green header (logo, name and role, Log out, ☰), desktop menu as pills with a gold active pill, mobile menu as a rounded scrolling card.
+- **Not restyled on purpose:** `report-card.tsx` (print / Save as PDF layout).
 - Logical spacing classes so an Arabic (RTL) version can be added later.
 
 ## 9. Environments & deploy
 - **No local Supabase / Docker** (simpler on Windows).
 - Dev: `npm run dev` on your machine, connected to a free Supabase cloud **DEV project** (`.env.local`).
+- **Stale dev cache:** on this machine Turbopack's dev cache can keep serving an old compiled copy of a CSS or component file after it changed on disk (seen three times). Symptom: the source is right but the page shows the old styling. Fix: stop the dev server, delete `.next/dev` (gitignored), start it again, refresh the phone.
+- Testing in a browser: pages cannot be loaded in an iframe (`X-Frame-Options: DENY`, F.1), so check each page by navigating to it. Do not submit a login form before the page has hydrated (a native submit puts the login and password in the URL).
 - Phone testing: open the "Network:" address the dev server prints (e.g. `http://192.168.x.x:3000`) on a phone on the same Wi-Fi/hotspot. `allowedDevOrigins` in `next.config.ts` allows the private ranges (`192.168.*.*`, `172.*.*.*`, `10.*.*.*`); without it Next blocks the dev scripts and client features (menu outside-tap, forms) don't run. Restart the dev server after changing it.
 - Prod: Netlify (connected to GitHub, auto-deploy `main`, preview deploys for branches) + a separate Supabase **PROD project**, created at go-live.
 - Supabase free tier allows 2 active projects (DEV + PROD). Free projects pause after ~1 week of no activity; just restore from the dashboard.

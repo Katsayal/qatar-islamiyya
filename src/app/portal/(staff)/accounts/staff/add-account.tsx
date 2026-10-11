@@ -3,8 +3,9 @@
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { createStaffAccount, type Result } from "../actions";
+import { controlClass } from "@/components/form-parts";
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 // Staff can add teachers only; the owner can also add staff (the server checks this too).
 export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
@@ -42,7 +43,7 @@ export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
         <input name="password" required minLength={6} autoComplete="off" className={input} />
       </label>
       {state.message && (
-        <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+        <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {state.message}
         </p>
       )}

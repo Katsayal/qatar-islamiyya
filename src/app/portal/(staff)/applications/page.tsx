@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -27,7 +28,7 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Applications</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Applications</h1>
       <p className="mt-1 text-sm text-muted-foreground">{newCount ?? 0} new</p>
 
       <nav className="mt-3 flex flex-wrap gap-2 text-sm">
@@ -35,14 +36,14 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
           <Link
             key={s}
             href={`/portal/applications?status=${s}`}
-            className={`rounded-full border px-3 py-1 capitalize ${s === status ? "bg-primary text-primary-foreground" : ""}`}
+            className={`rounded-full border px-3 py-1 capitalize ${s === status ? "bg-primary text-primary-foreground" : "bg-card hover:border-primary"}`}
           >
             {s}
           </Link>
         ))}
       </nav>
 
-      <ul className="mt-4 divide-y rounded-lg border">
+      <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
         {(apps ?? []).map((a) => (
           <li key={a.id}>
             <Link href={`/portal/applications/${a.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
@@ -54,7 +55,11 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
               </div>
               <div className="shrink-0 text-end text-xs text-muted-foreground">
                 <p>{new Date(a.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}</p>
-                {a.status !== "new" && <p className="capitalize">{a.status}</p>}
+                {a.status !== "new" && (
+                  <StatusBadge tone={a.status === "accepted" ? "good" : "bad"}>
+                    <span className="capitalize">{a.status}</span>
+                  </StatusBadge>
+                )}
               </div>
             </Link>
           </li>

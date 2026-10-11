@@ -4,6 +4,7 @@ import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { saveStudent } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export type StudentDefaults = Record<
   | "admission_no" | "full_name" | "full_name_ar" | "gender" | "date_of_birth" | "admitted_on"
@@ -15,7 +16,7 @@ export type StudentDefaults = Record<
 
 type ClassOption = { id: string; name: string; program: string };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 const programLabels: Record<string, string> = { tahfiz: "Tahfiz", maahad: "Ma'ahad", barnamaj: "Barnamaj" };
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -124,7 +125,7 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
       {text("guardian_local_government", "Local government")}
 
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}

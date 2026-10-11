@@ -75,7 +75,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 ## 7. Public website (mobile-first)
 | Page | Content |
 |---|---|
-| Home | Hero/welcome (some Arabic), three programs, latest news, apply CTA |
+| Home | Hero/welcome (some Arabic) and a quick-facts strip, three program cards, how admission works, school days and fees, latest news, Apply / WhatsApp / Call band, donation section |
 | About | History, vision, mission, leadership (content pending) |
 | Programs | Tahfiz, Ma'ahad, Barnamaj: what each one is, how it works, and an Apply button. No curriculum table on the site (the curriculum stays in the portal's Barnamaj books). Ends with the same Apply / WhatsApp / Call band as the home page. |
 | Admissions | Requirements & rules (English; translated from the school's Hausa original), fees, schedule, **online application**, downloadable PDF form, bank details |

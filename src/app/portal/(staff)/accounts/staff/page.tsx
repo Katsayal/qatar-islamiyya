@@ -5,6 +5,7 @@ import { resetPassword, setActive } from "../actions";
 import { AccountsTabs } from "../accounts-tabs";
 import { PasswordForm } from "../password-form";
 import { AddAccount } from "./add-account";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -19,7 +20,7 @@ const statuses = [
   { key: "disabled", label: "Disabled" },
   { key: "all", label: "Any status" },
 ];
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 type Search = { role?: string; status?: string; q?: string };
 
@@ -51,7 +52,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
   return (
     <div className="max-w-2xl">
       <AccountsTabs active="staff" />
-      <h1 className="text-xl font-semibold">Teachers &amp; staff</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Teachers &amp; staff</h1>
 
       <form className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
         <input name="q" defaultValue={q} placeholder="Search by name" className={input} />
@@ -65,13 +66,13 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
             <option key={s.key} value={s.key}>{s.label}</option>
           ))}
         </select>
-        <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
+        <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
       </form>
 
       <p className="mt-4 text-sm text-muted-foreground">
         {list.length} {list.length === 1 ? "person" : "people"}
       </p>
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {list.map((p) => {
           const canManage = me.is_owner || p.role === "teacher";
           const classes = p.class_teachers.map((c) => c.classes?.name).filter(Boolean).join(", ");
@@ -103,7 +104,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
                       <PasswordForm action={resetPassword} idField="userId" id={p.id} button="Set new password" />
                       {p.id !== me.id && (
                         <form action={setActive.bind(null, p.id, !p.active)}>
-                          <button className="h-11 w-full rounded-md border px-4 text-sm hover:bg-muted">
+                          <button className="h-11 w-full rounded-lg border px-4 text-sm hover:bg-muted bg-card">
                             {p.active ? "Disable account" : "Enable account"}
                           </button>
                         </form>
@@ -121,7 +122,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
       </ul>
 
       <h2 className="mt-8 font-semibold">Add an account</h2>
-      <div className="mt-3 rounded-lg border p-4">
+      <div className="mt-3 rounded-xl border p-4 bg-card shadow-sm">
         <AddAccount canCreateStaff={me.is_owner} />
       </div>
     </div>

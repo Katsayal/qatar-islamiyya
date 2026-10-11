@@ -24,7 +24,7 @@ export async function Corrections({ show: showParam }: { show?: string }) {
           <Link
             key={f}
             href={`/portal/messages?kind=corrections&show=${f}`}
-            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : ""}`}
+            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : "bg-card hover:border-primary"}`}
           >
             {f}
           </Link>
@@ -33,7 +33,7 @@ export async function Corrections({ show: showParam }: { show?: string }) {
 
       <ul className="mt-4 space-y-3">
         {(requests ?? []).map((r) => (
-          <li key={r.id} className="rounded-lg border p-4">
+          <li key={r.id} className="rounded-xl border p-4 bg-card shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 {r.students ? (
@@ -51,7 +51,7 @@ export async function Corrections({ show: showParam }: { show?: string }) {
             </div>
             <p className="mt-2 whitespace-pre-line text-sm">{r.message}</p>
             <form action={setCorrectionDone.bind(null, r.id, r.status !== "done")} className="mt-3">
-              <button className="h-10 rounded-md border px-4 text-sm hover:bg-muted">
+              <button className="h-10 rounded-lg border px-4 text-sm hover:bg-muted bg-card">
                 {r.status === "done" ? "Reopen" : "Mark done"}
               </button>
             </form>

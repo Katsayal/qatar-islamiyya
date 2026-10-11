@@ -6,6 +6,7 @@ import { linesToPages, maahadPace } from "@/lib/hifz-progress";
 import { TOTAL_PAGES } from "@/lib/quran";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
+import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -49,7 +50,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
       <Link href="/portal/classes" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Classes
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">{c.name}</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">{c.name}</h1>
       <p className="text-sm capitalize text-muted-foreground">
         {c.program}
         {c.level ? ` · Level ${c.level}` : ""}
@@ -60,12 +61,12 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
         {c.program === "barnamaj" && (
           <Link
             href={`/portal/classes/${c.id}/attendance`}
-            className="flex h-12 items-center justify-center rounded-md bg-primary font-medium text-primary-foreground"
+            className="flex h-12 items-center justify-center rounded-lg bg-primary font-medium text-primary-foreground hover:bg-primary/90"
           >
             Take attendance
           </Link>
         )}
-        <Link href={`/portal/classes/${c.id}/comments`} className="flex h-12 items-center justify-center rounded-md border font-medium hover:bg-muted">
+        <Link href={`/portal/classes/${c.id}/comments`} className="flex h-12 items-center justify-center rounded-lg border font-medium hover:bg-muted bg-card">
           Term comments
         </Link>
       </div>
@@ -77,7 +78,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
         </p>
       )}
 
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {rows.map((s) => (
           <li key={s.id} className="flex items-center gap-2 pe-3">
             <Link href={`/portal/classes/${c.id}/students/${s.id}`} className="min-w-0 flex-1 p-3 hover:bg-muted">
@@ -89,8 +90,10 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
                 <p className="mt-1 text-sm">
                   {s.total} / {TOTAL_PAGES} pages ({Math.round((s.total / TOTAL_PAGES) * 1000) / 10}%)
                   {s.pace && (
-                    <span className={`ms-2 rounded-full px-2 py-0.5 text-xs ${s.pace.onTrack ? "bg-primary/10 text-primary" : "bg-destructive/10 text-destructive"}`}>
-                      {s.pace.onTrack ? "On track" : `Behind by ${Math.abs(s.pace.diff)}`}
+                    <span className="ms-2">
+                      <StatusBadge tone={s.pace.onTrack ? "good" : "bad"}>
+                        {s.pace.onTrack ? "On track" : `Behind by ${Math.abs(s.pace.diff)}`}
+                      </StatusBadge>
                     </span>
                   )}
                 </p>
@@ -99,7 +102,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
             {hifz && (
               <Link
                 href={`/portal/classes/${c.id}/students/${s.id}/hifz`}
-                className="flex h-10 shrink-0 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted"
+                className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card"
               >
                 Record
               </Link>

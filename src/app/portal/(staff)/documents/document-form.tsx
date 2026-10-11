@@ -2,10 +2,11 @@
 
 import { startTransition, useActionState } from "react";
 import { saveDocument } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 export type DocumentDefaults = { id?: string; title: string; category: string };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -57,11 +58,11 @@ export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
         </>
       )}
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? (editing ? "Saving…" : "Uploading…") : editing ? "Save changes" : "Upload document"}
       </button>
     </form>

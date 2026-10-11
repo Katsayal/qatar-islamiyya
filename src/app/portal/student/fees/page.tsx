@@ -1,5 +1,8 @@
 import { Suspense } from "react";
 import { BankDetails } from "@/components/bank-details";
+import { PortalTitle } from "@/components/portal-title";
+import { ProgressBar } from "@/components/progress-bar";
+import { StatusBadge } from "@/components/status-badge";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
@@ -9,15 +12,16 @@ import { ProofForm } from "./proof-form";
 export const instant = true;
 
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
-const statusLabel: Record<string, { text: string; className: string }> = {
-  unpaid: { text: "Unpaid", className: "text-destructive" },
-  part: { text: "Part-paid", className: "text-amber-600" },
-  paid: { text: "Paid", className: "text-primary" },
+type Tone = "good" | "warn" | "bad";
+const statusLabel: Record<string, { text: string; tone: Tone }> = {
+  unpaid: { text: "Unpaid", tone: "bad" },
+  part: { text: "Part-paid", tone: "warn" },
+  paid: { text: "Paid", tone: "good" },
 };
-const proofLabel: Record<string, { text: string; className: string }> = {
-  pending: { text: "Waiting for the office", className: "text-amber-600" },
-  verified: { text: "Checked", className: "text-primary" },
-  rejected: { text: "Not accepted", className: "text-destructive" },
+const proofLabel: Record<string, { text: string; tone: Tone }> = {
+  pending: { text: "Waiting for the office", tone: "warn" },
+  verified: { text: "Checked", tone: "good" },
+  rejected: { text: "Not accepted", tone: "bad" },
 };
 
 export default async function StudentFeesPage() {
@@ -45,19 +49,22 @@ export default async function StudentFeesPage() {
 
   return (
     <div className="max-w-xl space-y-6">
-      <h1 className="text-xl font-semibold">School fees</h1>
+      <PortalTitle title="School fees" />
 
       <section>
         <ul className="space-y-3">
           {rows.map((f) => {
             const st = statusLabel[f.status];
             return (
-              <li key={f.id} className="rounded-lg border p-4 text-sm">
+              <li key={f.id} className="rounded-xl border p-4 text-sm bg-card shadow-sm">
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-medium">{f.terms?.academic_years?.name} · Term {f.terms?.number}</p>
-                  <span className={`font-medium ${st?.className ?? ""}`}>{st?.text ?? f.status}</span>
+                  <StatusBadge tone={st?.tone ?? "warn"}>{st?.text ?? f.status}</StatusBadge>
                 </div>
-                <p className="mt-1 text-muted-foreground">
+                <div className="mt-3">
+                  <ProgressBar value={f.amount_paid} max={f.amount_due} label="Fee paid so far" />
+                </div>
+                <p className="mt-2 text-muted-foreground">
                   Due {naira(f.amount_due)} · Paid {naira(f.amount_paid)} · Left {naira(Math.max(0, f.amount_due - f.amount_paid))}
                 </p>
                 {f.note && <p className="mt-1 text-muted-foreground">{f.note}</p>}
@@ -69,7 +76,7 @@ export default async function StudentFeesPage() {
       </section>
 
       <section>
-        <h2 className="font-semibold">Pay by bank transfer</h2>
+        <h2 className="text-lg font-semibold">Pay by bank transfer</h2>
         <Suspense fallback={null}>
           <BankDetails />
         </Suspense>
@@ -77,7 +84,7 @@ export default async function StudentFeesPage() {
 
       {!!rows.length && (
         <section>
-          <h2 className="font-semibold">I have paid</h2>
+          <h2 className="text-lg font-semibold">I have paid</h2>
           <p className="mb-3 mt-1 text-sm text-muted-foreground">
             Upload your receipt. The office checks it and updates your fees. This does not change your balance by itself.
           </p>
@@ -87,16 +94,16 @@ export default async function StudentFeesPage() {
 
       {!!proofs?.length && (
         <section>
-          <h2 className="font-semibold">My proofs</h2>
-          <ul className="mt-2 divide-y rounded-lg border text-sm">
+          <h2 className="text-lg font-semibold">My proofs</h2>
+          <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
             {proofs.map((p) => (
               <li key={p.id} className="flex items-center justify-between gap-3 p-3">
                 <span>
                   {new Date(p.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })} · Term {p.terms?.number}
                 </span>
-                <span className={`shrink-0 text-xs font-medium ${proofLabel[p.status]?.className ?? ""}`}>
+                <StatusBadge tone={proofLabel[p.status]?.tone ?? "warn"}>
                   {proofLabel[p.status]?.text ?? p.status}
-                </span>
+                </StatusBadge>
               </li>
             ))}
           </ul>

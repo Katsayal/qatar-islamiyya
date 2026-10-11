@@ -21,13 +21,16 @@ export default async function StudentNewsPostPage({ params }: { params: Promise<
 
   return (
     <article className="max-w-3xl">
-      <Link href="/portal/student/news" className="text-sm text-primary underline-offset-4 hover:underline">
+      <Link
+        href="/portal/student/news"
+        className="inline-flex h-10 items-center rounded-full border bg-card px-4 text-sm font-medium text-primary hover:border-primary"
+      >
         ← News
       </Link>
       {post.cover_path && (
-        <Image src={siteImageUrl(post.cover_path)} alt="" width={960} height={540} className="mt-4 aspect-video w-full rounded-lg object-cover" />
+        <Image src={siteImageUrl(post.cover_path)} alt="" width={960} height={540} className="mt-4 aspect-video w-full rounded-xl object-cover shadow-sm" />
       )}
-      <h1 className="mt-4 text-2xl font-semibold">{post.title}</h1>
+      <h1 className="mt-4 text-2xl font-semibold gold-bar">{post.title}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
       </p>

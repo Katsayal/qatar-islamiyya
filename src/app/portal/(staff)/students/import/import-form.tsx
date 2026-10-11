@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { checkCsv, importCsv, type Report } from "./actions";
 
-const button = "h-11 rounded-md px-5 text-sm font-medium disabled:opacity-50";
+const button = "h-11 rounded-lg px-5 text-sm font-medium disabled:opacity-50";
 
 export function ImportForm() {
   const [text, setText] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export function ImportForm() {
 
   if (done && !done.error) {
     return (
-      <p role="status" className="rounded-lg border bg-muted p-4">
+      <p role="status" className="rounded-xl border bg-muted p-4">
         Imported {done.imported} student{done.imported === 1 ? "" : "s"}.{" "}
         <Link href="/portal/students" className="text-primary underline-offset-4 hover:underline">
           See the list
@@ -41,7 +41,7 @@ export function ImportForm() {
       </button>
 
       {report && (
-        <div className="rounded-lg border p-4 text-sm">
+        <div className="rounded-xl border p-4 text-sm bg-card shadow-sm">
           <p className="font-medium">
             {report.rowCount} row{report.rowCount === 1 ? "" : "s"} read,{" "}
             {report.errors.length ? `${report.errors.length} problem${report.errors.length === 1 ? "" : "s"}` : "no problems"}

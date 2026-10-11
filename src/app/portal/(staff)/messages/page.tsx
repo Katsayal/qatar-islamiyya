@@ -28,10 +28,10 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
     supabase.from("correction_requests").select("id", { count: "exact", head: true }).eq("status", "open"),
   ]);
 
-  const tab = (active: boolean) => `rounded-md border px-3 py-2 text-sm ${active ? "bg-primary text-primary-foreground" : ""}`;
+  const tab = (active: boolean) => `rounded-lg border px-3 py-2 text-sm ${active ? "bg-primary text-primary-foreground" : "bg-card"}`;
   const heading = (
     <>
-      <h1 className="text-xl font-semibold">Messages</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Messages</h1>
       <nav className="mt-3 flex gap-2">
         <Link href="/portal/messages" className={tab(!corrections)}>
           Website ({openCount ?? 0})
@@ -67,7 +67,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
           <Link
             key={f}
             href={`/portal/messages?show=${f}`}
-            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : ""}`}
+            className={`rounded-full border px-3 py-1 capitalize ${f === show ? "bg-primary text-primary-foreground" : "bg-card hover:border-primary"}`}
           >
             {f}
           </Link>
@@ -76,7 +76,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
 
       <ul className="mt-4 space-y-3">
         {(messages ?? []).map((m) => (
-          <li key={m.id} className="rounded-lg border p-4">
+          <li key={m.id} className="rounded-xl border p-4 bg-card shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="font-medium">{m.name}</p>
@@ -92,7 +92,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
             </div>
             <p className="mt-2 whitespace-pre-line text-sm">{m.message}</p>
             <form action={setHandled.bind(null, m.id, !m.handled)} className="mt-3">
-              <button className="h-10 rounded-md border px-4 text-sm hover:bg-muted">
+              <button className="h-10 rounded-lg border px-4 text-sm hover:bg-muted bg-card">
                 {m.handled ? "Mark as not handled" : "Mark as handled"}
               </button>
             </form>

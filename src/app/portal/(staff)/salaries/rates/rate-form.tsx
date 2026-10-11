@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { saveRate, type Result } from "../actions";
+import { controlClass } from "@/components/form-parts";
 
 // One person's fixed monthly salary.
 export function RateForm({ profileId, amount }: { profileId: string; amount: number | null }) {
@@ -26,16 +27,16 @@ export function RateForm({ profileId, amount }: { profileId: string; amount: num
           inputMode="numeric"
           required
           defaultValue={amount ?? ""}
-          className="h-11 rounded-md border bg-background px-3 text-base"
+          className={controlClass}
         />
       </label>
       <p className="text-xs text-muted-foreground">A new amount applies to months you set after saving. Months already set keep theirs.</p>
       <div className="flex items-center gap-3">
-        <button disabled={pending} className="h-11 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50">
+        <button disabled={pending} className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
           {pending ? "Saving…" : "Save"}
         </button>
         {state.message && (
-          <p role={state.ok ? "status" : "alert"} className={`text-sm ${state.ok ? "text-primary" : "text-destructive"}`}>
+          <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
             {state.message}
           </p>
         )}

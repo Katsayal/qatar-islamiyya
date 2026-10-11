@@ -1,10 +1,14 @@
-// Shared look for the public forms (application, and later contact): one place for the field styles.
+// Shared look for the form fields (public forms and the portal): one place for the field styles.
 
 const base =
-  "w-full rounded-lg border border-input bg-white px-3 text-base shadow-xs outline-none transition-colors focus:border-primary focus:ring-3 focus:ring-primary/20";
+  "rounded-lg border border-input bg-white px-3 text-base shadow-xs outline-none transition-colors focus:border-primary focus:ring-3 focus:ring-primary/20";
 
-export const inputClass = `${base} h-12`;
-export const textareaClass = `${base} py-2.5`;
+// Public forms: fields fill their label. controlClass = same look without a width (portal filter bars).
+export const inputClass = `${base} h-12 w-full`;
+export const textareaClass = `${base} w-full py-2.5`;
+export const controlClass = `${base} h-11`;
+export const fileInputClass =
+  "w-full rounded-lg border border-input bg-white p-2 text-sm file:me-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:font-medium file:text-primary";
 
 export function Field({
   label,

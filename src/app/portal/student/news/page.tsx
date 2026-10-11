@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,14 +18,14 @@ export default async function StudentNewsPage() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-xl font-semibold">News</h1>
+      <PortalTitle title="News" />
       {posts.length === 0 ? (
-        <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">No news yet.</p>
+        <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No news yet.</p>
       ) : (
-        <ul className="mt-4 divide-y rounded-lg border">
+        <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
           {posts.map((p) => (
             <li key={p.id}>
-              <Link href={`/portal/student/news/${p.id}`} className="block p-3 hover:bg-muted">
+              <Link href={`/portal/student/news/${p.id}`} className="block p-4 hover:bg-secondary">
                 <p className="font-medium">{p.title}</p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}

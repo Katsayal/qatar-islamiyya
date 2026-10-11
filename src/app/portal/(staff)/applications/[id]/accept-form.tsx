@@ -3,8 +3,9 @@
 import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { acceptApplication } from "../actions";
+import { controlClass } from "@/components/form-parts";
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export function AcceptForm({
   id,
@@ -47,7 +48,7 @@ export function AcceptForm({
         Admitted on
         <input name="admitted_on" type="date" required defaultValue={today} className={input} />
       </label>
-      <div className="mt-1 flex flex-col gap-3 rounded-md border p-3">
+      <div className="mt-1 flex flex-col gap-3 rounded-lg border p-3 bg-card">
         <p className="text-sm font-medium">Payment</p>
         <label className="flex items-start gap-2 text-sm">
           <input name="form_fee_received" type="checkbox" required className="mt-1 size-4" />
@@ -72,7 +73,7 @@ export function AcceptForm({
         )}
       </div>
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </p>
       )}

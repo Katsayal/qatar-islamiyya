@@ -4,11 +4,12 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { MarksForm } from "./marks-form";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export default async function BookMarksPage({
   params,
@@ -62,7 +63,7 @@ export default async function BookMarksPage({
                 <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
               ))}
             </select>
-            <button className="h-11 rounded-md border px-5 hover:bg-muted">Go</button>
+            <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
           </form>
           <p className="mt-3 text-sm text-muted-foreground">
             Marks out of 100. Leave a box empty to skip that student. To correct a mark, type the new one.
@@ -71,12 +72,12 @@ export default async function BookMarksPage({
             {students?.length ? (
               <MarksForm key={term.id} bookId={id} termId={term.id} students={students} initial={initial} />
             ) : (
-              <p className="rounded-lg border p-4 text-sm text-muted-foreground">No active Barnamaj students.</p>
+              <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active Barnamaj students.</p>
             )}
           </div>
         </>
       ) : (
-        <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">No terms are set up yet. Ask staff (Academic setup).</p>
+        <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No terms are set up yet. Ask staff (Academic setup).</p>
       )}
     </div>
   );

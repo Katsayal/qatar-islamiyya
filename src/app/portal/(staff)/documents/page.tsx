@@ -8,9 +8,9 @@ export const instant = true;
 type Row = { id: string; title: string; category: string | null; created_at: string };
 
 function DocumentList({ rows, staff }: { rows: Row[]; staff: boolean }) {
-  if (rows.length === 0) return <p className="mt-2 rounded-lg border p-4 text-sm text-muted-foreground">No documents yet.</p>;
+  if (rows.length === 0) return <p className="mt-2 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No documents yet.</p>;
   return (
-    <ul className="mt-2 divide-y rounded-lg border">
+    <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
       {rows.map((d) => (
         <li key={d.id} className="flex items-center gap-2 p-3">
           <div className="min-w-0 flex-1">
@@ -20,11 +20,11 @@ function DocumentList({ rows, staff }: { rows: Row[]; staff: boolean }) {
               {new Date(d.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
             </p>
           </div>
-          <a href={`/portal/documents/${d.id}/download`} className="flex h-10 shrink-0 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted">
+          <a href={`/portal/documents/${d.id}/download`} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
             Download
           </a>
           {staff && (
-            <Link href={`/portal/documents/${d.id}/edit`} className="flex h-10 shrink-0 items-center rounded-md border px-3 text-sm hover:bg-muted">
+            <Link href={`/portal/documents/${d.id}/edit`} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm hover:bg-muted bg-card">
               Edit
             </Link>
           )}
@@ -49,9 +49,9 @@ export default async function DocumentsPage() {
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Documents</h1>
+        <h1 className="text-2xl font-semibold gold-bar">Documents</h1>
         {staff && (
-          <Link href="/portal/documents/new" className="flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+          <Link href="/portal/documents/new" className="flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
             Add document
           </Link>
         )}

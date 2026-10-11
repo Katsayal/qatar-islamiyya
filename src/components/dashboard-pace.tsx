@@ -15,7 +15,7 @@ export async function DashboardPace() {
     supabase.from("classes").select("id, name").eq("program", "maahad").eq("active", true).order("sort_order").order("name"),
   ]);
 
-  const title = <h2 className="font-semibold">Ma&apos;ahad pace</h2>;
+  const title = <h2 className="text-lg font-semibold">Ma&apos;ahad pace</h2>;
   if (!year) {
     return (
       <section>
@@ -56,7 +56,7 @@ export async function DashboardPace() {
             this year&apos;s pace.
           </p>
           {behind.length > 0 && (
-            <ul className="mt-2 divide-y rounded-lg border text-sm">
+            <ul className="mt-3 divide-y rounded-xl border bg-card text-sm shadow-sm">
               {behind.slice(0, SHOWN).map((s) => (
                 <li key={s.id}>
                   <Link href={`/portal/classes/${s.classId}/students/${s.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">

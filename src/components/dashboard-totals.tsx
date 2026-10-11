@@ -26,16 +26,16 @@ export async function DashboardTotals() {
 
   return (
     <section>
-      <h2 className="font-semibold">Students</h2>
+      <h2 className="text-lg font-semibold">Students</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        <span className="text-2xl font-semibold text-foreground">{total.count ?? 0}</span> active · {boys.count ?? 0} {boys.count === 1 ? "boy" : "boys"} · {girls.count ?? 0} {girls.count === 1 ? "girl" : "girls"}
+        <span className="text-3xl font-semibold text-primary">{total.count ?? 0}</span> active · {boys.count ?? 0} {boys.count === 1 ? "boy" : "boys"} · {girls.count ?? 0} {girls.count === 1 ? "girl" : "girls"}
       </p>
 
       <ul className="mt-3 grid grid-cols-3 gap-3">
         {programs.map((p) => (
           <li key={p.key}>
-            <Link href={`/portal/students?program=${p.key}`} className="block rounded-lg border p-3 hover:bg-muted">
-              <p className="text-xl font-semibold">{perClass.filter((c) => c.program === p.key).reduce((sum, c) => sum + c.count, 0)}</p>
+            <Link href={`/portal/students?program=${p.key}`} className="block rounded-xl border bg-card p-3 shadow-sm transition-colors hover:border-primary">
+              <p className="text-2xl font-semibold text-primary">{perClass.filter((c) => c.program === p.key).reduce((sum, c) => sum + c.count, 0)}</p>
               <p className="text-xs text-muted-foreground">{p.label}</p>
             </Link>
           </li>
@@ -43,7 +43,7 @@ export async function DashboardTotals() {
       </ul>
 
       {perClass.length > 0 && (
-        <ul className="mt-3 divide-y rounded-lg border text-sm">
+        <ul className="mt-3 divide-y rounded-xl border bg-card text-sm shadow-sm">
           {perClass.map((c) => (
             <li key={c.id}>
               <Link href={`/portal/classes/${c.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">

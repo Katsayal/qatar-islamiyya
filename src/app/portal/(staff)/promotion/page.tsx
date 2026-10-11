@@ -2,11 +2,12 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PromoteForm } from "./promote-form";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export default async function PromotionPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
   await requireRole("staff");
@@ -30,8 +31,8 @@ export default async function PromotionPage({ searchParams }: { searchParams: Pr
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-xl font-semibold">Promotion</h1>
-      <p className="mt-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+      <h1 className="text-2xl font-semibold gold-bar">Promotion</h1>
+      <p className="mt-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
         Print the final term&apos;s{" "}
         <Link href="/portal/reports" className="font-medium underline underline-offset-4">report cards</Link> first. A class&apos;s cards list only the
         students who are in it now.
@@ -47,7 +48,7 @@ export default async function PromotionPage({ searchParams }: { searchParams: Pr
             </option>
           ))}
         </select>
-        <button className="h-11 rounded-md border px-5 font-medium hover:bg-muted">Show students</button>
+        <button className="h-11 rounded-lg border px-5 font-medium hover:bg-muted bg-card">Show students</button>
       </form>
 
       {from && students && (

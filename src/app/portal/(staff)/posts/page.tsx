@@ -19,16 +19,16 @@ export default async function PostsPage() {
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">News posts</h1>
-        <Link href="/portal/posts/new" className="flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+        <h1 className="text-2xl font-semibold gold-bar">News posts</h1>
+        <Link href="/portal/posts/new" className="flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
           Add post
         </Link>
       </div>
 
       {posts.length === 0 ? (
-        <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">No posts yet.</p>
+        <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No posts yet.</p>
       ) : (
-        <ul className="mt-4 divide-y rounded-lg border">
+        <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
           {posts.map((p) => (
             <li key={p.id} className="flex items-center gap-2 p-3">
               <div className="min-w-0 flex-1">
@@ -40,7 +40,7 @@ export default async function PostsPage() {
                     : "Draft"}
                 </p>
               </div>
-              <Link href={`/portal/posts/${p.id}/edit`} className="flex h-10 shrink-0 items-center rounded-md border px-3 text-sm hover:bg-muted">
+              <Link href={`/portal/posts/${p.id}/edit`} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm hover:bg-muted bg-card">
                 Edit
               </Link>
             </li>

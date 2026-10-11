@@ -3,8 +3,9 @@
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { resizeImage } from "@/lib/resize-image";
 import { uploadProof } from "./actions";
+import { controlClass, fileInputClass } from "@/components/form-parts";
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export function ProofForm({ terms, defaultTerm }: { terms: { id: string; label: string }[]; defaultTerm: string }) {
   const [result, formAction, pending] = useActionState(uploadProof, null);
@@ -34,7 +35,7 @@ export function ProofForm({ terms, defaultTerm }: { terms: { id: string; label: 
       }}
       className="flex flex-col gap-3"
     >
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Which term did you pay for?
         <select name="term_id" defaultValue={defaultTerm} className={input}>
           {terms.map((t) => (
@@ -42,17 +43,17 @@ export function ProofForm({ terms, defaultTerm }: { terms: { id: string; label: 
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Receipt or transfer screenshot
-        <input name="proof" type="file" required accept="image/jpeg,image/png,image/webp,application/pdf" className="text-sm" />
-        <span className="text-xs text-muted-foreground">JPG, PNG, WebP or PDF, up to 2 MB.</span>
+        <input name="proof" type="file" required accept="image/jpeg,image/png,image/webp,application/pdf" className={fileInputClass} />
+        <span className="text-xs font-normal text-muted-foreground">JPG, PNG, WebP or PDF, up to 2 MB.</span>
       </label>
       {result && (
-        <p role="alert" className={`text-sm ${result.ok ? "text-primary" : "text-destructive"}`}>
+        <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
           {result.message}
         </p>
       )}
-      <button disabled={pending || preparing} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending || preparing} className="h-12 rounded-lg bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
         {preparing ? "Preparing…" : pending ? "Sending…" : "Send proof of payment"}
       </button>
     </form>

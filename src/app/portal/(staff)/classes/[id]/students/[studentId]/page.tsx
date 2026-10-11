@@ -56,7 +56,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
           <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-lg object-cover" />
         )}
         <div>
-          <h1 className="text-xl font-semibold">{s.full_name}</h1>
+          <h1 className="text-2xl font-semibold gold-bar">{s.full_name}</h1>
           {s.full_name_ar && (
             <p lang="ar" dir="rtl" className="font-arabic text-lg">
               {s.full_name_ar}
@@ -69,20 +69,20 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
         <div className="mt-5 grid grid-cols-2 gap-3">
           <Link
             href={`/portal/classes/${id}/students/${s.id}/hifz`}
-            className="flex h-12 items-center justify-center rounded-md bg-primary font-medium text-primary-foreground"
+            className="flex h-12 items-center justify-center rounded-lg bg-primary font-medium text-primary-foreground hover:bg-primary/90"
           >
             Record hifz
           </Link>
           <Link
             href={`/portal/classes/${id}/students/${s.id}/hifz/history`}
-            className="flex h-12 items-center justify-center rounded-md border font-medium hover:bg-muted"
+            className="flex h-12 items-center justify-center rounded-lg border font-medium hover:bg-muted bg-card"
           >
             Hifz history
           </Link>
         </div>
       )}
 
-      <dl className="mt-5 divide-y rounded-lg border">
+      <dl className="mt-5 divide-y rounded-xl border bg-card shadow-sm">
         {rows
           .filter(([, v]) => v)
           .map(([label, value]) => (
@@ -106,7 +106,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
       {profile.role === "staff" && (
         <Link
           href={`/portal/students/${s.id}`}
-          className="mt-5 flex h-11 items-center justify-center rounded-md border text-sm font-medium hover:bg-muted"
+          className="mt-5 flex h-11 items-center justify-center rounded-lg border text-sm font-medium hover:bg-muted bg-card"
         >
           Edit student
         </Link>

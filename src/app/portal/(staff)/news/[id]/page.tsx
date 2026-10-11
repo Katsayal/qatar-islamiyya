@@ -27,7 +27,7 @@ export default async function NewsPostPage({ params }: { params: Promise<{ id: s
       {post.cover_path && (
         <Image src={siteImageUrl(post.cover_path)} alt="" width={960} height={540} className="mt-4 aspect-video w-full rounded-lg object-cover" />
       )}
-      <h1 className="mt-4 text-2xl font-semibold">{post.title}</h1>
+      <h1 className="mt-4 text-2xl font-semibold gold-bar">{post.title}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
       </p>

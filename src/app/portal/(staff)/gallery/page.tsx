@@ -21,13 +21,13 @@ export default async function GalleryAdminPage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-xl font-semibold">Gallery</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Gallery</h1>
       <div className="mt-4">
         <UploadForm />
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-6 rounded-lg border p-4 text-sm text-muted-foreground">No photos yet.</p>
+        <p className="mt-6 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No photos yet.</p>
       ) : (
         <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
           {items.map((g) => (

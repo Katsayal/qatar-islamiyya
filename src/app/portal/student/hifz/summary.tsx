@@ -1,9 +1,9 @@
+import { ProgressBar } from "@/components/progress-bar";
+import { StatusBadge } from "@/components/status-badge";
 import { linesToPages, maahadPace } from "@/lib/hifz-progress";
 import { TOTAL_PAGES } from "@/lib/quran";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
-
-const card = "rounded-lg border p-3";
 
 // Totals, this term, and (Ma'ahad) pace. The SQL functions run as the student, so RLS returns only their own row.
 export async function Summary({ classId, program }: { classId: string; program: string }) {
@@ -30,30 +30,36 @@ export async function Summary({ classId, program }: { classId: string; program: 
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 text-sm">
-        <div className={card}>
-          <p className="text-muted-foreground">Memorised (new)</p>
-          <p className="text-lg font-semibold">{total} / {TOTAL_PAGES} pages</p>
-          <p className="text-muted-foreground">{percent}% of the Qur&apos;an</p>
-        </div>
-        <div className={card}>
-          <p className="text-muted-foreground">{term ? `Term ${term.number}` : "This term"}</p>
-          <p className="text-lg font-semibold">{linesToPages(s?.term_lines ?? 0)} pages</p>
-          <p className="text-muted-foreground">
-            {s?.present_days ?? 0} days present · {s?.absent_days ?? 0} absent
-          </p>
+      <div className="rounded-xl border bg-card p-4 shadow-sm">
+        <p className="text-sm text-muted-foreground">Memorised (new)</p>
+        <p className="mt-1 flex items-baseline gap-2">
+          <span className="text-3xl font-semibold text-primary">{total}</span>
+          <span className="text-muted-foreground">/ {TOTAL_PAGES} pages</span>
+          <span className="ms-auto font-semibold">{percent}%</span>
+        </p>
+        <div className="mt-3">
+          <ProgressBar value={total} max={TOTAL_PAGES} label="Pages of the Qur'an memorised" />
         </div>
       </div>
 
+      <div className="rounded-xl border bg-card p-4 shadow-sm">
+        <p className="text-sm text-muted-foreground">{term ? `Term ${term.number}` : "This term"}</p>
+        <p className="mt-1 text-xl font-semibold">{linesToPages(s?.term_lines ?? 0)} pages</p>
+        <p className="mt-1 flex flex-wrap gap-2 text-sm">
+          <StatusBadge tone="good">{s?.present_days ?? 0} days present</StatusBadge>
+          <StatusBadge tone={s?.absent_days ? "bad" : "muted"}>{s?.absent_days ?? 0} absent</StatusBadge>
+        </p>
+      </div>
+
       {pace && (
-        <div className={`${card} text-sm`}>
-          <p className="font-medium">
-            Pace this year:{" "}
-            <span className={pace.onTrack ? "text-primary" : "text-destructive"}>
+        <div className="rounded-xl border bg-card p-4 text-sm shadow-sm">
+          <p className="flex flex-wrap items-center gap-2 font-medium">
+            Pace this year
+            <StatusBadge tone={pace.onTrack ? "good" : "bad"}>
               {pace.onTrack ? "On track" : `Behind by ${Math.abs(pace.diff)} pages`}
-            </span>
+            </StatusBadge>
           </p>
-          <p className="text-muted-foreground">
+          <p className="mt-2 text-muted-foreground">
             Expected by today: {pace.expected} pages ({pace.diff >= 0 ? "+" : ""}{pace.diff} now).
             {pace.projectedFinish
               ? ` At this rate you finish the whole Qur'an on ${pace.projectedFinish}${pace.afterYearEnd ? " (after the year ends)" : ""}.`

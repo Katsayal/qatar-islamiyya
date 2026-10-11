@@ -9,7 +9,7 @@ export default async function NewDocumentPage() {
       <Link href="/portal/documents" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Documents
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Upload document</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Upload document</h1>
       <div className="mt-4">
         <DocumentForm defaults={{ title: "", category: "" }} />
       </div>

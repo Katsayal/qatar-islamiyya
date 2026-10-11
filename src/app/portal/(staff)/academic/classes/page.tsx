@@ -32,7 +32,7 @@ export default async function ClassesPage() {
         ← Academic setup
       </Link>
       <div className="mt-2 flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Classes</h1>
+        <h1 className="text-2xl font-semibold gold-bar">Classes</h1>
         <Link href="/portal/academic/classes/new" className={buttonVariants() + " h-10 px-4"}>
           Add class
         </Link>

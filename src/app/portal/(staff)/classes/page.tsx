@@ -34,11 +34,11 @@ export default async function MyClassesPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{profile.role === "staff" ? "Classes" : "My classes"}</h1>
+      <h1 className="text-2xl font-semibold gold-bar">{profile.role === "staff" ? "Classes" : "My classes"}</h1>
       <ul className="mt-4 grid gap-3 md:grid-cols-2">
         {(classes ?? []).map((c, i) => (
           <li key={c.id}>
-            <Link href={`/portal/classes/${c.id}`} className="block rounded-lg border p-4 hover:bg-muted">
+            <Link href={`/portal/classes/${c.id}`} className="block rounded-xl border p-4 hover:bg-muted bg-card shadow-sm">
               <p className="font-medium">{c.name}</p>
               <p className="mt-1 text-sm capitalize text-muted-foreground">
                 {c.program}
@@ -50,7 +50,7 @@ export default async function MyClassesPage() {
           </li>
         ))}
         {!classes?.length && (
-          <li className="rounded-lg border p-4 text-sm text-muted-foreground">
+          <li className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">
             You are not assigned to any class yet. Ask staff to assign you.
           </li>
         )}

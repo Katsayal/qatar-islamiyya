@@ -58,14 +58,14 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
       <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Students
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">{s.full_name}</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">{s.full_name}</h1>
       <div className="mt-4">
         <StudentForm defaults={defaults} classes={classes ?? []} />
       </div>
 
       <div className="mt-8 flex flex-col gap-4">
         <form action={setStatus.bind(null, s.id, archived ? "active" : "archived")}>
-          <button className="h-11 w-full rounded-md border px-4 text-sm font-medium hover:bg-muted">
+          <button className="h-11 w-full rounded-lg border px-4 text-sm font-medium hover:bg-muted bg-card">
             {archived ? "Restore student" : "Archive student"}
           </button>
         </form>

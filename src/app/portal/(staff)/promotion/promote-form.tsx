@@ -2,16 +2,17 @@
 
 import { startTransition, useActionState } from "react";
 import { promoteStudents } from "./actions";
+import { controlClass } from "@/components/form-parts";
 
 type Student = { id: string; full_name: string; admission_no: string };
 type Destination = { id: string; name: string; program: string; level: number | null };
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 function Message({ result }: { result: { ok: boolean; message: string } | null }) {
   if (!result) return null;
   return (
-    <p role="alert" className={`text-sm ${result.ok ? "text-primary" : "text-destructive"}`}>
+    <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
       {result.message}
       {result.ok && " Remember to set the new year's fees on the Fees page."}
     </p>
@@ -38,7 +39,7 @@ export function PromoteForm({
     return (
       <div className="mt-4 flex flex-col gap-3">
         <Message result={result} />
-        <p className="rounded-lg border p-4 text-sm text-muted-foreground">No active students in {fromName}.</p>
+        <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active students in {fromName}.</p>
       </div>
     );
   }
@@ -60,7 +61,7 @@ export function PromoteForm({
 
       <fieldset>
         <legend className="text-sm font-medium">Students moving (untick anyone staying behind)</legend>
-        <ul className="mt-2 divide-y rounded-lg border">
+        <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
           {students.map((s) => (
             <li key={s.id}>
               <label className="flex min-h-12 cursor-pointer items-center gap-3 p-3">
@@ -90,7 +91,7 @@ export function PromoteForm({
       </label>
 
       <Message result={result} />
-      <button disabled={pending} className="h-12 rounded-md bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50">
+      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
         {pending ? "Moving…" : "Move students"}
       </button>
     </form>

@@ -10,7 +10,7 @@ export default async function ImportPage() {
       <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Students
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Import students (CSV)</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Import students (CSV)</h1>
 
       <ol className="mt-4 list-decimal space-y-2 ps-5 text-sm">
         <li>

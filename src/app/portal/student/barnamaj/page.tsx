@@ -1,15 +1,17 @@
 import { Suspense } from "react";
+import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { Attendance } from "./attendance";
 import { Books } from "./books";
 import { Marks } from "./marks";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 export default async function StudentBarnamajPage({ searchParams }: { searchParams: Promise<{ term?: string }> }) {
   await requireRole("student");
@@ -28,13 +30,10 @@ export default async function StudentBarnamajPage({ searchParams }: { searchPara
 
   return (
     <div className="max-w-xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">My Barnamaj</h1>
-        {s?.classes && <p className="text-sm text-muted-foreground">{s.classes.name}</p>}
-      </div>
+      <PortalTitle title="My Barnamaj" subtitle={s?.classes?.name} />
 
       {s?.classes?.program !== "barnamaj" ? (
-        <p className="text-sm text-muted-foreground">This page is for Barnamaj students.</p>
+        <p className="rounded-xl border bg-card p-4 text-sm text-muted-foreground shadow-sm">This page is for Barnamaj students.</p>
       ) : (
         <>
           <form className="flex gap-2">
@@ -43,7 +42,7 @@ export default async function StudentBarnamajPage({ searchParams }: { searchPara
                 <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
               ))}
             </select>
-            <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Show</button>
+            <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Show</button>
           </form>
 
           {term && (

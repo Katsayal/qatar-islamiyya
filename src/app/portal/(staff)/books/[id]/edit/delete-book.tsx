@@ -15,7 +15,7 @@ export function DeleteBook({ id }: { id: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-11 w-full rounded-md border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
+      <button disabled={pending} className="h-11 w-full rounded-lg border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
         {pending ? "Deleting…" : "Delete book"}
       </button>
       {error && (

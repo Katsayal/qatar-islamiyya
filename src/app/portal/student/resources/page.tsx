@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,12 +17,9 @@ export default async function StudentResourcesPage() {
 
   return (
     <div className="max-w-xl space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Resources</h1>
-        <p className="text-sm text-muted-foreground">Timetables, notes and other files shared by the school.</p>
-      </div>
+      <PortalTitle title="Resources" subtitle="Timetables, notes and other files shared by the school." />
 
-      <ul className="divide-y rounded-lg border">
+      <ul className="divide-y rounded-xl border bg-card shadow-sm">
         {docs.map((d) => (
           <li key={d.id} className="flex items-center gap-2 p-3">
             <div className="min-w-0 flex-1">
@@ -31,7 +29,7 @@ export default async function StudentResourcesPage() {
                 {new Date(d.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
               </p>
             </div>
-            <a href={`/portal/documents/${d.id}/download`} className="flex h-10 shrink-0 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted">
+            <a href={`/portal/documents/${d.id}/download`} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
               Download
             </a>
           </li>

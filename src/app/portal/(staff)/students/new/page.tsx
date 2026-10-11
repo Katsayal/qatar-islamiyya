@@ -27,7 +27,7 @@ export default async function NewStudentPage() {
       <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
         ← Students
       </Link>
-      <h1 className="mt-2 text-xl font-semibold">Add student</h1>
+      <h1 className="mt-2 text-2xl font-semibold gold-bar">Add student</h1>
       <div className="mt-4">
         <StudentForm defaults={defaults} classes={classes ?? []} />
       </div>

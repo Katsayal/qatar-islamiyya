@@ -6,6 +6,7 @@ import { AccountsTabs } from "./accounts-tabs";
 import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
+import { controlClass } from "@/components/form-parts";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -16,7 +17,7 @@ const shows = [
   { key: "has", label: "Has login" },
   { key: "all", label: "All" },
 ];
-const input = "h-11 rounded-md border bg-background px-3 text-base";
+const input = controlClass;
 
 type Search = { q?: string; show?: string; page?: string };
 
@@ -49,12 +50,12 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
   return (
     <div className="max-w-2xl">
       <AccountsTabs active="students" />
-      <h1 className="text-xl font-semibold">Student logins</h1>
+      <h1 className="text-2xl font-semibold gold-bar">Student logins</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         A student signs in with their admission number and the password you set here.
       </p>
 
-      <section className="mt-4 rounded-lg border p-4">
+      <section className="mt-4 rounded-xl border p-4 bg-card shadow-sm">
         <h2 className="font-semibold">Create logins in bulk</h2>
         {remaining === 0 ? (
           <p className="mt-1 text-sm text-muted-foreground">Every active student has a login.</p>
@@ -81,11 +82,11 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
             <option key={s.key} value={s.key}>{s.label}</option>
           ))}
         </select>
-        <button className="h-11 rounded-md bg-primary px-5 text-primary-foreground">Filter</button>
+        <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
       </form>
 
       <p className="mt-4 text-sm text-muted-foreground">{count ?? 0} active student{count === 1 ? "" : "s"}</p>
-      <ul className="mt-2 divide-y rounded-lg border">
+      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
         {(students ?? []).map((s) => {
           const login = s.user_id ? s.profiles : null;
           return (
@@ -107,7 +108,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
                     <>
                       <PasswordForm action={resetPassword} idField="userId" id={s.user_id} button="Set new password" />
                       <form action={setActive.bind(null, s.user_id, !login?.active)}>
-                        <button className="h-11 w-full rounded-md border px-4 text-sm hover:bg-muted">
+                        <button className="h-11 w-full rounded-lg border px-4 text-sm hover:bg-muted bg-card">
                           {login?.active ? "Disable login" : "Enable login"}
                         </button>
                       </form>
@@ -123,9 +124,9 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
 
       {lastPage > 1 && (
         <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="rounded-md border px-4 py-2">← Previous</Link> : <span />}
+          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
           <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="rounded-md border px-4 py-2">Next →</Link> : <span />}
+          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
         </nav>
       )}
     </div>

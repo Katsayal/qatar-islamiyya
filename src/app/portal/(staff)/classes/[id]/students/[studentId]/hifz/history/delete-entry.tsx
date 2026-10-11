@@ -15,7 +15,7 @@ export function DeleteEntry({ id }: { id: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-9 rounded-md border border-destructive/40 px-3 text-xs font-medium text-destructive disabled:opacity-50">
+      <button disabled={pending} className="h-9 rounded-lg border border-destructive/40 px-3 text-xs font-medium text-destructive disabled:opacity-50">
         {pending ? "Deleting…" : "Delete"}
       </button>
       {error && (
