@@ -103,6 +103,8 @@ begin
   -- cannot see fees
   if (select count(*) from public.student_fees) <> 0 then raise exception 'FAIL: teacher can see fees'; end if;
   if (select count(*) from public.my_class_teacher_names()) <> 0 then raise exception 'FAIL: teacher got student teacher names'; end if;
+  -- notes of own class's students only (F.1)
+  if (select count(*) from public.student_notes()) <> 1 then raise exception 'FAIL: teacher A should get notes of exactly 1 student'; end if;
 
   -- a teacher cannot edit any profile, not even a colleague's
   update public.profiles set phone = '0800' where id <> auth.uid();
@@ -134,6 +136,19 @@ do $$ begin
     raise exception 'FAIL: student recorded hifz';
   exception when insufficient_privilege then null;
   end;
+
+  -- staff notes and medical notes are hidden from the student, even on their own row (F.1)
+  begin
+    perform notes from public.students;
+    raise exception 'FAIL: student can read staff notes';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform medical_notes from public.students;
+    raise exception 'FAIL: student can read medical notes';
+  exception when insufficient_privilege then null;
+  end;
+  if (select count(*) from public.student_notes()) <> 0 then raise exception 'FAIL: student got notes through student_notes()'; end if;
 
   -- my teachers: only the active teachers of own class (Teacher A; not the inactive one, not class B's)
   if (select count(*) from public.my_class_teacher_names()) <> 1
@@ -330,6 +345,7 @@ do $$
 declare n int;
 begin
   if (select count(*) from public.students where admission_no like 'RLS%') <> 2 then raise exception 'FAIL: staff should see all students'; end if;
+  if (select count(*) from public.student_notes() where id::text like '30000000-%') <> 2 then raise exception 'FAIL: staff should get notes of all students'; end if;
   begin
     update public.profiles set role = 'staff' where id = '00000000-0000-0000-0000-000000000005';
     raise exception 'FAIL: staff promoted a student to staff';
@@ -365,6 +381,13 @@ begin
   if n <> 1 then raise exception 'FAIL: owner could not edit a teacher profile'; end if;
 end $$;
 reset role;
+
+-- ---------- bucket limits (F.1) ----------
+do $$ begin
+  if (select count(*) from storage.buckets where file_size_limit is null) <> 0 then raise exception 'FAIL: a bucket has no size limit'; end if;
+  if not (select allowed_mime_types @> array['application/pdf'] from storage.buckets where id = 'private') then raise exception 'FAIL: private bucket must accept PDF proofs'; end if;
+  if (select allowed_mime_types @> array['application/pdf'] from storage.buckets where id = 'student-photos') then raise exception 'FAIL: student-photos must accept images only'; end if;
+end $$;
 
 select 'ALL RLS CHECKS PASSED' as result;
 rollback;

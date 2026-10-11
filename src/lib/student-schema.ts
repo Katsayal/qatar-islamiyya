@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { BLOOD_GROUPS } from "./blood-groups.ts";
 
+// Every students column a select may ask for. notes and medical_notes are not granted to anyone
+// (students must not read them); staff and teachers get them from rpc("student_notes").
+// One string literal on purpose: supabase-js reads the column names from its type.
+export const STUDENT_COLUMNS = "id, admission_no, full_name, full_name_ar, gender, date_of_birth, photo_path, address, local_government, previous_islamiyya, entry_level, guardian_name, guardian_phone, guardian_address, guardian_local_government, class_id, status, admitted_on, user_id, created_at, updated_at, updated_by, blood_group, student_phone";
+
 // One set of rules for the student form and the CSV import.
 // YYYY-MM-DD that is a real calendar date (rejects 2015-31-31).
 const isoDate = z

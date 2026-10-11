@@ -1375,6 +1375,14 @@ export type Database = {
         }[]
       }
       my_student_id: { Args: never; Returns: string }
+      student_notes: {
+        Args: never
+        Returns: {
+          id: string
+          medical_notes: string
+          notes: string
+        }[]
+      }
       teaches_class: { Args: { cid: string }; Returns: boolean }
       teaches_student: { Args: { sid: string }; Returns: boolean }
       term_for_date: { Args: { d: string }; Returns: string }

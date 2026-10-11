@@ -1,3 +1,4 @@
+import "server-only"; // build fails if a client component imports this (built into Next, no package)
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 

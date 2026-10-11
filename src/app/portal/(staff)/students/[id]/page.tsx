@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth";
+import { STUDENT_COLUMNS } from "@/lib/student-schema";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteStudent } from "../delete-student";
 import { setStatus } from "../actions";
@@ -11,8 +12,9 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: s }, { data: classes }] = await Promise.all([
-    supabase.from("students").select("*").eq("id", id).maybeSingle(),
+  const [{ data: s }, { data: n }, { data: classes }] = await Promise.all([
+    supabase.from("students").select(STUDENT_COLUMNS).eq("id", id).maybeSingle(),
+    supabase.rpc("student_notes").eq("id", id).maybeSingle(),
     supabase.from("classes").select("id, name, program").eq("active", true).order("sort_order").order("name"),
   ]);
   if (!s) notFound();
@@ -39,8 +41,8 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
     blood_group: v(s.blood_group),
     student_phone: v(s.student_phone),
     entry_level: v(s.entry_level),
-    medical_notes: v(s.medical_notes),
-    notes: v(s.notes),
+    medical_notes: v(n?.medical_notes ?? null),
+    notes: v(n?.notes ?? null),
     guardian_name: v(s.guardian_name),
     guardian_phone: v(s.guardian_phone),
     guardian_address: v(s.guardian_address),

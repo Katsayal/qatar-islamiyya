@@ -11,7 +11,13 @@ export default async function StudentProfilePage() {
 
   // RLS: a student can only read their own row and their own requests.
   const [{ data: s }, { data: requests }] = await Promise.all([
-    supabase.from("students").select("*, classes(name)").maybeSingle(),
+    // No notes / medical_notes: the database does not let students read them.
+    supabase
+      .from("students")
+      .select(
+        "admission_no, full_name, full_name_ar, gender, date_of_birth, photo_path, address, local_government, previous_islamiyya, blood_group, student_phone, admitted_on, guardian_name, guardian_phone, guardian_address, guardian_local_government, classes(name)",
+      )
+      .maybeSingle(),
     supabase
       .from("correction_requests")
       .select("id, message, status, created_at")

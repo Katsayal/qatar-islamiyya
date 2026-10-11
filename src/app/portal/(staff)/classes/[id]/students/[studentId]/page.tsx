@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth";
+import { STUDENT_COLUMNS } from "@/lib/student-schema";
 import { createClient } from "@/lib/supabase/server";
 
 type Params = { id: string; studentId: string };
@@ -11,9 +12,10 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
   const { id, studentId } = await params;
   const supabase = await createClient();
 
-  const [{ data: s }, { data: c }] = await Promise.all([
-    supabase.from("students").select("*").eq("id", studentId).eq("class_id", id).maybeSingle(),
+  const [{ data: s }, { data: c }, { data: n }] = await Promise.all([
+    supabase.from("students").select(STUDENT_COLUMNS).eq("id", studentId).eq("class_id", id).maybeSingle(),
     supabase.from("classes").select("name, program").eq("id", id).maybeSingle(),
+    supabase.rpc("student_notes").eq("id", studentId).maybeSingle(),
   ]);
   if (!s || !c) notFound();
 
@@ -34,8 +36,8 @@ export default async function StudentProfilePage({ params }: { params: Promise<P
     ["Previous Islamiyya", s.previous_islamiyya],
     ["Student phone", s.student_phone],
     ["Entry level", s.entry_level],
-    ["Medical notes", s.medical_notes],
-    ["Notes", s.notes],
+    ["Medical notes", n?.medical_notes ?? null],
+    ["Notes", n?.notes ?? null],
     ["Guardian", s.guardian_name],
     ["Guardian address", [s.guardian_address, s.guardian_local_government].filter(Boolean).join(", ")],
   ];

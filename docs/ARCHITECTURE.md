@@ -67,6 +67,10 @@ Pattern per table:
 - **Owner only:** `salary_rates` and `salary_months` (`is_owner()`): not even other staff see a row. Their amounts are in separate tables, not columns on `profiles`, because RLS works per row and staff may read every profile.
 - **Public (anon):** select posts where audience = 'public', gallery. **No** insert/storage rights: application and contact forms go through Server Actions (see §5a).
 
+- **Hidden columns:** RLS is per row, so a column a role must not see (students' `notes`, `medical_notes`) is hidden with column privileges plus a security-definer reader (`student_notes()`); see SCHEMA §8a.
+
+Other protections (F.1): `lib/supabase/admin.ts` imports `server-only` (built into Next) so the service-role client can never reach a client bundle; `next.config.ts` sends `X-Frame-Options: DENY`, `nosniff` and a referrer policy; CSV exports put `'` before cells starting with `= + - @` (formula injection; plain numbers like `+234…` are left alone); buckets have size/type limits. Supabase Auth sign-up must be **off** in the dashboard (DEV and PROD): accounts are created only by staff.
+
 RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake owner/staff/teacher/student/inactive users + data, asserts the critical rules per role, then rolls back. Run `npx supabase db query --linked -f supabase/rls-checks.sql` after every policy change. All helpers return false for inactive users, so `active = false` locks an account out of the data.
 
 ## 5. Storage buckets

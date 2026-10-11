@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
     // Largest upload is a document (max 5 MB) + multipart overhead. Netlify's own request limit is ~6 MB.
     serverActions: { bodySizeLimit: "6mb" },
   },
+  // Basic security headers: no framing (clickjacking on login/portal), no MIME sniffing, short referrers.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+    ];
+  },
   partialPrefetching: true,
   reactCompiler: true,
   turbopack: {

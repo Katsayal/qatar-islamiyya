@@ -176,13 +176,15 @@ Insert fails with a clear error if no term contains the date.
 - `my_class_teacher_names()` (migration `…_student_class_teachers.sql`, security definer, execute = authenticated only): names of the active teachers of the logged-in student's class (empty for everyone else). Students cannot read other `profiles` rows, so the student dashboard (5.1) uses this instead of widening the profiles policy.
 - `my_juz_progress()` (migration `20261010110553_student_juz_progress.sql`, security invoker, execute = authenticated only): 30 rows (juz, total_ayahs, done_ayahs) for the logged-in student; done = distinct ayahs covered by their own new, non-absent hifz entries (repeats not double counted). Empty for non-students. Used by the student hifz page (5.2). Totals/term/pace there reuse `hifz_lines_by_student` and `term_report_stats` (invoker, so a student gets only their own row).
 - Storage policies for students (migration `20261010122749_student_storage_policies.sql`, bucket `private`): `student_read_signature` (select the object whose name = `school_settings.signature_path`), `student_proofs_insert` / `student_proofs_read` (name starts `proofs/<my_student_id()>/`). `payment_proofs.file_path` holds that path; the server action builds it, never the form.
+- **Hidden student columns** (migration `20261010212048_f1_security_fixes.sql`): `students.notes` and `students.medical_notes` are not granted to `anon`/`authenticated` (column privileges; RLS is per row), so a student cannot read them even on their own row. Staff and teachers read them with `student_notes()` (security definer: staff all, teachers their classes, others nothing; filter with `.eq('id', …)`). Selects list columns with `STUDENT_COLUMNS` (`src/lib/student-schema.ts`), never `*`. **A new `students` column must be added to that grant** (and to `STUDENT_COLUMNS`), or nobody can select it. Writes are unaffected.
+- Bucket limits (same migration): `site`, `student-photos` 2 MB images; `private` 2 MB images + PDF; `documents`, `vault` 5 MB any type.
 - Checks: `supabase/rls-checks.sql` (self-contained, rolls back) → `npx supabase db query --linked -f supabase/rls-checks.sql`.
 
 ## 9. RLS summary
 | table | anon | student | teacher | staff |
 |---|---|---|---|---|
 | profiles | – | own | own | read all; edit student and teacher profiles only (role locked: `staff_update_teachers`, migration `…_staff_manage_teachers.sql`); owner edits anyone |
-| students | – | own | select where teaches_class(class_id) | all |
+| students | – | own (without `notes`, `medical_notes`) | select where teaches_class(class_id); notes via `student_notes()` | all; notes via `student_notes()` |
 | classes, class_teachers, terms, academic_years | – | select | select | all |
 | quran_ayahs | – | select | select | select |
 | hifz_entries | – | own | select/insert/update own classes | all |

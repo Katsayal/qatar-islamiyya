@@ -36,6 +36,13 @@ test("write then parse round trip keeps Arabic and special characters", () => {
   assert.ok(toCsv(rows).startsWith("﻿"));
 });
 
+test("toCsv stops formulas but keeps phone numbers", () => {
+  const [, line] = toCsv([["a"], ["=HYPERLINK(\"x\")"]]).split("\r\n");
+  assert.equal(line, `"'=HYPERLINK(""x"")"`);
+  const out = parseCsv(toCsv([["@SUM(A1)", "+cmd|x", "-1+1", "+2348038102495", "-5", "Aminu"]]))[0];
+  assert.deepEqual(out, ["'@SUM(A1)", "'+cmd|x", "'-1+1", "+2348038102495", "-5", "Aminu"]);
+});
+
 test("fixPhone restores Excel's lost leading zero", () => {
   assert.equal(fixPhone("8038102495"), "08038102495");
   assert.equal(fixPhone("0803 810 2495"), "08038102495");

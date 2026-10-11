@@ -17,9 +17,13 @@ export type CsvRecord = Partial<Record<Column, string>>;
 
 const quote = (v: string) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
+// A cell starting with = + - @ runs as a formula in Excel (text can come from the public application form).
+// A leading ' keeps it as text. Plain numbers such as +2348012345678 or -5 are left alone.
+const defuse = (v: string) => (/^[=@\t\r]/.test(v) || /^[+-](?![\d\s.]*$)/.test(v) ? `'${v}` : v);
+
 // BOM first so Excel reads Arabic as UTF-8.
 export function toCsv(rows: string[][]): string {
-  return "﻿" + rows.map((r) => r.map(quote).join(",")).join("\r\n") + "\r\n";
+  return "﻿" + rows.map((r) => r.map((v) => quote(defuse(v))).join(",")).join("\r\n") + "\r\n";
 }
 
 // Handles quotes, commas/newlines inside quotes, a BOM, and `;` as delimiter (some Excel locales).
