@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BankDetails } from "@/components/bank-details";
+import { LinesSkeleton } from "@/components/page-skeleton";
 import { admissionRulesHa, fees, schedule } from "@/content/admissions";
 import { ApplicationForm } from "./application-form";
 
@@ -34,7 +35,7 @@ export default function AdmissionsPage() {
             application first: the school confirms payment before admission.
           </p>
           <h3 className="mt-4 font-semibold">Pay to</h3>
-          <Suspense fallback={<p className="mt-2 text-sm text-muted-foreground">Loading…</p>}>
+          <Suspense fallback={<div className="mt-2"><LinesSkeleton /></div>}>
             <BankDetails />
           </Suspense>
         </div>

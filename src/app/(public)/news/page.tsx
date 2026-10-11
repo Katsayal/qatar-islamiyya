@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import { CardsSkeleton } from "@/components/page-skeleton";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -52,7 +53,7 @@ export default function NewsPage() {
   return (
     <section className="mx-auto max-w-4xl px-4 py-10">
       <h1 className="text-3xl font-semibold">News &amp; events</h1>
-      <Suspense fallback={<p className="mt-6 text-sm text-muted-foreground">Loading…</p>}>
+      <Suspense fallback={<div className="mt-6"><CardsSkeleton count={4} grid="md:grid-cols-2" image /></div>}>
         <NewsList />
       </Suspense>
     </section>

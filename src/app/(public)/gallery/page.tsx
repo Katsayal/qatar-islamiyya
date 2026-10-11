@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Suspense } from "react";
+import { PhotosSkeleton } from "@/components/page-skeleton";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -40,7 +41,7 @@ export default function GalleryPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-3xl font-semibold">Gallery</h1>
-      <Suspense fallback={<p className="mt-6 text-sm text-muted-foreground">Loading…</p>}>
+      <Suspense fallback={<div className="mt-6"><PhotosSkeleton /></div>}>
         <GalleryGrid />
       </Suspense>
     </section>

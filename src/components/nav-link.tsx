@@ -2,20 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
+
+type Props = { href: string; variant: "bar" | "menu"; children: React.ReactNode };
 
 // A header link that knows if it is the current page (gold underline on desktop, tint on phone).
-export function NavLink({
-  href,
-  variant,
-  children,
-}: {
-  href: string;
-  variant: "bar" | "menu";
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+// usePathname() needs <Suspense> (Cache Components): the plain link is prerendered, the highlight streams in.
+export function NavLink(props: Props) {
+  return (
+    <Suspense fallback={<StyledLink {...props} active={false} />}>
+      <ActiveLink {...props} />
+    </Suspense>
+  );
+}
 
+function ActiveLink(props: Props) {
+  const pathname = usePathname();
+  const active = props.href === "/" ? pathname === "/" : pathname.startsWith(props.href);
+  return <StyledLink {...props} active={active} />;
+}
+
+function StyledLink({ href, variant, children, active }: Props & { active: boolean }) {
   if (variant === "bar") {
     return (
       <Link

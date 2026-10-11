@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LatestNews } from "@/components/latest-news";
+import { CardsSkeleton } from "@/components/page-skeleton";
 import { programs } from "@/content/home";
 
 export default function Home() {
@@ -65,7 +66,7 @@ export default function Home() {
             All news
           </Link>
         </div>
-        <Suspense fallback={<p className="mt-4 text-sm text-muted-foreground">Loading…</p>}>
+        <Suspense fallback={<div className="mt-4"><CardsSkeleton count={3} grid="md:grid-cols-3" /></div>}>
           <LatestNews />
         </Suspense>
       </section>

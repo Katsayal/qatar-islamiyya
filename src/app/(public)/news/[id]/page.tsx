@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ArticleSkeleton } from "@/components/page-skeleton";
 import { PostBody } from "@/components/post-body";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
@@ -58,7 +59,7 @@ export default function PostPage({ params }: Props) {
         ← All news
       </Link>
       <div className="mt-4">
-        <Suspense fallback={<p className="text-sm text-muted-foreground">Loading…</p>}>
+        <Suspense fallback={<ArticleSkeleton />}>
           <Post params={params} />
         </Suspense>
       </div>
