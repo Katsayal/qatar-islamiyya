@@ -3,10 +3,11 @@ import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
-import { Attendance } from "./attendance";
+import { Attendance } from "@/components/barnamaj-attendance";
 import { Books } from "./books";
-import { Marks } from "./marks";
+import { Marks } from "@/components/barnamaj-marks";
 import { controlClass } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -36,14 +37,13 @@ export default async function StudentBarnamajPage({ searchParams }: { searchPara
         <p className="rounded-xl border bg-card p-4 text-sm text-muted-foreground shadow-sm">This page is for Barnamaj students.</p>
       ) : (
         <>
-          <form className="flex gap-2">
+          <PickerForm action="/portal/student/barnamaj" className="flex gap-2">
             <select name="term" defaultValue={term?.id} className={`${input} min-w-0 flex-1`}>
               {termList.map((t) => (
                 <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
               ))}
             </select>
-            <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Show</button>
-          </form>
+          </PickerForm>
 
           {term && (
             <>

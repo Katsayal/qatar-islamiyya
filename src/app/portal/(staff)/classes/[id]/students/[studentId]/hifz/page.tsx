@@ -58,7 +58,7 @@ export default async function RecordHifzPage({ params }: { params: Promise<{ id:
 
         <div className="mt-8 flex items-center justify-between">
           <h2 className="font-medium">Latest entries</h2>
-          <Link href={`/portal/classes/${id}/students/${studentId}/hifz/history`} className="text-sm text-primary underline-offset-4 hover:underline">
+          <Link href={`/portal/classes/${id}/students/${studentId}`} className="text-sm text-primary underline-offset-4 hover:underline">
             View all →
           </Link>
         </div>

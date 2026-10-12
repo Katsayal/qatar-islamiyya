@@ -10,14 +10,13 @@ const chip: Record<string, { label: string; tone: "good" | "bad" | "muted" }> = 
 const weekday = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
 
-// Own attendance for one term (RLS: own rows only). A term has about 70 school days, far below the 1,000-row cap.
-export async function Attendance({ termId }: { termId: string }) {
+// Attendance for one term. Without studentId: the logged-in student (RLS: own rows only). With studentId: that
+// student, for staff and their teachers (RLS decides). A term has about 70 school days, far below the 1,000-row cap.
+export async function Attendance({ termId, studentId }: { termId: string; studentId?: string }) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("attendance")
-    .select("id, att_date, status")
-    .eq("term_id", termId)
-    .order("att_date", { ascending: false });
+  let query = supabase.from("attendance").select("id, att_date, status").eq("term_id", termId);
+  if (studentId) query = query.eq("student_id", studentId);
+  const { data } = await query.order("att_date", { ascending: false });
   const rows = data ?? [];
   const count = (status: string) => rows.filter((r) => r.status === status).length;
 

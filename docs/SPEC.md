@@ -89,7 +89,10 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Arabic/Hausa sections are marked with `lang`/`dir`; no full translation for now.
 
 ## 8. Teacher portal
-- **My classes** → student list → student profile (read-only). Teachers see the classes they are assigned to. Staff see "Classes I teach" (classes they are assigned to) first, then "All other classes" (staff can open every class).
+- **My classes** → class page → student page. Teachers see the classes they are assigned to. Staff see "Classes I teach" (classes they are assigned to) first, then "All other classes" (staff can open every class).
+- **Class page:** the student list first (each row: progress + a Record button; Ma'ahad shows how many are behind pace; Barnamaj has "Take attendance" on top). An "End of term" card at the bottom leads to the term comments.
+- **Student page:** name, admission no., class, Record hifz, and a closed "Contact & care" section (guardian, phone, medical notes; staff also get a link to the full record). No other bio data for teachers. Tahfiz/Ma'ahad: hifz summary, Ma'ahad pace, all entries with a term filter (staff can delete). Barnamaj: the chosen term's attendance and exam marks.
+- Single term/date pickers load as soon as a value is picked (no "Go" button).
 - **Record hifz** (Tahfiz/Ma'ahad): fast mobile form per student, incl. Absent.
 - **Barnamaj:** take daily attendance; enter exam marks for books they teach.
 - **Term comment** per student (used on report card).

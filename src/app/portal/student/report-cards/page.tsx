@@ -6,6 +6,7 @@ import { loadCards } from "@/lib/report-cards";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { controlClass } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -47,14 +48,13 @@ export default async function StudentReportCardsPage({ searchParams }: { searchP
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-2 print:hidden">
-            <form className="flex min-w-0 flex-1 gap-2">
+            <PickerForm action="/portal/student/report-cards" className="flex min-w-0 flex-1 gap-2">
               <select name="term" defaultValue={term.id} className={`${input} min-w-0 flex-1`}>
                 {termList.map((t) => (
                   <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
                 ))}
               </select>
-              <button className="h-11 rounded-lg border px-4 text-sm hover:bg-muted bg-card">Show</button>
-            </form>
+            </PickerForm>
             <PrintButton />
           </div>
           {cards.map((d) => (

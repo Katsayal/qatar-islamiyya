@@ -72,10 +72,10 @@ export function BookForm({ defaults, teachers }: { defaults: BookDefaults; teach
         </select>
       </Field>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Started on">
+        <Field label="Starting on">
           <input name="started_on" type="date" defaultValue={defaults.started_on} className={input} />
         </Field>
-        <Field label="Finished on">
+        <Field label="Finishing on">
           <input name="finished_on" type="date" defaultValue={defaults.finished_on} className={input} />
         </Field>
       </div>

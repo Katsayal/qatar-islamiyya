@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth";
-import { isSchoolDay, type Status } from "@/lib/attendance";
+import { type Status } from "@/lib/attendance";
 import { requireClassAccess } from "@/lib/class-access";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { AttendanceForm } from "./attendance-form";
 import { controlClass } from "@/components/form-parts";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -49,16 +50,10 @@ export default async function AttendancePage({
         </Link>
         <h1 className="mt-2 text-2xl font-semibold gold-bar">Attendance</h1>
 
-        <form className="mt-4 flex gap-2">
+        <PickerForm action={`/portal/classes/${id}/attendance`} className="mt-4 flex gap-2">
           <input name="date" type="date" max={today} defaultValue={date} required className={`${input} min-w-0 flex-1`} />
-          <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
-        </form>
+        </PickerForm>
 
-        {!isSchoolDay(date) && (
-          <p className="mt-3 rounded-lg bg-muted p-3 text-sm">
-            {date} is not a normal school day (Sat, Sun, Tue, Wed). You can still save.
-          </p>
-        )}
         {list.some((s) => initial[s.id]) && (
           <p className="mt-3 text-sm text-muted-foreground">Attendance was already taken for this day. Saving updates it.</p>
         )}

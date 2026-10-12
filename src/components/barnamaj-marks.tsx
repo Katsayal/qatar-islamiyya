@@ -1,12 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 
-// Own exam marks for one term (RLS: own rows only), in curriculum order.
-export async function Marks({ termId }: { termId: string }) {
+// Exam marks for one term, in curriculum order. Without studentId: the logged-in student (RLS: own rows only).
+// With studentId: that student, for staff and their teachers (RLS decides).
+export async function Marks({ termId, studentId }: { termId: string; studentId?: string }) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("exam_results")
-    .select("id, score, books(title, subject, sort_order)")
-    .eq("term_id", termId);
+  let query = supabase.from("exam_results").select("id, score, books(title, subject, sort_order)").eq("term_id", termId);
+  if (studentId) query = query.eq("student_id", studentId);
+  const { data } = await query;
   const rows = (data ?? []).sort((a, b) => (a.books?.sort_order ?? 0) - (b.books?.sort_order ?? 0));
   const average = rows.length ? Math.round((rows.reduce((sum, r) => sum + r.score, 0) / rows.length) * 10) / 10 : null;
 

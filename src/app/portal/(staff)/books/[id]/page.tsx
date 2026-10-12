@@ -6,6 +6,7 @@ import { todayInLagos } from "@/lib/today";
 import { MarksForm } from "./marks-form";
 import { controlClass } from "@/components/form-parts";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -59,14 +60,13 @@ export default async function BookMarksPage({
 
         {term ? (
           <>
-            <form className="mt-4 flex gap-2">
+            <PickerForm action={`/portal/books/${id}`} className="mt-4 flex gap-2">
               <select name="term" defaultValue={term.id} className={`${input} min-w-0 flex-1`}>
                 {termList.map((t) => (
                   <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
                 ))}
               </select>
-              <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
-            </form>
+            </PickerForm>
             <p className="mt-3 text-sm text-muted-foreground">
               Marks out of 100. Leave a box empty to skip that student. To correct a mark, type the new one.
             </p>

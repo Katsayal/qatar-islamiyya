@@ -7,6 +7,7 @@ import { todayInLagos } from "@/lib/today";
 import { CommentsForm } from "./comments-form";
 import { controlClass } from "@/components/form-parts";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { PickerForm } from "@/components/picker-form";
 
 const MAX_COMMENT = 600; // same limit as actions.ts (a "use server" file can only export functions)
 const input = controlClass;
@@ -51,14 +52,13 @@ export default async function CommentsPage({
 
         {term ? (
           <>
-            <form className="mt-4 flex gap-2">
+            <PickerForm action={`/portal/classes/${id}/comments`} className="mt-4 flex gap-2">
               <select name="term" defaultValue={term.id} className={`${input} min-w-0 flex-1`}>
                 {termList.map((t) => (
                   <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
                 ))}
               </select>
-              <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
-            </form>
+            </PickerForm>
             <p className="mt-3 text-sm text-muted-foreground">
               One comment per student per term, printed on the report card. Leave a box empty to skip. To correct a comment, type the new
               one. If several teachers teach this class, the last saved text is the one kept.

@@ -7,6 +7,7 @@ import { TOTAL_PAGES } from "@/lib/quran";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { StatusBadge } from "@/components/status-badge";
+import { StudentSearch } from "./student-search";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -44,6 +45,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
   if (c.program === "maahad" && year) {
     rows.sort((a, b) => Number(a.pace!.onTrack) - Number(b.pace!.onTrack) || a.pace!.diff - b.pace!.diff);
   }
+  const behind = c.program === "maahad" && year ? rows.filter((r) => !r.pace!.onTrack).length : null;
 
   return (
     <div>
@@ -57,60 +59,80 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
         {c.hifz_unit ? ` · ${c.hifz_unit}` : ""} · {rows.length} active student{rows.length === 1 ? "" : "s"}
       </p>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {c.program === "barnamaj" && (
-          <Link
-            href={`/portal/classes/${c.id}/attendance`}
-            className="flex h-12 items-center justify-center rounded-lg bg-primary font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Take attendance
-          </Link>
-        )}
-        <Link href={`/portal/classes/${c.id}/comments`} className="flex h-12 items-center justify-center rounded-lg border font-medium hover:bg-muted bg-card">
-          Term comments
+      {behind !== null && rows.length > 0 && (
+        <p className="mt-2 text-sm">
+          <StatusBadge tone={behind ? "bad" : "good"}>
+            {behind ? `${behind} of ${rows.length} behind pace` : "Everyone on track"}
+          </StatusBadge>
+        </p>
+      )}
+
+      {c.program === "barnamaj" && (
+        <Link
+          href={`/portal/classes/${c.id}/attendance`}
+          className="mt-4 flex h-12 items-center justify-center rounded-lg bg-primary font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          Take attendance
         </Link>
-      </div>
+      )}
 
       {hifz && (
         <p className="mt-4 text-xs text-muted-foreground">
-          Pages memorised = all new hifz recorded.
+          Tap a student for their hifz. Pages memorised = all new hifz recorded.
           {c.program === "maahad" && " Students behind this year's pace are listed first."}
         </p>
       )}
 
-      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
-        {rows.map((s) => (
-          <li key={s.id} className="flex items-center gap-2 pe-3">
-            <Link href={`/portal/classes/${c.id}/students/${s.id}`} className="min-w-0 flex-1 p-3 hover:bg-muted">
-              <p className="truncate font-medium">{s.full_name}</p>
-              <p className="text-sm text-muted-foreground">
-                {s.admission_no} · <span className="capitalize">{s.gender}</span>
-              </p>
-              {hifz && (
-                <p className="mt-1 text-sm">
-                  {s.total} / {TOTAL_PAGES} pages ({Math.round((s.total / TOTAL_PAGES) * 1000) / 10}%)
-                  {s.pace && (
-                    <span className="ms-2">
-                      <StatusBadge tone={s.pace.onTrack ? "good" : "bad"}>
-                        {s.pace.onTrack ? "On track" : `Behind by ${Math.abs(s.pace.diff)}`}
-                      </StatusBadge>
-                    </span>
-                  )}
+      <StudentSearch
+        rows={rows.map((s) => ({
+          id: s.id,
+          search: `${s.full_name} ${s.admission_no}`.toLowerCase(),
+          row: (
+            <>
+              <Link href={`/portal/classes/${c.id}/students/${s.id}`} className="min-w-0 flex-1 p-3 hover:bg-muted">
+                <p className="truncate font-medium">{s.full_name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {s.admission_no} · <span className="capitalize">{s.gender}</span>
                 </p>
-              )}
-            </Link>
-            {hifz && (
-              <Link
-                href={`/portal/classes/${c.id}/students/${s.id}/hifz`}
-                className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card"
-              >
-                Record
+                {hifz && (
+                  <p className="mt-1 text-sm">
+                    {s.total} / {TOTAL_PAGES} pages ({Math.round((s.total / TOTAL_PAGES) * 1000) / 10}%)
+                    {s.pace && (
+                      <span className="ms-2">
+                        <StatusBadge tone={s.pace.onTrack ? "good" : "bad"}>
+                          {s.pace.onTrack ? "On track" : `Behind by ${Math.abs(s.pace.diff)}`}
+                        </StatusBadge>
+                      </span>
+                    )}
+                  </p>
+                )}
               </Link>
-            )}
-          </li>
-        ))}
-        {!rows.length && <li className="p-4 text-sm text-muted-foreground">No active students in this class.</li>}
-      </ul>
+              {hifz && (
+                <Link
+                  href={`/portal/classes/${c.id}/students/${s.id}/hifz`}
+                  className="flex h-10 shrink-0 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Record
+                </Link>
+              )}
+            </>
+          ),
+        }))}
+      />
+
+      <section className="mt-8 rounded-xl border bg-card p-4 shadow-sm">
+        <h2 className="font-semibold">End of term</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Write one short comment per student for the report card, once per term. You can come back and change it until
+          report cards are printed.
+        </p>
+        <Link
+          href={`/portal/classes/${c.id}/comments`}
+          className="mt-3 flex h-11 items-center justify-center rounded-lg border bg-card text-sm font-medium hover:bg-muted"
+        >
+          Write term comments
+        </Link>
+      </section>
     </div>
   );
 }
