@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
+import { bookStatus } from "@/lib/barnamaj-books";
 import { createClient } from "@/lib/supabase/server";
+import { todayInLagos } from "@/lib/today";
 import { loadCurriculum } from "./actions";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const status = (b: { started_on: string | null; finished_on: string | null }) =>
-  b.finished_on ? "Finished" : b.started_on ? "In progress" : "Not started";
-
 export default async function BooksPage() {
   const profile = await requireRole("teacher", "staff");
   const supabase = await createClient();
+  const today = todayInLagos();
   const staff = profile.role === "staff";
 
   let query = supabase
@@ -59,7 +59,7 @@ export default async function BooksPage() {
                     <p lang="ar" dir="rtl" className="font-arabic truncate text-start font-medium">{b.title}</p>
                     <p lang="ar" dir="rtl" className="font-arabic text-start text-sm text-muted-foreground">{b.subject}</p>
                     <p className="text-xs text-muted-foreground">
-                      {b.profiles?.full_name ?? "No teacher"} · {status(b)}
+                      {b.profiles?.full_name ?? "No teacher"} · {bookStatus(b, today)}
                     </p>
                   </div>
                   <Link href={`/portal/books/${b.id}`} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">

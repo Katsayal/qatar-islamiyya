@@ -1,25 +1,26 @@
 import { StatusBadge } from "@/components/status-badge";
+import { bookStatus, type BookStatus } from "@/lib/barnamaj-books";
 import { createClient } from "@/lib/supabase/server";
+import { todayInLagos } from "@/lib/today";
 
-type Status = { label: string; tone: "good" | "warn" | "muted" };
-const status = (b: { started_on: string | null; finished_on: string | null }): Status =>
-  b.finished_on
-    ? { label: "Finished", tone: "good" }
-    : b.started_on
-      ? { label: "In progress", tone: "warn" }
-      : { label: "Not started", tone: "muted" };
+const tone: Record<BookStatus, "good" | "warn" | "muted"> = { Finished: "good", "In progress": "warn", "Not started": "muted" };
+const status = (b: { started_on: string | null; finished_on: string | null }, today: string) => {
+  const label = bookStatus(b, today);
+  return { label, tone: tone[label] };
+};
 
 // The school's curriculum by term; every active user can read `books`.
 export async function Books({ openTerm }: { openTerm: number }) {
   const supabase = await createClient();
+  const today = todayInLagos();
   const { data } = await supabase
     .from("books")
     .select("id, term_number, subject, title, started_on, finished_on")
     .order("term_number")
     .order("sort_order");
   const books = data ?? [];
-  const finished = books.filter((b) => b.finished_on).length;
-  const now = books.filter((b) => b.started_on && !b.finished_on);
+  const finished = books.filter((b) => bookStatus(b, today) === "Finished").length;
+  const now = books.filter((b) => bookStatus(b, today) === "In progress");
 
   return (
     <section>
@@ -37,7 +38,7 @@ export async function Books({ openTerm }: { openTerm: number }) {
             <summary className="cursor-pointer p-3 text-sm font-semibold">Term {n} ({rows.length} {rows.length === 1 ? "book" : "books"})</summary>
             <ul className="divide-y border-t text-sm">
               {rows.map((b) => {
-                const st = status(b);
+                const st = status(b, today);
                 return (
                   <li key={b.id} className="flex items-center justify-between gap-3 p-3">
                     <div className="min-w-0">
