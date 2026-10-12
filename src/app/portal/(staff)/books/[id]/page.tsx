@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { MarksForm } from "./marks-form";
 import { controlClass } from "@/components/form-parts";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -48,37 +49,39 @@ export default async function BookMarksPage({
   const initial = Object.fromEntries((marks ?? []).map((m) => [m.student_id, m.score]));
 
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/books" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Books
-      </Link>
-      <h1 lang="ar" dir="rtl" className="font-arabic mt-2 text-xl font-semibold">{book.title}</h1>
-      <p lang="ar" dir="rtl" className="font-arabic text-sm text-muted-foreground">{book.subject}</p>
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/books" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← Books
+        </Link>
+        <h1 lang="ar" dir="rtl" className="font-arabic mt-2 text-xl font-semibold">{book.title}</h1>
+        <p lang="ar" dir="rtl" className="font-arabic text-sm text-muted-foreground">{book.subject}</p>
 
-      {term ? (
-        <>
-          <form className="mt-4 flex gap-2">
-            <select name="term" defaultValue={term.id} className={`${input} min-w-0 flex-1`}>
-              {termList.map((t) => (
-                <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
-              ))}
-            </select>
-            <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
-          </form>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Marks out of 100. Leave a box empty to skip that student. To correct a mark, type the new one.
-          </p>
-          <div className="mt-3">
-            {students?.length ? (
-              <MarksForm key={term.id} bookId={id} termId={term.id} students={students} initial={initial} />
-            ) : (
-              <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active Barnamaj students.</p>
-            )}
-          </div>
-        </>
-      ) : (
-        <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No terms are set up yet. Ask staff (Academic setup).</p>
-      )}
-    </div>
+        {term ? (
+          <>
+            <form className="mt-4 flex gap-2">
+              <select name="term" defaultValue={term.id} className={`${input} min-w-0 flex-1`}>
+                {termList.map((t) => (
+                  <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
+                ))}
+              </select>
+              <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
+            </form>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Marks out of 100. Leave a box empty to skip that student. To correct a mark, type the new one.
+            </p>
+            <div className="mt-3">
+              {students?.length ? (
+                <MarksForm key={term.id} bookId={id} termId={term.id} students={students} initial={initial} />
+              ) : (
+                <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active Barnamaj students.</p>
+              )}
+            </div>
+          </>
+        ) : (
+          <p className="mt-4 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No terms are set up yet. Ask staff (Academic setup).</p>
+        )}
+      </div>
+    </FreshOnVisit>
   );
 }

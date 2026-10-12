@@ -1,18 +1,21 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { DocumentForm } from "../document-form";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 export default async function NewDocumentPage() {
   await requireRole("staff");
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/documents" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Documents
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">Upload document</h1>
-      <div className="mt-4">
-        <DocumentForm defaults={{ title: "", category: "" }} />
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/documents" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← Documents
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">Upload document</h1>
+        <div className="mt-4">
+          <DocumentForm defaults={{ title: "", category: "" }} />
+        </div>
       </div>
-    </div>
+    </FreshOnVisit>
   );
 }

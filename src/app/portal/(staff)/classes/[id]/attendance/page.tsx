@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { AttendanceForm } from "./attendance-form";
 import { controlClass } from "@/components/form-parts";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -41,33 +42,35 @@ export default async function AttendancePage({
   const list = students ?? [];
 
   return (
-    <div className="max-w-xl">
-      <Link href={`/portal/classes/${id}`} className="text-sm text-primary underline-offset-4 hover:underline">
-        ← {c.name}
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">Attendance</h1>
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href={`/portal/classes/${id}`} className="text-sm text-primary underline-offset-4 hover:underline">
+          ← {c.name}
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">Attendance</h1>
 
-      <form className="mt-4 flex gap-2">
-        <input name="date" type="date" max={today} defaultValue={date} required className={`${input} min-w-0 flex-1`} />
-        <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
-      </form>
+        <form className="mt-4 flex gap-2">
+          <input name="date" type="date" max={today} defaultValue={date} required className={`${input} min-w-0 flex-1`} />
+          <button className="h-11 rounded-lg border px-5 hover:bg-muted bg-card">Go</button>
+        </form>
 
-      {!isSchoolDay(date) && (
-        <p className="mt-3 rounded-lg bg-muted p-3 text-sm">
-          {date} is not a normal school day (Sat, Sun, Tue, Wed). You can still save.
-        </p>
-      )}
-      {list.some((s) => initial[s.id]) && (
-        <p className="mt-3 text-sm text-muted-foreground">Attendance was already taken for this day. Saving updates it.</p>
-      )}
-
-      <div className="mt-4">
-        {list.length ? (
-          <AttendanceForm key={date} classId={id} date={date} students={list} initial={initial} />
-        ) : (
-          <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active students in this class.</p>
+        {!isSchoolDay(date) && (
+          <p className="mt-3 rounded-lg bg-muted p-3 text-sm">
+            {date} is not a normal school day (Sat, Sun, Tue, Wed). You can still save.
+          </p>
         )}
+        {list.some((s) => initial[s.id]) && (
+          <p className="mt-3 text-sm text-muted-foreground">Attendance was already taken for this day. Saving updates it.</p>
+        )}
+
+        <div className="mt-4">
+          {list.length ? (
+            <AttendanceForm key={date} classId={id} date={date} students={list} initial={initial} />
+          ) : (
+            <p className="rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No active students in this class.</p>
+          )}
+        </div>
       </div>
-    </div>
+    </FreshOnVisit>
   );
 }

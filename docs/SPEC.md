@@ -89,7 +89,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Arabic/Hausa sections are marked with `lang`/`dir`; no full translation for now.
 
 ## 8. Teacher portal
-- **My classes** → student list → student profile (read-only).
+- **My classes** → student list → student profile (read-only). Teachers see the classes they are assigned to. Staff see "Classes I teach" (classes they are assigned to) first, then "All other classes" (staff can open every class).
 - **Record hifz** (Tahfiz/Ma'ahad): fast mobile form per student, incl. Absent.
 - **Barnamaj:** take daily attendance; enter exam marks for books they teach.
 - **Term comment** per student (used on report card).

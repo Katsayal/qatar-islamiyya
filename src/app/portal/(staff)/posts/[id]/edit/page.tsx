@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PostForm } from "../../post-form";
 import { DeletePost } from "./delete-post";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   await requireRole("staff");
@@ -13,27 +14,29 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!p) notFound();
 
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/posts" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← News posts
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">Edit post</h1>
-      <div className="mt-4">
-        <PostForm
-          defaults={{
-            id: p.id,
-            title: p.title,
-            body: p.body,
-            lang: p.lang,
-            audience: p.audience,
-            published: p.published_at !== null,
-            hasCover: p.cover_path !== null,
-          }}
-        />
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/posts" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← News posts
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">Edit post</h1>
+        <div className="mt-4">
+          <PostForm
+            defaults={{
+              id: p.id,
+              title: p.title,
+              body: p.body,
+              lang: p.lang,
+              audience: p.audience,
+              published: p.published_at !== null,
+              hasCover: p.cover_path !== null,
+            }}
+          />
+        </div>
+        <div className="mt-8">
+          <DeletePost id={p.id} />
+        </div>
       </div>
-      <div className="mt-8">
-        <DeletePost id={p.id} />
-      </div>
-    </div>
+    </FreshOnVisit>
   );
 }

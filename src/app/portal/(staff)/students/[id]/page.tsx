@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DeleteStudent } from "../delete-student";
 import { setStatus } from "../actions";
 import { StudentForm, type StudentDefaults } from "../student-form";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -54,23 +55,25 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
   const archived = s.status === "archived";
 
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Students
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">{s.full_name}</h1>
-      <div className="mt-4">
-        <StudentForm defaults={defaults} classes={classes ?? []} />
-      </div>
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← Students
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">{s.full_name}</h1>
+        <div className="mt-4">
+          <StudentForm defaults={defaults} classes={classes ?? []} />
+        </div>
 
-      <div className="mt-8 flex flex-col gap-4">
-        <form action={setStatus.bind(null, s.id, archived ? "active" : "archived")}>
-          <button className="h-11 w-full rounded-lg border px-4 text-sm font-medium hover:bg-muted bg-card">
-            {archived ? "Restore student" : "Archive student"}
-          </button>
-        </form>
-        <DeleteStudent id={s.id} admissionNo={s.admission_no} />
+        <div className="mt-8 flex flex-col gap-4">
+          <form action={setStatus.bind(null, s.id, archived ? "active" : "archived")}>
+            <button className="h-11 w-full rounded-lg border px-4 text-sm font-medium hover:bg-muted bg-card">
+              {archived ? "Restore student" : "Archive student"}
+            </button>
+          </form>
+          <DeleteStudent id={s.id} admissionNo={s.admission_no} />
+        </div>
       </div>
-    </div>
+    </FreshOnVisit>
   );
 }

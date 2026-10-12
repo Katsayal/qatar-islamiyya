@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ClassForm, type ClassDefaults } from "../class-form";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 export default async function ClassPage({ params }: { params: Promise<{ id: string }> }) {
   await requireRole("staff");
@@ -48,14 +49,16 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/academic/classes" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Classes
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">{id === "new" ? "Add class" : "Edit class"}</h1>
-      <div className="mt-4">
-        <ClassForm defaults={defaults} teachers={teachers ?? []} />
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/academic/classes" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← Classes
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">{id === "new" ? "Add class" : "Edit class"}</h1>
+        <div className="mt-4">
+          <ClassForm defaults={defaults} teachers={teachers ?? []} />
+        </div>
       </div>
-    </div>
+    </FreshOnVisit>
   );
 }

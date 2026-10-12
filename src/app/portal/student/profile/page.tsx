@@ -5,6 +5,7 @@ import { CorrectionForm } from "./correction-form";
 import { StatusBadge } from "@/components/status-badge";
 import { PasswordChangeForm } from "@/components/password-change-form";
 import { changePassword } from "./actions";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 export default async function StudentProfilePage() {
   await requireRole("student");
@@ -48,68 +49,70 @@ export default async function StudentProfilePage() {
   ];
 
   return (
-    <div className="max-w-xl space-y-6">
-      <div className="flex items-center gap-4">
-        {photoUrl && (
-          <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-xl border-2 border-gold object-cover" />
-        )}
-        <div>
-          <h1 className="text-2xl font-semibold gold-bar">{s.full_name}</h1>
-          {s.full_name_ar && (
-            <p lang="ar" dir="rtl" className="font-arabic text-lg">
-              {s.full_name_ar}
-            </p>
+    <FreshOnVisit>
+      <div className="max-w-xl space-y-6">
+        <div className="flex items-center gap-4">
+          {photoUrl && (
+            <Image src={photoUrl} alt="" width={80} height={80} unoptimized className="size-20 rounded-xl border-2 border-gold object-cover" />
           )}
+          <div>
+            <h1 className="text-2xl font-semibold gold-bar">{s.full_name}</h1>
+            {s.full_name_ar && (
+              <p lang="ar" dir="rtl" className="font-arabic text-lg">
+                {s.full_name_ar}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      <dl className="divide-y rounded-xl border bg-card shadow-sm">
-        {rows
-          .filter(([, v]) => v)
-          .map(([label, value]) => (
-            <div key={label} className="grid grid-cols-3 gap-2 p-3 text-sm">
-              <dt className="text-muted-foreground">{label}</dt>
-              <dd className="col-span-2">{value}</dd>
-            </div>
-          ))}
-      </dl>
-
-      <section id="password">
-        <h2 className="text-lg font-semibold">My password</h2>
-        <p className="mb-3 mt-1 text-sm text-muted-foreground">
-          Set your own password so nobody else can sign in as you. If you forget it, ask the office to reset it.
-        </p>
-        <PasswordChangeForm action={changePassword} />
-      </section>
-
-      <section>
-        <h2 className="text-lg font-semibold">Something wrong?</h2>
-        <p className="mb-3 mt-1 text-sm text-muted-foreground">
-          You cannot edit your details here. Tell the office what to correct and they will fix it.
-        </p>
-        <CorrectionForm />
-      </section>
-
-      {!!requests?.length && (
-        <section>
-          <h2 className="text-lg font-semibold">My requests</h2>
-          <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
-            {requests.map((r) => (
-              <li key={r.id} className="p-3 text-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(r.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
-                  </span>
-                  <StatusBadge tone={r.status === "done" ? "good" : "warn"}>
-                    {r.status === "done" ? "Done" : "Open"}
-                  </StatusBadge>
-                </div>
-                <p className="mt-1 whitespace-pre-line">{r.message}</p>
-              </li>
+        <dl className="divide-y rounded-xl border bg-card shadow-sm">
+          {rows
+            .filter(([, v]) => v)
+            .map(([label, value]) => (
+              <div key={label} className="grid grid-cols-3 gap-2 p-3 text-sm">
+                <dt className="text-muted-foreground">{label}</dt>
+                <dd className="col-span-2">{value}</dd>
+              </div>
             ))}
-          </ul>
+        </dl>
+
+        <section id="password">
+          <h2 className="text-lg font-semibold">My password</h2>
+          <p className="mb-3 mt-1 text-sm text-muted-foreground">
+            Set your own password so nobody else can sign in as you. If you forget it, ask the office to reset it.
+          </p>
+          <PasswordChangeForm action={changePassword} />
         </section>
-      )}
-    </div>
+
+        <section>
+          <h2 className="text-lg font-semibold">Something wrong?</h2>
+          <p className="mb-3 mt-1 text-sm text-muted-foreground">
+            You cannot edit your details here. Tell the office what to correct and they will fix it.
+          </p>
+          <CorrectionForm />
+        </section>
+
+        {!!requests?.length && (
+          <section>
+            <h2 className="text-lg font-semibold">My requests</h2>
+            <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
+              {requests.map((r) => (
+                <li key={r.id} className="p-3 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(r.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                    </span>
+                    <StatusBadge tone={r.status === "done" ? "good" : "warn"}>
+                      {r.status === "done" ? "Done" : "Open"}
+                    </StatusBadge>
+                  </div>
+                  <p className="mt-1 whitespace-pre-line">{r.message}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    </FreshOnVisit>
   );
 }

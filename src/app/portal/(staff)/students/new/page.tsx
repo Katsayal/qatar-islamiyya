@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { StudentForm, type StudentDefaults } from "../student-form";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 export default async function NewStudentPage() {
   await requireRole("staff");
@@ -23,14 +24,16 @@ export default async function NewStudentPage() {
   };
 
   return (
-    <div className="max-w-xl">
-      <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Students
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">Add student</h1>
-      <div className="mt-4">
-        <StudentForm defaults={defaults} classes={classes ?? []} />
+    <FreshOnVisit>
+      <div className="max-w-xl">
+        <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
+          ← Students
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold gold-bar">Add student</h1>
+        <div className="mt-4">
+          <StudentForm defaults={defaults} classes={classes ?? []} />
+        </div>
       </div>
-    </div>
+    </FreshOnVisit>
   );
 }

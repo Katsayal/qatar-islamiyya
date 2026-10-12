@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { ProofForm } from "./proof-form";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -48,67 +49,69 @@ export default async function StudentFeesPage() {
   const defaultTerm = termOptions.find((t) => t.id === current?.id)?.id ?? termOptions[0]?.id ?? "";
 
   return (
-    <div className="max-w-xl space-y-6">
-      <PortalTitle title="School fees" />
+    <FreshOnVisit>
+      <div className="max-w-xl space-y-6">
+        <PortalTitle title="School fees" />
 
-      <section>
-        <ul className="space-y-3">
-          {rows.map((f) => {
-            const st = statusLabel[f.status];
-            return (
-              <li key={f.id} className="rounded-xl border p-4 text-sm bg-card shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium">{f.terms?.academic_years?.name} · Term {f.terms?.number}</p>
-                  <StatusBadge tone={st?.tone ?? "warn"}>{st?.text ?? f.status}</StatusBadge>
-                </div>
-                <div className="mt-3">
-                  <ProgressBar value={f.amount_paid} max={f.amount_due} label="Fee paid so far" />
-                </div>
-                <p className="mt-2 text-muted-foreground">
-                  Due {naira(f.amount_due)} · Paid {naira(f.amount_paid)} · Left {naira(Math.max(0, f.amount_due - f.amount_paid))}
-                </p>
-                {f.note && <p className="mt-1 text-muted-foreground">{f.note}</p>}
-              </li>
-            );
-          })}
-          {!rows.length && <li className="text-sm text-muted-foreground">No fee has been set for you yet.</li>}
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="text-lg font-semibold">Pay by bank transfer</h2>
-        <Suspense fallback={null}>
-          <BankDetails />
-        </Suspense>
-      </section>
-
-      {!!rows.length && (
         <section>
-          <h2 className="text-lg font-semibold">I have paid</h2>
-          <p className="mb-3 mt-1 text-sm text-muted-foreground">
-            Upload your receipt. The office checks it and updates your fees. This does not change your balance by itself.
-          </p>
-          <ProofForm terms={termOptions} defaultTerm={defaultTerm} />
-        </section>
-      )}
-
-      {!!proofs?.length && (
-        <section>
-          <h2 className="text-lg font-semibold">My proofs</h2>
-          <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
-            {proofs.map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-3 p-3">
-                <span>
-                  {new Date(p.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })} · Term {p.terms?.number}
-                </span>
-                <StatusBadge tone={proofLabel[p.status]?.tone ?? "warn"}>
-                  {proofLabel[p.status]?.text ?? p.status}
-                </StatusBadge>
-              </li>
-            ))}
+          <ul className="space-y-3">
+            {rows.map((f) => {
+              const st = statusLabel[f.status];
+              return (
+                <li key={f.id} className="rounded-xl border p-4 text-sm bg-card shadow-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium">{f.terms?.academic_years?.name} · Term {f.terms?.number}</p>
+                    <StatusBadge tone={st?.tone ?? "warn"}>{st?.text ?? f.status}</StatusBadge>
+                  </div>
+                  <div className="mt-3">
+                    <ProgressBar value={f.amount_paid} max={f.amount_due} label="Fee paid so far" />
+                  </div>
+                  <p className="mt-2 text-muted-foreground">
+                    Due {naira(f.amount_due)} · Paid {naira(f.amount_paid)} · Left {naira(Math.max(0, f.amount_due - f.amount_paid))}
+                  </p>
+                  {f.note && <p className="mt-1 text-muted-foreground">{f.note}</p>}
+                </li>
+              );
+            })}
+            {!rows.length && <li className="text-sm text-muted-foreground">No fee has been set for you yet.</li>}
           </ul>
         </section>
-      )}
-    </div>
+
+        <section>
+          <h2 className="text-lg font-semibold">Pay by bank transfer</h2>
+          <Suspense fallback={null}>
+            <BankDetails />
+          </Suspense>
+        </section>
+
+        {!!rows.length && (
+          <section>
+            <h2 className="text-lg font-semibold">I have paid</h2>
+            <p className="mb-3 mt-1 text-sm text-muted-foreground">
+              Upload your receipt. The office checks it and updates your fees. This does not change your balance by itself.
+            </p>
+            <ProofForm terms={termOptions} defaultTerm={defaultTerm} />
+          </section>
+        )}
+
+        {!!proofs?.length && (
+          <section>
+            <h2 className="text-lg font-semibold">My proofs</h2>
+            <ul className="mt-2 divide-y rounded-xl border text-sm bg-card shadow-sm">
+              {proofs.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-3 p-3">
+                  <span>
+                    {new Date(p.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })} · Term {p.terms?.number}
+                  </span>
+                  <StatusBadge tone={proofLabel[p.status]?.tone ?? "warn"}>
+                    {proofLabel[p.status]?.text ?? p.status}
+                  </StatusBadge>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    </FreshOnVisit>
   );
 }

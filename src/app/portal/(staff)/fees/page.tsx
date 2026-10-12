@@ -5,6 +5,7 @@ import { FeeForm } from "./fee-form";
 import { TermFeeForm } from "./term-fee-form";
 import { controlClass } from "@/components/form-parts";
 import { StatusBadge } from "@/components/status-badge";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -113,98 +114,101 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
     .eq("status", "pending");
 
   return (
-    <div>
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold gold-bar">Fees</h1>
-        <Link href="/portal/fees/proofs" className="flex h-10 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
-          Payment proofs ({pendingProofs ?? 0})
-        </Link>
-      </div>
-
-      <form className="mt-4 grid gap-3 md:grid-cols-6">
-        <select name="term" defaultValue={term.id} className={`${input} md:col-span-2`}>
-          {terms.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.academic_years?.name} · Term {t.number}
-            </option>
-          ))}
-        </select>
-        <select name="status" defaultValue={status} className={input}>
-          {filters.map((f) => (
-            <option key={f.key} value={f.key}>{f.label}</option>
-          ))}
-        </select>
-        <select name="program" defaultValue={program ?? ""} className={input}>
-          <option value="">All programs</option>
-          {programs.map((p) => (
-            <option key={p.key} value={p.key}>{p.label}</option>
-          ))}
-        </select>
-        <select name="class" defaultValue={sp.class ?? ""} className={input}>
-          <option value="">All classes</option>
-          {(classes ?? []).map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-        <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-4`} />
-        <div className="flex gap-2 md:col-span-2">
-          <button className="h-11 flex-1 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-          <Link href="/portal/fees" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
+    <FreshOnVisit>
+      <div>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold gold-bar">Fees</h1>
+          <Link href="/portal/fees/proofs" className="flex h-10 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
+            Payment proofs ({pendingProofs ?? 0})
+          </Link>
         </div>
-      </form>
 
-      <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
-        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>
-        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Paid</dt><dd className="font-medium">{naira(totalPaid)}</dd></div>
-        <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Outstanding</dt><dd className="font-medium">{naira(outstanding)}</dd></div>
-      </dl>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {count("paid")} paid · {count("part")} part-paid · {count("unpaid")} unpaid · {count("none")} no record
-        {" "}(active students matching the program, class and search)
-      </p>
+        <form className="mt-4 grid gap-3 md:grid-cols-6">
+          <select name="term" defaultValue={term.id} className={`${input} md:col-span-2`}>
+            {terms.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.academic_years?.name} · Term {t.number}
+              </option>
+            ))}
+          </select>
+          <select name="status" defaultValue={status} className={input}>
+            {filters.map((f) => (
+              <option key={f.key} value={f.key}>{f.label}</option>
+            ))}
+          </select>
+          <select name="program" defaultValue={program ?? ""} className={input}>
+            <option value="">All programs</option>
+            {programs.map((p) => (
+              <option key={p.key} value={p.key}>{p.label}</option>
+            ))}
+          </select>
+          <select name="class" defaultValue={sp.class ?? ""} className={input}>
+            <option value="">All classes</option>
+            {(classes ?? []).map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-4`} />
+          <div className="flex gap-2 md:col-span-2">
+            <button className="h-11 flex-1 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
+            <Link href="/portal/fees" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
+          </div>
+        </form>
 
-      <TermFeeForm termId={term.id} />
+        <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
+          <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>
+          <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Paid</dt><dd className="font-medium">{naira(totalPaid)}</dd></div>
+          <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Outstanding</dt><dd className="font-medium">{naira(outstanding)}</dd></div>
+        </dl>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {count("paid")} paid · {count("part")} part-paid · {count("unpaid")} unpaid · {count("none")} no record
+          {" "}(active students matching the program, class and search)
+        </p>
 
-      <p className="mt-4 text-sm text-muted-foreground">{shown.length} student{shown.length === 1 ? "" : "s"} shown</p>
-      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
-        {pageRows.map(({ s, fee, key }) => {
-          const c = s.class_id ? classById.get(s.class_id) : undefined;
-          return (
-            <li key={s.id} className="p-3">
-              <details>
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium">{s.full_name}</span>
-                    <span className="text-sm text-muted-foreground">{s.admission_no} · {c?.name ?? "No class"}</span>
-                  </span>
-                  <span className="shrink-0 text-end text-sm">
-                    <span className="mb-1 block"><StatusBadge tone={statusTone[key]}>{statusLabel[key]}</StatusBadge></span>
-                    {fee && <span className="text-xs text-muted-foreground">{naira(fee.amount_paid)} of {naira(fee.amount_due)}</span>}
-                  </span>
-                </summary>
-                <div className="mt-3">
-                  <FeeForm
-                    studentId={s.id}
-                    termId={term.id}
-                    due={fee?.amount_due ?? 0}
-                    paid={fee?.amount_paid ?? 0}
-                    note={fee?.note ?? ""}
-                  />
-                </div>
-              </details>
-            </li>
-          );
-        })}
-        {!pageRows.length && <li className="p-4 text-sm text-muted-foreground">No students match these filters.</li>}
-      </ul>
+        <TermFeeForm termId={term.id} />
 
-      {lastPage > 1 && (
-        <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
-          <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
-        </nav>
-      )}
-    </div>
+        <p className="mt-4 text-sm text-muted-foreground">{shown.length} student{shown.length === 1 ? "" : "s"} shown</p>
+        <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
+          {pageRows.map(({ s, fee, key }) => {
+            const c = s.class_id ? classById.get(s.class_id) : undefined;
+            return (
+              <li key={s.id} className="p-3">
+                <details>
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium">{s.full_name}</span>
+                      <span className="text-sm text-muted-foreground">{s.admission_no} · {c?.name ?? "No class"}</span>
+                    </span>
+                    <span className="shrink-0 text-end text-sm">
+                      <span className="mb-1 block"><StatusBadge tone={statusTone[key]}>{statusLabel[key]}</StatusBadge></span>
+                      {fee && <span className="text-xs text-muted-foreground">{naira(fee.amount_paid)} of {naira(fee.amount_due)}</span>}
+                    </span>
+                  </summary>
+                  <div className="mt-3">
+                    <FeeForm
+                      key={`${term.id}-${s.id}`} // switching the term must not keep values typed for another term
+                      studentId={s.id}
+                      termId={term.id}
+                      due={fee?.amount_due ?? 0}
+                      paid={fee?.amount_paid ?? 0}
+                      note={fee?.note ?? ""}
+                    />
+                  </div>
+                </details>
+              </li>
+            );
+          })}
+          {!pageRows.length && <li className="p-4 text-sm text-muted-foreground">No students match these filters.</li>}
+        </ul>
+
+        {lastPage > 1 && (
+          <nav className="mt-4 flex items-center justify-between text-sm">
+            {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
+            <span className="text-muted-foreground">Page {page} of {lastPage}</span>
+            {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
+          </nav>
+        )}
+      </div>
+    </FreshOnVisit>
   );
 }
