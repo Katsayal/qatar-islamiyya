@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
+import { Trash2, Upload } from "lucide-react";
 import { resizeImage } from "@/lib/resize-image";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
+import { fileInputClass } from "@/components/form-parts";
 import { removeSignature, uploadSignature } from "./actions";
 
 function Message({ result }: { result: { ok: boolean; message: string } | null }) {
@@ -51,12 +55,12 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
       >
         <label className="flex flex-col gap-1 text-sm">
           {currentUrl ? "Replace signature" : "Upload signature"}
-          <input name="signature" type="file" required accept="image/jpeg,image/png,image/webp" className="text-sm" />
+          <input name="signature" type="file" required accept="image/jpeg,image/png,image/webp" className={fileInputClass} />
           <span className="text-xs text-muted-foreground">A photo or scan of the signature on white paper. JPG, PNG or WebP.</span>
         </label>
         <Message result={uploadResult} />
-        <button disabled={uploading || preparing} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-          {preparing ? "Preparing…" : uploading ? "Uploading…" : "Save signature"}
+        <button disabled={uploading || preparing} className={cn(btn.upload, big)}>
+          <Upload aria-hidden /> {preparing ? "Preparing…" : uploading ? "Uploading…" : "Upload signature"}
         </button>
       </form>
 
@@ -68,8 +72,8 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
             startTransition(() => removeAction());
           }}
         >
-          <button disabled={removing} className="h-11 w-full rounded-lg border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
-            {removing ? "Removing…" : "Remove signature"}
+          <button disabled={removing} className={`${btn.danger} w-full`}>
+            <Trash2 aria-hidden /> {removing ? "Removing…" : "Remove signature"}
           </button>
         </form>
       )}

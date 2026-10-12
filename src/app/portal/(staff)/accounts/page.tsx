@@ -1,3 +1,4 @@
+import { Ban, CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -6,7 +7,10 @@ import { AccountsTabs } from "./accounts-tabs";
 import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
-import { controlClass } from "@/components/form-parts";
+import { btn } from "@/components/buttons";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
+import { StatusBadge } from "@/components/status-badge";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -77,15 +81,14 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
           )}
         </section>
 
-        <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
-          <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={input} />
-          <select name="show" defaultValue={show} className={input}>
+        <PickerForm action="/portal/accounts" className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <SearchField defaultValue={q} />
+          <select name="show" defaultValue={show} aria-label="Show" className={input}>
             {shows.map((s) => (
               <option key={s.key} value={s.key}>{s.label}</option>
             ))}
           </select>
-          <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-        </form>
+        </PickerForm>
 
         <p className="mt-4 text-sm text-muted-foreground">{count ?? 0} active student{count === 1 ? "" : "s"}</p>
         <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
@@ -99,20 +102,30 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
                       <span className="block truncate font-medium">{s.full_name}</span>
                       <span className="text-sm text-muted-foreground">{s.admission_no}</span>
                     </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {!s.user_id ? "No login" : login?.active ? "Has login" : "Login disabled"}
-                    </span>
+                    {!s.user_id ? (
+                      <StatusBadge tone="muted">No login</StatusBadge>
+                    ) : login?.active ? (
+                      <StatusBadge tone="good">Has login</StatusBadge>
+                    ) : (
+                      <StatusBadge tone="bad">Login disabled</StatusBadge>
+                    )}
                   </summary>
                   <div className="mt-3 flex flex-col gap-3">
                     {!s.user_id ? (
-                      <PasswordForm action={createStudentLogin} idField="studentId" id={s.id} button="Create login" />
+                      <PasswordForm action={createStudentLogin} idField="studentId" id={s.id} button="Create login" kind="create" />
                     ) : (
                       <>
                         <PasswordForm action={resetPassword} idField="userId" id={s.user_id} button="Set new password" />
                         <form action={setActive.bind(null, s.user_id, !login?.active)}>
-                          <button className="h-11 w-full rounded-lg border px-4 text-sm hover:bg-muted bg-card">
-                            {login?.active ? "Disable login" : "Enable login"}
-                          </button>
+                          {login?.active ? (
+                            <button className={`${btn.danger} w-full`}>
+                              <Ban aria-hidden /> Disable login
+                            </button>
+                          ) : (
+                            <button className={`${btn.secondary} w-full`}>
+                              <CircleCheck aria-hidden /> Enable login
+                            </button>
+                          )}
                         </form>
                       </>
                     )}

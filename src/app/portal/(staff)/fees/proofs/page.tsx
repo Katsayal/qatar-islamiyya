@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { setProofStatus } from "./actions";
 import { StatusBadge } from "@/components/status-badge";
+import { Ban, Banknote, Check, RotateCcw } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -15,7 +17,6 @@ const statusLabel: Record<string, { text: string; tone: "warn" | "good" | "bad" 
   verified: { text: "Verified", tone: "good" },
   rejected: { text: "Rejected", tone: "bad" },
 };
-const button = "h-10 rounded-lg border bg-card px-4 text-sm hover:bg-muted";
 
 export default async function PaymentProofsPage({ searchParams }: { searchParams: Promise<{ show?: string; page?: string }> }) {
   await requireRole("staff");
@@ -103,21 +104,28 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
               <div className="mt-3 flex flex-wrap gap-2">
                 {p.status !== "verified" && (
                   <form action={setProofStatus.bind(null, p.id, "verified")}>
-                    <button className={`${button} bg-primary text-primary-foreground hover:bg-primary/90`}>Verify</button>
+                    <button className={`${btn.save} h-10`}>
+                      <Check aria-hidden /> Verify
+                    </button>
                   </form>
                 )}
                 {p.status !== "rejected" && (
                   <form action={setProofStatus.bind(null, p.id, "rejected")}>
-                    <button className={button}>Reject</button>
+                    <button className={`${btn.danger} h-10`}>
+                      <Ban aria-hidden /> Reject
+                    </button>
                   </form>
                 )}
                 {p.status !== "pending" && (
                   <form action={setProofStatus.bind(null, p.id, "pending")}>
-                    <button className={button}>Back to pending</button>
+                    <button className={`${btn.secondary} h-10`}>
+                      <RotateCcw aria-hidden /> Back to pending
+                    </button>
                   </form>
                 )}
                 {p.students && (
-                  <Link href={`/portal/fees?term=${p.term_id}&q=${encodeURIComponent(p.students.admission_no)}&status=all`} className={`${button} flex items-center`}>
+                  <Link href={`/portal/fees?term=${p.term_id}&q=${encodeURIComponent(p.students.admission_no)}&status=all`} className={`${btn.secondary} h-10`}>
+                    <Banknote aria-hidden />
                     Record payment
                   </Link>
                 )}

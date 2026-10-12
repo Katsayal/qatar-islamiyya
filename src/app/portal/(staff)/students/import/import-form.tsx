@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { checkCsv, importCsv, type Report } from "./actions";
+import { FileSearch, Upload } from "lucide-react";
+import { btn } from "@/components/buttons";
+import { fileInputClass } from "@/components/form-parts";
 
-const button = "h-11 rounded-lg px-5 text-sm font-medium disabled:opacity-50";
 
 export function ImportForm() {
   const [text, setText] = useState<string | null>(null);
@@ -31,13 +33,13 @@ export function ImportForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <input type="file" accept=".csv,text/csv" onChange={(e) => onFile(e.target.files?.[0])} className="text-sm" />
+      <input type="file" accept=".csv,text/csv" onChange={(e) => onFile(e.target.files?.[0])} className={fileInputClass} />
       <button
         disabled={!text || pending}
         onClick={() => text && start(async () => setReport(await checkCsv(text)))}
-        className={`${button} border`}
+        className={btn.secondary}
       >
-        {pending && !report ? "Checking…" : "Check file"}
+        <FileSearch aria-hidden /> {pending && !report ? "Checking…" : "Check file"}
       </button>
 
       {report && (
@@ -60,9 +62,9 @@ export function ImportForm() {
             <button
               disabled={pending}
               onClick={() => start(async () => setDone(await importCsv(text)))}
-              className={`${button} mt-3 bg-primary text-primary-foreground`}
+              className={`${btn.upload} mt-3`}
             >
-              {pending ? "Importing…" : `Import ${report.rowCount} student${report.rowCount === 1 ? "" : "s"}`}
+              <Upload aria-hidden /> {pending ? "Importing…" : `Import ${report.rowCount} student${report.rowCount === 1 ? "" : "s"}`}
             </button>
           )}
           {done?.error && <p role="alert" className="mt-2 text-destructive">{done.error}</p>}

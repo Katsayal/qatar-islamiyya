@@ -123,7 +123,19 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 - Tailwind + shadcn/ui, mobile-first.
 - Fonts via `next/font/google`: **Noto Sans** (supports Hausa ɓ ɗ ƙ ƴ), **Noto Naskh Arabic** (`font-arabic`), **Amiri Quran** (`font-quran`).
 - **Brand tokens** (`globals.css`, taken from the logo): `--primary` deep green, `--gold` (`bg-gold`, `text-gold`), `--deep` (`bg-deep`, the darkest green), warm page background (`--background` ≈ `oklch(0.962 0.012 100)`, `--muted` a step darker; cards are white `bg-card`). No dark mode (the `.dark` block is unused). Two CSS helpers: `.pattern-star` (faint gold eight-point star on dark green; put it on its own layer if the element also has a gradient, both use `background-image`) and `.gold-bar` (short gold bar under a page title: add it to every portal `<h1>`).
-- **Card look:** `rounded-xl border bg-card shadow-sm`. Primary button: `rounded-lg bg-primary ... hover:bg-primary/90`. Secondary: `rounded-lg border bg-card`.
+- **Card look:** `rounded-xl border bg-card shadow-sm`.
+- **Buttons by function** (`components/buttons.ts`, `btn.*`; add `big` via `cn()` for a form's main action; always pair with a lucide icon):
+
+  | Function | `btn.` | Look | Icon |
+  |---|---|---|---|
+  | Save / submit | `save` | solid green | `Check` |
+  | Create / add | `create` | solid green | `Plus` / `UserPlus` |
+  | Upload | `upload` | deep green | `Upload` |
+  | Passwords, logins | `security` | gold | `KeyRound` |
+  | Download, print, clear, enable, edit | `secondary` | white + border | `Download` / `Printer` / `X` / `Pencil` |
+  | Delete, remove, disable | `danger` | red outline | `Trash2` / `Ban` |
+  | Final delete | `dangerSolid` | solid red | `Trash2` |
+- **File inputs** always use `fileInputClass` (same as the public application form). **Filter bars have no Filter button:** wrap them in `PickerForm` (dropdowns apply on change, text search on Enter) with `SearchField` for the search box.
 - **Shared pieces** (`src/components/`): `form-parts.tsx` (`inputClass` = public forms, full width, h-12; `controlClass` = portal fields, no width, h-11, so filter bars keep their layout; `textareaClass`, `fileInputClass`, `Field`, `FormSection`; use these, do not hand-write field classes), `status-badge.tsx` (coloured pill for any status: tone good / warn / bad / muted, text always says the status), `progress-bar.tsx`, `portal-title.tsx`, `portal-banner.tsx` (green greeting band on the portal homes), `page-header.tsx` (green title band on public pages), `section-heading.tsx` (gold label + title), `cta-band.tsx` (Apply / WhatsApp / Call), `nav-link.tsx` (active-page link: `bar` public, `menu` phone card, `pill` portal bar; the home links `/`, `/portal`, `/portal/student` match exactly, others match the path and its children).
 - **Public pages:** `PageHeader` band first, outside any `<Suspense>` (so the title renders instantly), then cards; 32px (`gap-8`, `pt-8`) between the band and the first card. **Portal shell:** deep-green header (logo, name and role, Log out, ☰), desktop menu as pills with a gold active pill, mobile menu as a rounded scrolling card.
 - **Not restyled on purpose:** `report-card.tsx` (print / Save as PDF layout).

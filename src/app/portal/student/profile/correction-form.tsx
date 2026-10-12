@@ -3,6 +3,9 @@
 import { startTransition, useActionState, useEffect, useRef } from "react";
 import { requestCorrection } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { Send } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 export function CorrectionForm() {
   const [result, formAction, pending] = useActionState(requestCorrection, null);
@@ -40,8 +43,8 @@ export function CorrectionForm() {
           {result.message}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Sending…" : "Send request"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <Send aria-hidden /> {pending ? "Sending…" : "Send request"}
       </button>
     </form>
   );

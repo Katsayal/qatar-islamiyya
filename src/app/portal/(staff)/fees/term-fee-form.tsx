@@ -3,6 +3,8 @@
 import { startTransition, useActionState } from "react";
 import { setTermFee, type Result } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { Plus } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 export function TermFeeForm({ termId }: { termId: string }) {
   const [state, formAction, pending] = useActionState<Result, FormData>(setTermFee, { ok: false, message: null });
@@ -31,8 +33,8 @@ export function TermFeeForm({ termId }: { termId: string }) {
           placeholder="Amount due (₦)"
           className={`${controlClass} flex-1`}
         />
-        <button disabled={pending} className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-          {pending ? "Creating…" : "Create records"}
+        <button disabled={pending} className={btn.create}>
+          <Plus aria-hidden /> {pending ? "Creating…" : "Create records"}
         </button>
       </form>
       {state.message && (

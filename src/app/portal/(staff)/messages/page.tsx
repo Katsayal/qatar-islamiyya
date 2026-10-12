@@ -3,6 +3,8 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { setHandled } from "./actions";
 import { Corrections } from "./corrections";
+import { Check, RotateCcw } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -92,8 +94,8 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
             </div>
             <p className="mt-2 whitespace-pre-line text-sm">{m.message}</p>
             <form action={setHandled.bind(null, m.id, !m.handled)} className="mt-3">
-              <button className="h-10 rounded-lg border px-4 text-sm hover:bg-muted bg-card">
-                {m.handled ? "Mark as not handled" : "Mark as handled"}
+              <button className={m.handled ? `${btn.secondary} h-10` : `${btn.save} h-10`}>
+                {m.handled ? <RotateCcw aria-hidden /> : <Check aria-hidden />} {m.handled ? "Mark as not handled" : "Mark as handled"}
               </button>
             </form>
           </li>

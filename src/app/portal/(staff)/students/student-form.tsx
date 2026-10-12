@@ -1,10 +1,12 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import { BLOOD_GROUPS } from "@/lib/blood-groups";
 import { saveStudent } from "./actions";
-import { controlClass } from "@/components/form-parts";
+import { controlClass, fileInputClass } from "@/components/form-parts";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 export type StudentDefaults = Record<
   | "admission_no" | "full_name" | "full_name_ar" | "gender" | "date_of_birth" | "admitted_on"
@@ -115,7 +117,7 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           // eslint-disable-next-line @next/next/no-img-element
           <img src={d.photoUrl} alt="Current photo" className="size-24 rounded-lg object-cover" />
         )}
-        <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="text-sm" />
+        <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className={fileInputClass} />
       </Field>
 
       <h2 className="mt-2 font-semibold">Parent / guardian</h2>
@@ -129,9 +131,9 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           {error}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-11">
-        {pending ? "Saving…" : "Save student"}
-      </Button>
+      <button type="submit" disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save student"}
+      </button>
     </form>
   );
 }

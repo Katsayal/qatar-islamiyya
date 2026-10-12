@@ -1,9 +1,11 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import { acceptApplication } from "../actions";
 import { controlClass } from "@/components/form-parts";
+import { UserCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 const input = controlClass;
 
@@ -77,9 +79,9 @@ export function AcceptForm({
           {error}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-11">
-        {pending ? "Creating student…" : "Accept and create student"}
-      </Button>
+      <button type="submit" disabled={pending} className={cn(btn.save, big)}>
+        <UserCheck aria-hidden /> {pending ? "Creating student…" : "Accept and create student"}
+      </button>
     </form>
   );
 }

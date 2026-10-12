@@ -1,21 +1,15 @@
 "use client";
 
+import { Check, Upload } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
+import { controlClass, Field, fileInputClass } from "@/components/form-parts";
 import { saveDocument } from "./actions";
-import { controlClass } from "@/components/form-parts";
 
 export type DocumentDefaults = { id?: string; title: string; category: string };
 
-const input = controlClass;
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="flex flex-col gap-1 text-sm">
-      {label}
-      {children}
-    </label>
-  );
-}
+const input = `${controlClass} w-full`;
 
 export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
   const [error, formAction, pending] = useActionState(saveDocument, null);
@@ -27,7 +21,7 @@ export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
         e.preventDefault();
         startTransition(() => formAction(new FormData(e.currentTarget)));
       }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm"
     >
       {defaults.id && <input type="hidden" name="id" value={defaults.id} />}
       <Field label="Title">
@@ -51,9 +45,9 @@ export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
               type="file"
               required
               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
-              className="text-sm"
+              className={fileInputClass}
             />
-            <span className="text-xs text-muted-foreground">PDF, Word, Excel, PowerPoint or image, max 5 MB.</span>
+            <span className="text-xs font-normal text-muted-foreground">PDF, Word, Excel, PowerPoint or image, max 5 MB.</span>
           </Field>
         </>
       )}
@@ -62,9 +56,15 @@ export function DocumentForm({ defaults }: { defaults: DocumentDefaults }) {
           {error}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? (editing ? "Saving…" : "Uploading…") : editing ? "Save changes" : "Upload document"}
-      </button>
+      {editing ? (
+        <button disabled={pending} className={cn(btn.save, big)}>
+          <Check aria-hidden /> {pending ? "Saving…" : "Save changes"}
+        </button>
+      ) : (
+        <button disabled={pending} className={cn(btn.upload, big)}>
+          <Upload aria-hidden /> {pending ? "Uploading…" : "Upload document"}
+        </button>
+      )}
     </form>
   );
 }

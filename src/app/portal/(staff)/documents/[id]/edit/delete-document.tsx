@@ -1,6 +1,8 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { btn } from "@/components/buttons";
 import { deleteDocument } from "../../actions";
 
 export function DeleteDocument({ id }: { id: string }) {
@@ -15,8 +17,8 @@ export function DeleteDocument({ id }: { id: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-11 w-full rounded-lg border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50">
-        {pending ? "Deleting…" : "Delete document"}
+      <button disabled={pending} className={`${btn.danger} w-full`}>
+        <Trash2 aria-hidden /> {pending ? "Deleting…" : "Delete document"}
       </button>
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">

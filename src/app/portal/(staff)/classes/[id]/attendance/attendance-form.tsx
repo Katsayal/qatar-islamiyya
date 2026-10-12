@@ -3,6 +3,9 @@
 import { startTransition, useActionState } from "react";
 import { STATUSES, type Status } from "@/lib/attendance";
 import { saveAttendance, type Result } from "./actions";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 type Student = { id: string; full_name: string; admission_no: string };
 
@@ -59,8 +62,8 @@ export function AttendanceForm({
         ))}
       </ul>
 
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Saving…" : "Save attendance"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save attendance"}
       </button>
       {state.message && (
         <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>

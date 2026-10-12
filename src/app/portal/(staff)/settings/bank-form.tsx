@@ -1,6 +1,9 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 import { saveBank } from "./actions";
 import { controlClass } from "@/components/form-parts";
 
@@ -35,8 +38,8 @@ export function BankForm({ defaults }: { defaults: { bank_name: string; account_
           {result.message}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Saving…" : "Save bank details"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save bank details"}
       </button>
     </form>
   );

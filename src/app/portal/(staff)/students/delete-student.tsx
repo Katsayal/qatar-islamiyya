@@ -3,6 +3,8 @@
 import { startTransition, useActionState } from "react";
 import { deleteStudent } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { Trash2 } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 export function DeleteStudent({ id, admissionNo }: { id: string; admissionNo: string }) {
   const [error, formAction, pending] = useActionState(deleteStudent, null);
@@ -29,8 +31,8 @@ export function DeleteStudent({ id, admissionNo }: { id: string; admissionNo: st
             {error}
           </p>
         )}
-        <button disabled={pending} className="h-11 rounded-lg bg-destructive px-4 text-sm font-medium text-white disabled:opacity-50">
-          {pending ? "Deleting…" : "Delete permanently"}
+        <button disabled={pending} className={btn.dangerSolid}>
+          <Trash2 aria-hidden /> {pending ? "Deleting…" : "Delete permanently"}
         </button>
       </form>
     </details>

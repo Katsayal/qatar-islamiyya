@@ -45,6 +45,8 @@ export function ReportCard({ d }: { d: CardData }) {
   return (
     <article className="mx-auto max-w-[210mm] break-after-page rounded-lg border bg-background p-6 print:rounded-none print:border-0 print:p-0">
       <header className="border-b pb-3 text-center">
+        {/* SVG, unoptimized: prints sharp at any size. */}
+        <Image src="/logo.svg" alt="School logo" width={72} height={72} unoptimized className="mx-auto mb-2 size-18" />
         <p lang="ar" dir="rtl" className="font-arabic text-xl font-semibold">{school.nameAr}</p>
         <p className="font-semibold">{school.name}</p>
         <p className="text-xs text-muted-foreground">{school.address} · {school.phones.join(" · ")}</p>

@@ -1,3 +1,4 @@
+import { Images } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
@@ -24,14 +25,18 @@ export default async function GalleryAdminPage() {
     <FreshOnVisit>
       <div className="max-w-3xl">
         <h1 className="text-2xl font-semibold gold-bar">Gallery</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Photos shown on the public Gallery page, newest first. Tap a photo to edit its caption or delete it.</p>
         <div className="mt-4">
           <UploadForm />
         </div>
 
+        <h2 className="mt-8 flex items-center gap-2 font-semibold">
+          <Images aria-hidden className="size-4 text-primary" /> Photos <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
+        </h2>
         {items.length === 0 ? (
-          <p className="mt-6 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No photos yet.</p>
+          <p className="mt-3 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No photos yet.</p>
         ) : (
-          <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
+          <ul className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
             {items.map((g) => (
               <li key={g.id}>
                 <Link href={`/portal/gallery/${g.id}`} className="block">

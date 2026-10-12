@@ -1,4 +1,6 @@
+import { KeyRound, UserRound } from "lucide-react";
 import { PasswordChangeForm } from "@/components/password-change-form";
+import { StatusBadge } from "@/components/status-badge";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { changeOwnPassword } from "./actions";
@@ -12,33 +14,33 @@ export default async function MyAccountPage() {
   const me = await requireRole("teacher", "staff");
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  const role = me.is_owner ? "Owner" : me.role === "teacher" ? "Teacher" : "Staff";
 
   return (
     <FreshOnVisit>
       <div className="max-w-md space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold gold-bar">My account</h1>
-          <dl className="mt-3 divide-y rounded-xl border text-sm bg-card shadow-sm">
-            <div className="grid grid-cols-3 gap-2 p-3">
-              <dt className="text-muted-foreground">Name</dt>
-              <dd className="col-span-2">{me.full_name}</dd>
-            </div>
-            <div className="grid grid-cols-3 gap-2 p-3">
-              <dt className="text-muted-foreground">Role</dt>
-              <dd className="col-span-2 capitalize">
-                {me.role}
-                {me.is_owner && " · owner"}
-              </dd>
-            </div>
-            <div className="grid grid-cols-3 gap-2 p-3">
-              <dt className="text-muted-foreground">Email</dt>
-              <dd className="col-span-2 break-all">{data.user?.email}</dd>
-            </div>
-          </dl>
-        </div>
+        <h1 className="text-2xl font-semibold gold-bar">My account</h1>
 
-        <section>
-          <h2 className="font-semibold">Change my password</h2>
+        <section className="rounded-xl border bg-card shadow-sm">
+          <div className="flex items-center gap-3 border-b p-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
+              <UserRound aria-hidden className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate font-semibold">{me.full_name}</p>
+              <StatusBadge tone="good">{role}</StatusBadge>
+            </div>
+          </div>
+          <dl className="grid grid-cols-3 gap-2 p-4 text-sm">
+            <dt className="text-muted-foreground">Email</dt>
+            <dd className="col-span-2 break-all">{data.user?.email}</dd>
+          </dl>
+        </section>
+
+        <section className="rounded-xl border bg-card p-4 shadow-sm">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <KeyRound aria-hidden className="size-4 text-primary" /> Change my password
+          </h2>
           <p className="mb-3 mt-1 text-sm text-muted-foreground">
             {me.is_owner
               ? "Keep it safe: there is no reset link for the owner, a forgotten owner password has to be reset from the Supabase dashboard."

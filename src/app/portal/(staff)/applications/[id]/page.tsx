@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { rejectApplication } from "../actions";
 import { AcceptForm } from "./accept-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { Ban } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 const programLabel: Record<string, string> = { tahfiz: "Tahfiz", maahad: "Ma'ahad", barnamaj: "Barnamaj" };
 
@@ -96,8 +98,8 @@ export default async function ApplicationPage({ params }: { params: Promise<{ id
             <details className="rounded-xl border border-destructive/40 p-4">
               <summary className="cursor-pointer text-sm font-medium text-destructive">Reject this application…</summary>
               <form action={rejectApplication.bind(null, a.id)} className="mt-3">
-                <button className="h-11 w-full rounded-lg bg-destructive px-4 text-sm font-medium text-white">
-                  Reject application
+                <button className={`${btn.dangerSolid} w-full`}>
+                  <Ban aria-hidden /> Reject application
                 </button>
               </form>
             </details>

@@ -1,9 +1,12 @@
+import { Receipt, X } from "lucide-react";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { FeeForm } from "./fee-form";
 import { TermFeeForm } from "./term-fee-form";
-import { controlClass } from "@/components/form-parts";
+import { btn } from "@/components/buttons";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 import { StatusBadge } from "@/components/status-badge";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
@@ -118,42 +121,44 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
       <div>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold gold-bar">Fees</h1>
-          <Link href="/portal/fees/proofs" className="flex h-10 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
-            Payment proofs ({pendingProofs ?? 0})
+          <Link href="/portal/fees/proofs" className={`${btn.secondary} h-10 px-3`}>
+            <Receipt aria-hidden /> Payment proofs ({pendingProofs ?? 0})
           </Link>
         </div>
 
-        <form className="mt-4 grid gap-3 md:grid-cols-6">
-          <select name="term" defaultValue={term.id} className={`${input} md:col-span-2`}>
+        {/* key: rebuild when the URL filters change (e.g. Clear), so the boxes show what is applied */}
+        <PickerForm key={[q, term.id, status, program, sp.class].join("|")} action="/portal/fees" className="mt-4 grid gap-3 md:grid-cols-6">
+          <SearchField defaultValue={q} className="md:col-span-6" />
+          <select name="term" defaultValue={term.id} aria-label="Term" className={`${input} md:col-span-2`}>
             {terms.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.academic_years?.name} · Term {t.number}
               </option>
             ))}
           </select>
-          <select name="status" defaultValue={status} className={input}>
+          <select name="status" defaultValue={status} aria-label="Payment status" className={input}>
             {filters.map((f) => (
               <option key={f.key} value={f.key}>{f.label}</option>
             ))}
           </select>
-          <select name="program" defaultValue={program ?? ""} className={input}>
+          <select name="program" defaultValue={program ?? ""} aria-label="Program" className={input}>
             <option value="">All programs</option>
             {programs.map((p) => (
               <option key={p.key} value={p.key}>{p.label}</option>
             ))}
           </select>
-          <select name="class" defaultValue={sp.class ?? ""} className={input}>
+          <select name="class" defaultValue={sp.class ?? ""} aria-label="Class" className={input}>
             <option value="">All classes</option>
             {(classes ?? []).map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
-          <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-4`} />
-          <div className="flex gap-2 md:col-span-2">
-            <button className="h-11 flex-1 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-            <Link href="/portal/fees" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
-          </div>
-        </form>
+          {(q || program || sp.class || status !== "notpaid") && (
+            <Link href="/portal/fees" className={`${btn.secondary} `}>
+              <X aria-hidden /> Clear
+            </Link>
+          )}
+        </PickerForm>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
           <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>

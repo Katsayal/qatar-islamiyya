@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { setCorrectionDone } from "./actions";
+import { Check, RotateCcw } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 const filters = ["open", "done", "all"];
 
@@ -51,8 +53,8 @@ export async function Corrections({ show: showParam }: { show?: string }) {
             </div>
             <p className="mt-2 whitespace-pre-line text-sm">{r.message}</p>
             <form action={setCorrectionDone.bind(null, r.id, r.status !== "done")} className="mt-3">
-              <button className="h-10 rounded-lg border px-4 text-sm hover:bg-muted bg-card">
-                {r.status === "done" ? "Reopen" : "Mark done"}
+              <button className={r.status === "done" ? `${btn.secondary} h-10` : `${btn.save} h-10`}>
+                {r.status === "done" ? <RotateCcw aria-hidden /> : <Check aria-hidden />} {r.status === "done" ? "Reopen" : "Mark done"}
               </button>
             </form>
           </li>

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { controlClass } from "@/components/form-parts";
+import { FileText, Printer } from "lucide-react";
+import { btn } from "@/components/buttons";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -42,28 +45,27 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-semibold gold-bar">Report cards</h1>
-      <form className="mt-4 flex flex-col gap-3">
-        <select name="term" defaultValue={term.id} className={input}>
+      <PickerForm action="/portal/reports" className="mt-4 flex flex-col gap-3">
+        <select name="term" defaultValue={term.id} aria-label="Term" className={input}>
           {terms.map((t) => (
             <option key={t.id} value={t.id}>{t.academic_years?.name} · Term {t.number}</option>
           ))}
         </select>
-        <select name="class" defaultValue={chosen?.id ?? ""} required className={input}>
+        <select name="class" defaultValue={chosen?.id ?? ""} aria-label="Class" className={input}>
           <option value="" disabled>Choose a class…</option>
           {(classes ?? []).map((c) => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
-        <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Show students</button>
-      </form>
+      </PickerForm>
 
       {chosen && (
         <div className="mt-6">
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">{students?.length ?? 0} active students</p>
             {!!students?.length && (
-              <Link href={href()} className="flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                Print the whole class
+              <Link href={href()} className={btn.save}>
+                <Printer aria-hidden /> Print the whole class
               </Link>
             )}
           </div>
@@ -74,8 +76,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                   <p className="truncate font-medium">{s.full_name}</p>
                   <p className="text-xs text-muted-foreground">{s.admission_no}</p>
                 </div>
-                <Link href={href(`&student=${s.id}`)} className="flex h-10 shrink-0 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
-                  Open card
+                <Link href={href(`&student=${s.id}`)} className={`${btn.secondary} h-10 px-3`}>
+                  <FileText aria-hidden /> Open card
                 </Link>
               </li>
             ))}

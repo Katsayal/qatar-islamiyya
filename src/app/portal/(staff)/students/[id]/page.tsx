@@ -7,6 +7,8 @@ import { DeleteStudent } from "../delete-student";
 import { setStatus } from "../actions";
 import { StudentForm, type StudentDefaults } from "../student-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { Archive, ArchiveRestore } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -67,8 +69,8 @@ export default async function EditStudentPage({ params }: { params: Promise<{ id
 
         <div className="mt-8 flex flex-col gap-4">
           <form action={setStatus.bind(null, s.id, archived ? "active" : "archived")}>
-            <button className="h-11 w-full rounded-lg border px-4 text-sm font-medium hover:bg-muted bg-card">
-              {archived ? "Restore student" : "Archive student"}
+            <button className={`${btn.secondary} w-full`}>
+              {archived ? <ArchiveRestore aria-hidden /> : <Archive aria-hidden />} {archived ? "Restore student" : "Archive student"}
             </button>
           </form>
           <DeleteStudent id={s.id} admissionNo={s.admission_no} />

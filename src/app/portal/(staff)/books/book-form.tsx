@@ -3,6 +3,9 @@
 import { startTransition, useActionState } from "react";
 import { saveBook } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 export type BookDefaults = {
   id?: string;
@@ -84,8 +87,8 @@ export function BookForm({ defaults, teachers }: { defaults: BookDefaults; teach
           {error}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Saving…" : "Save book"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save book"}
       </button>
     </form>
   );

@@ -4,6 +4,8 @@ import { bookStatus } from "@/lib/barnamaj-books";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { loadCurriculum } from "./actions";
+import { BookPlus, Plus } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -28,8 +30,8 @@ export default async function BooksPage() {
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold gold-bar">{staff ? "Books & exams" : "My books"}</h1>
         {staff && (
-          <Link href="/portal/books/new" className="flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-            Add book
+          <Link href="/portal/books/new" className={btn.create}>
+            <Plus aria-hidden /> Add book
           </Link>
         )}
       </div>
@@ -39,7 +41,9 @@ export default async function BooksPage() {
           <p className="text-sm text-muted-foreground">
             No books yet. You can load the school&apos;s 43-book curriculum in one step, then assign a teacher to each book.
           </p>
-          <button className="mt-3 h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90">Load curriculum</button>
+          <button className={`${btn.create} mt-3`}>
+            <BookPlus aria-hidden /> Load curriculum
+          </button>
         </form>
       )}
       {!staff && list.length === 0 && (

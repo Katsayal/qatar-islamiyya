@@ -1,3 +1,4 @@
+import { Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { requireOwner } from "@/lib/auth";
 import { currentMonth, monthLabel, monthStart } from "@/lib/months";
@@ -5,7 +6,9 @@ import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 import { SalaryForm } from "./salary-form";
 import { SetMonthForm } from "./set-month-form";
-import { controlClass } from "@/components/form-parts";
+import { btn } from "@/components/buttons";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 import { StatusBadge } from "@/components/status-badge";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
@@ -74,30 +77,32 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
       <div>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold gold-bar">Salaries</h1>
-          <Link href="/portal/salaries/rates" className="flex h-10 items-center rounded-lg border px-3 text-sm font-medium hover:bg-muted bg-card">
-            Salary amounts
+          <Link href="/portal/salaries/rates" className={`${btn.secondary} h-10 px-3`}>
+            <Wallet aria-hidden /> Salary amounts
           </Link>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">Owner only. Nobody else can see this page or any salary figure.</p>
 
-        <form className="mt-4 grid gap-3 md:grid-cols-6">
-          <input name="month" type="month" required defaultValue={month} className={`${input} md:col-span-2`} />
-          <select name="status" defaultValue={status} className={`${input} md:col-span-2`}>
+        {/* key: rebuild when the URL filters change (e.g. Clear), so the boxes show what is applied */}
+        <PickerForm key={[q, month, status, role].join("|")} action="/portal/salaries" className="mt-4 grid gap-3 md:grid-cols-6">
+          <SearchField defaultValue={sp.q ?? ""} placeholder="Search by name" className="md:col-span-6" />
+          <input name="month" type="month" required defaultValue={month} aria-label="Month" className={`${input} md:col-span-2`} />
+          <select name="status" defaultValue={status} aria-label="Payment status" className={`${input} md:col-span-2`}>
             {filters.map((f) => (
               <option key={f.key} value={f.key}>{f.label}</option>
             ))}
           </select>
-          <select name="role" defaultValue={role} className={`${input} md:col-span-2`}>
+          <select name="role" defaultValue={role} aria-label="Role" className={input}>
             {roles.map((r) => (
               <option key={r.key} value={r.key}>{r.label}</option>
             ))}
           </select>
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Search by name" className={`${input} md:col-span-4`} />
-          <div className="flex gap-2 md:col-span-2">
-            <button className="h-11 flex-1 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-            <Link href="/portal/salaries" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
-          </div>
-        </form>
+          {(q || status !== "notpaid" || role !== "all") && (
+            <Link href="/portal/salaries" className={`${btn.secondary} `}>
+              <X aria-hidden /> Clear
+            </Link>
+          )}
+        </PickerForm>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
           <div className="rounded-xl border p-3 bg-card shadow-sm"><dt className="text-muted-foreground">Due</dt><dd className="font-medium">{naira(totalDue)}</dd></div>

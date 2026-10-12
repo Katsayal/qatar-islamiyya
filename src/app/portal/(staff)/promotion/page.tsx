@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PromoteForm } from "./promote-form";
 import { controlClass } from "@/components/form-parts";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { PickerForm } from "@/components/picker-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -40,8 +41,8 @@ export default async function PromotionPage({ searchParams }: { searchParams: Pr
           students who are in it now.
         </p>
 
-        <form className="mt-4 flex flex-col gap-3">
-          <select name="from" defaultValue={from?.id ?? ""} required className={input}>
+        <PickerForm action="/portal/promotion" className="mt-4 flex flex-col gap-3">
+          <select name="from" defaultValue={from?.id ?? ""} required aria-label="Class to move students out of" className={input}>
             <option value="" disabled>Move students out of…</option>
             {(classes ?? []).map((c) => (
               <option key={c.id} value={c.id}>
@@ -50,8 +51,7 @@ export default async function PromotionPage({ searchParams }: { searchParams: Pr
               </option>
             ))}
           </select>
-          <button className="h-11 rounded-lg border px-5 font-medium hover:bg-muted bg-card">Show students</button>
-        </form>
+        </PickerForm>
 
         {from && students && (
           <PromoteForm

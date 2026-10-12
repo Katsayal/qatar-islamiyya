@@ -1,8 +1,11 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
+import { controlClass, Field, fileInputClass, textareaClass } from "@/components/form-parts";
 import { savePost } from "./actions";
-import { controlClass } from "@/components/form-parts";
 
 export type PostDefaults = {
   id?: string;
@@ -14,16 +17,7 @@ export type PostDefaults = {
   hasCover: boolean;
 };
 
-const input = controlClass;
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="flex flex-col gap-1 text-sm">
-      {label}
-      {children}
-    </label>
-  );
-}
+const input = `${controlClass} w-full`;
 
 export function PostForm({ defaults }: { defaults: PostDefaults }) {
   const [error, formAction, pending] = useActionState(savePost, null);
@@ -34,7 +28,7 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
         e.preventDefault();
         startTransition(() => formAction(new FormData(e.currentTarget)));
       }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm"
     >
       {defaults.id && <input type="hidden" name="id" value={defaults.id} />}
       <Field label="Title">
@@ -57,14 +51,14 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
         </Field>
       </div>
       <Field label="Text">
-        <textarea name="body" rows={12} defaultValue={defaults.body} className={`${controlClass} h-auto p-3 text-base`} />
-        <span className="text-xs text-muted-foreground">
+        <textarea name="body" rows={12} defaultValue={defaults.body} className={textareaClass} />
+        <span className="text-xs font-normal text-muted-foreground">
           Markdown: **bold**, *italic*, # Heading, - list item, [link text](https://…). A blank line starts a new paragraph.
         </span>
       </Field>
       <Field label={defaults.hasCover ? "Replace cover image (optional)" : "Cover image (optional)"}>
-        <input name="cover" type="file" accept="image/jpeg,image/png,image/webp" className="text-sm" />
-        <span className="text-xs text-muted-foreground">JPG, PNG or WebP, max 2 MB.</span>
+        <input name="cover" type="file" accept="image/jpeg,image/png,image/webp" className={fileInputClass} />
+        <span className="text-xs font-normal text-muted-foreground">JPG, PNG or WebP, max 2 MB.</span>
       </Field>
       {defaults.hasCover && (
         <label className="flex items-center gap-2 text-sm">
@@ -72,7 +66,7 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
           Remove the current cover
         </label>
       )}
-      <label className="flex items-center gap-2 text-sm font-medium">
+      <label className="flex items-center gap-2 rounded-lg bg-secondary p-3 text-sm font-medium">
         <input type="checkbox" name="publish" defaultChecked={defaults.published} className="size-4" />
         Published (untick to keep as a draft)
       </label>
@@ -81,8 +75,8 @@ export function PostForm({ defaults }: { defaults: PostDefaults }) {
           {error}
         </p>
       )}
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Saving…" : "Save post"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save post"}
       </button>
     </form>
   );

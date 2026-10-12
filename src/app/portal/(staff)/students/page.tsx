@@ -1,8 +1,10 @@
+import { UserPlus, X } from "lucide-react";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
-import { controlClass } from "@/components/form-parts";
+import { btn } from "@/components/buttons";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 import { StatusBadge } from "@/components/status-badge";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -73,8 +75,8 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
     <div>
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold gold-bar">Students</h1>
-        <Link href="/portal/students/new" className={buttonVariants() + " h-10 px-4"}>
-          Add student
+        <Link href="/portal/students/new" className={btn.create}>
+          <UserPlus aria-hidden /> Add student
         </Link>
       </div>
 
@@ -99,30 +101,32 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         <li className="py-1 text-muted-foreground">active students</li>
       </ul>
 
-      <form className="mt-4 grid gap-3 md:grid-cols-5">
-        <input name="q" defaultValue={q} placeholder="Search Name or admission no." className={`${input} md:col-span-2`} />
-        <select name="program" defaultValue={program ?? ""} className={input}>
+      {/* key: rebuild when the URL filters change (e.g. Clear), so the boxes show what is applied */}
+      <PickerForm key={[q, program, sp.class, status].join("|")} action="/portal/students" className="mt-4 grid gap-3 md:grid-cols-4">
+        <SearchField defaultValue={q} className="md:col-span-4" />
+        <select name="program" defaultValue={program ?? ""} aria-label="Program" className={input}>
           <option value="">All programs</option>
           {programs.map((p) => (
             <option key={p.key} value={p.key}>{p.label}</option>
           ))}
         </select>
-        <select name="class" defaultValue={sp.class ?? ""} className={input}>
+        <select name="class" defaultValue={sp.class ?? ""} aria-label="Class" className={input}>
           <option value="">All classes</option>
           {(classes ?? []).filter((c) => c.active).map((c) => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
-        <select name="status" defaultValue={status} className={input}>
+        <select name="status" defaultValue={status} aria-label="Status" className={`${input} capitalize`}>
           {statuses.map((s) => (
             <option key={s} value={s} className="capitalize">{s}</option>
           ))}
         </select>
-        <div className="flex gap-2 md:col-span-5">
-          <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-          <Link href="/portal/students" className="flex h-11 items-center rounded-lg border px-5 bg-card">Reset</Link>
-        </div>
-      </form>
+        {(q || program || sp.class || status !== "active") && (
+          <Link href="/portal/students" className={btn.secondary}>
+            <X aria-hidden /> Clear
+          </Link>
+        )}
+      </PickerForm>
 
       <p className="mt-4 text-sm text-muted-foreground">
         {total} student{total === 1 ? "" : "s"} found

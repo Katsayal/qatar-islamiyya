@@ -2,6 +2,9 @@
 
 import { startTransition, useActionState } from "react";
 import { deleteHifz } from "./actions";
+import { Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { btn } from "@/components/buttons";
 
 export function DeleteEntry({ id }: { id: string }) {
   const [error, formAction, pending] = useActionState(deleteHifz, null);
@@ -15,8 +18,8 @@ export function DeleteEntry({ id }: { id: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-9 rounded-lg border border-destructive/40 px-3 text-xs font-medium text-destructive disabled:opacity-50">
-        {pending ? "Deleting…" : "Delete"}
+      <button disabled={pending} aria-label="Delete this entry" className={cn(btn.danger, "h-9 px-3 text-xs")}>
+        <Trash2 aria-hidden /> {pending ? "Deleting…" : "Delete"}
       </button>
       {error && (
         <p role="alert" className="mt-1 text-xs text-destructive">

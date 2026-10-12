@@ -4,6 +4,9 @@ import { startTransition, useActionState, useEffect, useRef, useState } from "re
 import { resizeImage } from "@/lib/resize-image";
 import { uploadProof } from "./actions";
 import { controlClass, fileInputClass } from "@/components/form-parts";
+import { Upload } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 const input = controlClass;
 
@@ -53,8 +56,8 @@ export function ProofForm({ terms, defaultTerm }: { terms: { id: string; label: 
           {result.message}
         </p>
       )}
-      <button disabled={pending || preparing} className="h-12 rounded-lg bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-        {preparing ? "Preparing…" : pending ? "Sending…" : "Send proof of payment"}
+      <button disabled={pending || preparing} className={cn(btn.upload, big)}>
+        <Upload aria-hidden /> {preparing ? "Preparing…" : pending ? "Sending…" : "Send proof of payment"}
       </button>
     </form>
   );

@@ -1,9 +1,10 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import { saveYear, type YearState } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { Check, Plus } from "lucide-react";
+import { btn } from "@/components/buttons";
 
 type Defaults = {
   id?: string;
@@ -62,9 +63,9 @@ export function YearForm({ defaults }: { defaults: Defaults }) {
           </p>
         )}
         {state.ok && <p role="status" className="text-sm text-primary">Saved.</p>}
-        <Button type="submit" disabled={pending} className="h-11">
-          {pending ? "Saving…" : defaults.id ? "Save changes" : "Create year"}
-        </Button>
+        <button type="submit" disabled={pending} className={defaults.id ? btn.save : btn.create}>
+          {defaults.id ? <Check aria-hidden /> : <Plus aria-hidden />} {pending ? "Saving…" : defaults.id ? "Save changes" : "Create year"}
+        </button>
       </div>
     </form>
   );

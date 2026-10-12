@@ -1,3 +1,4 @@
+import { Ban, CircleCheck } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -5,7 +6,10 @@ import { resetPassword, setActive } from "../actions";
 import { AccountsTabs } from "../accounts-tabs";
 import { PasswordForm } from "../password-form";
 import { AddAccount } from "./add-account";
-import { controlClass } from "@/components/form-parts";
+import { btn } from "@/components/buttons";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
+import { StatusBadge } from "@/components/status-badge";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -56,20 +60,19 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
         <AccountsTabs active="staff" />
         <h1 className="text-2xl font-semibold gold-bar">Teachers &amp; staff</h1>
 
-        <form className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
-          <input name="q" defaultValue={q} placeholder="Search by name" className={input} />
-          <select name="role" defaultValue={role} className={input}>
+        <PickerForm action="/portal/accounts/staff" className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+          <SearchField defaultValue={q} placeholder="Search by name" />
+          <select name="role" defaultValue={role} aria-label="Role" className={input}>
             {roles.map((r) => (
               <option key={r.key} value={r.key}>{r.label}</option>
             ))}
           </select>
-          <select name="status" defaultValue={status} className={input}>
+          <select name="status" defaultValue={status} aria-label="Status" className={input}>
             {statuses.map((s) => (
               <option key={s.key} value={s.key}>{s.label}</option>
             ))}
           </select>
-          <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-        </form>
+        </PickerForm>
 
         <p className="mt-4 text-sm text-muted-foreground">
           {list.length} {list.length === 1 ? "person" : "people"}
@@ -86,10 +89,11 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
                       <span className="block truncate font-medium">{p.full_name}</span>
                       <span className="block truncate text-sm text-muted-foreground">{email.get(p.id) ?? "—"}</span>
                     </span>
-                    <span className="shrink-0 text-end text-xs capitalize text-muted-foreground">
-                      {p.role}
-                      {p.is_owner && " · owner"}
-                      {!p.active && <span className="block">disabled</span>}
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <StatusBadge tone={p.role === "teacher" ? "muted" : "good"}>
+                        {p.is_owner ? "Owner" : p.role === "teacher" ? "Teacher" : "Staff"}
+                      </StatusBadge>
+                      {!p.active && <StatusBadge tone="bad">Disabled</StatusBadge>}
                     </span>
                   </summary>
                   <div className="mt-3 flex flex-col gap-3">
@@ -106,9 +110,15 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
                         <PasswordForm action={resetPassword} idField="userId" id={p.id} button="Set new password" />
                         {p.id !== me.id && (
                           <form action={setActive.bind(null, p.id, !p.active)}>
-                            <button className="h-11 w-full rounded-lg border px-4 text-sm hover:bg-muted bg-card">
-                              {p.active ? "Disable account" : "Enable account"}
-                            </button>
+                            {p.active ? (
+                              <button className={`${btn.danger} w-full`}>
+                                <Ban aria-hidden /> Disable account
+                              </button>
+                            ) : (
+                              <button className={`${btn.secondary} w-full`}>
+                                <CircleCheck aria-hidden /> Enable account
+                              </button>
+                            )}
                           </form>
                         )}
                       </>

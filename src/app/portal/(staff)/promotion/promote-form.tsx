@@ -3,6 +3,9 @@
 import { startTransition, useActionState } from "react";
 import { promoteStudents } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { ArrowRightLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 type Student = { id: string; full_name: string; admission_no: string };
 type Destination = { id: string; name: string; program: string; level: number | null };
@@ -91,8 +94,8 @@ export function PromoteForm({
       </label>
 
       <Message result={result} />
-      <button disabled={pending} className="h-12 rounded-lg bg-primary px-5 font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Moving…" : "Move students"}
+      <button disabled={pending} className={cn(btn.save, big)}>
+        <ArrowRightLeft aria-hidden /> {pending ? "Moving…" : "Move students"}
       </button>
     </form>
   );

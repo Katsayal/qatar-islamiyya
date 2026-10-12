@@ -1,6 +1,8 @@
 "use client";
 
+import { KeyRound } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { btn } from "@/components/buttons";
 import { createStudentLoginsBatch } from "./actions";
 import { controlClass } from "@/components/form-parts";
 
@@ -25,7 +27,8 @@ export function BulkLoginForm({ batch, remaining }: { batch: number; remaining: 
         placeholder="Enter the password"
         className={controlClass}
       />
-      <button disabled={pending} className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
+      <button disabled={pending} className={btn.security}>
+        <KeyRound aria-hidden />{" "}
         {pending ? "Creating logins… please wait" : `Create logins for the next ${next} student${next === 1 ? "" : "s"}`}
       </button>
       {result && (

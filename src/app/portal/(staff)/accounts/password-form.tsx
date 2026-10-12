@@ -1,6 +1,8 @@
 "use client";
 
+import { KeyRound, UserPlus } from "lucide-react";
 import { startTransition, useActionState } from "react";
+import { btn } from "@/components/buttons";
 import type { Result } from "./actions";
 import { controlClass } from "@/components/form-parts";
 
@@ -11,11 +13,14 @@ export function PasswordForm({
   idField,
   id,
   button,
+  kind = "reset",
 }: {
   action: (prev: Result, formData: FormData) => Promise<Result>;
   idField: string;
   id: string;
   button: string;
+  /** create = a new login (green, person icon); otherwise a password reset (gold, key icon). */
+  kind?: "create" | "reset";
 }) {
   const [state, formAction, pending] = useActionState(action, { ok: false, message: null });
 
@@ -36,8 +41,8 @@ export function PasswordForm({
         placeholder="Password (at least 6 characters)"
         className={controlClass}
       />
-      <button disabled={pending} className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-        {pending ? "Saving…" : button}
+      <button disabled={pending} className={kind === "create" ? btn.create : btn.security}>
+        {kind === "create" ? <UserPlus aria-hidden /> : <KeyRound aria-hidden />} {pending ? "Saving…" : button}
       </button>
       {state.message && (
         <p role={state.ok ? "status" : "alert"} className={`rounded-lg border p-3 text-sm ${state.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>

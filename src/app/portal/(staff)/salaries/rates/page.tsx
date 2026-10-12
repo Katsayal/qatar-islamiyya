@@ -2,7 +2,8 @@ import Link from "next/link";
 import { requireOwner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { RateForm } from "./rate-form";
-import { controlClass } from "@/components/form-parts";
+import { controlClass, SearchField } from "@/components/form-parts";
+import { PickerForm } from "@/components/picker-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
@@ -33,14 +34,13 @@ export default async function SalaryRatesPage({ searchParams }: { searchParams: 
           The fixed monthly salary of each person. {missing > 0 ? `${missing} active ${missing === 1 ? "person has" : "people have"} no salary set yet.` : "Everyone listed has a salary set."}
         </p>
 
-        <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Search by name" className={input} />
-          <select name="show" defaultValue={showAll ? "all" : "active"} className={input}>
+        <PickerForm action="/portal/salaries/rates" className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <SearchField defaultValue={sp.q ?? ""} placeholder="Search by name" />
+          <select name="show" defaultValue={showAll ? "all" : "active"} aria-label="Show" className={input}>
             <option value="active">Active accounts</option>
             <option value="all">Including disabled</option>
           </select>
-          <button className="h-11 rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90">Filter</button>
-        </form>
+        </PickerForm>
 
         <ul className="mt-4 divide-y rounded-xl border bg-card shadow-sm">
           {list.map((p) => (

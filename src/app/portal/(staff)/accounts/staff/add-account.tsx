@@ -1,7 +1,8 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
+import { btn } from "@/components/buttons";
 import { createStaffAccount, type Result } from "../actions";
 import { controlClass } from "@/components/form-parts";
 
@@ -47,9 +48,9 @@ export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
           {state.message}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-11">
-        {pending ? "Creating…" : "Create account"}
-      </Button>
+      <button type="submit" disabled={pending} className={btn.create}>
+        <UserPlus aria-hidden /> {pending ? "Creating…" : "Create account"}
+      </button>
     </form>
   );
 }

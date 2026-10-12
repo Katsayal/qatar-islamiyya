@@ -1,10 +1,12 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import { saveClass } from "./actions";
 import { controlClass } from "@/components/form-parts";
 import { TeacherPicker, type Person } from "./teacher-picker";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { big, btn } from "@/components/buttons";
 
 export type ClassDefaults = {
   id?: string;
@@ -90,9 +92,9 @@ export function ClassForm({
           {error}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-11">
-        {pending ? "Saving…" : "Save class"}
-      </Button>
+      <button type="submit" disabled={pending} className={cn(btn.save, big)}>
+        <Check aria-hidden /> {pending ? "Saving…" : "Save class"}
+      </button>
     </form>
   );
 }
