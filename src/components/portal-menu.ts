@@ -21,6 +21,7 @@ const items: MenuItem[] = [
   { href: "/portal/gallery", label: "Gallery", staffOnly: true },
   { href: "/portal/accounts", label: "Accounts", staffOnly: true },
   { href: "/portal/salaries", label: "Salaries", staffOnly: true, ownerOnly: true },
+  { href: "/portal/audit", label: "Activity log", staffOnly: true, ownerOnly: true },
   { href: "/portal/settings", label: "Settings", staffOnly: true },
   { href: "/portal/account", label: "My account" },
 ];

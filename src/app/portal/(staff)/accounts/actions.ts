@@ -17,6 +17,12 @@ const done = (message: string): Result => ({ ok: true, message });
 // Everything here runs on the server. The service-role client is used only below,
 // after requireRole; who may do what is also enforced by RLS on profiles.
 
+// Logins are made with the service-role key, so the database cannot see who did it:
+// log it with the staff member's own session (actor taken from the session). Never logs a password.
+async function logAccount(supabase: Awaited<ReturnType<typeof createClient>>, summary: string, table: string, row: string) {
+  await supabase.rpc("log_action", { p_summary: summary, p_table: table, p_row: row });
+}
+
 type LoginStudent = { id: string; admission_no: string; full_name: string };
 
 // Creates the auth login for one student and links it. Returns an error message, or null on success.
@@ -42,6 +48,7 @@ async function createLoginFor(
     await admin.auth.admin.deleteUser(data.user.id); // no orphan login
     return "Could not link the login to the student. Nothing was saved.";
   }
+  await logAccount(supabase, `Created a login for student ${s.admission_no} (${s.full_name})`, "students", s.id);
   return null;
 }
 
@@ -149,10 +156,9 @@ export async function createStaffAccount(_prev: Result, formData: FormData): Pro
   });
   if (error) return fail(error.code === "email_exists" ? "An account with this email already exists." : "Could not create the account.");
 
-  if (v.phone) {
-    const supabase = await createClient();
-    await supabase.from("profiles").update({ phone: v.phone }).eq("id", data.user.id);
-  }
+  const supabase = await createClient();
+  if (v.phone) await supabase.from("profiles").update({ phone: v.phone }).eq("id", data.user.id);
+  await logAccount(supabase, `Created a ${v.role} account for ${v.full_name} (${v.email})`, "profiles", data.user.id);
 
   revalidatePath("/portal/accounts/staff");
   return done(`Account created for ${v.full_name}. They sign in with ${v.email} and the password you set.`);
@@ -164,7 +170,7 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Enter a password.");
 
   const supabase = await createClient();
-  const { data: target } = await supabase.from("profiles").select("role").eq("id", parsed.data.userId).maybeSingle();
+  const { data: target } = await supabase.from("profiles").select("role, full_name").eq("id", parsed.data.userId).maybeSingle();
   if (!target) return fail("Account not found.");
   // Staff reset students and teachers; staff and owner passwords are the owner's to reset.
   if (target.role === "staff" && !me.is_owner) return fail("Only the owner can change a staff password.");
@@ -174,7 +180,9 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
     // A student whose password staff reset sees the "set your own password" reminder again.
     ...(target.role === "student" ? { user_metadata: { password_changed: false } } : {}),
   });
-  return error ? fail("Could not change the password.") : done("Password changed.");
+  if (error) return fail("Could not change the password.");
+  await logAccount(supabase, `Reset the password of ${target.full_name} (${target.role})`, "profiles", parsed.data.userId);
+  return done("Password changed.");
 }
 
 // Disable / enable. RLS decides who may touch which profile (staff: students and teachers, owner: anyone).

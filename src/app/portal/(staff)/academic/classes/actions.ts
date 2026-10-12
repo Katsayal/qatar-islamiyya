@@ -62,13 +62,19 @@ export async function saveClass(_prev: string | null, formData: FormData): Promi
     classId = data.id;
   }
 
-  // Replace the teacher assignments.
-  const { error: delError } = await supabase.from("class_teachers").delete().eq("class_id", classId);
-  if (delError) return "Could not update the teachers.";
-  if (teacher_ids.length) {
+  // Change only the assignments that changed, so the activity log shows real changes, not remove + re-add on every save.
+  const { data: current } = await supabase.from("class_teachers").select("teacher_id").eq("class_id", classId);
+  const had = (current ?? []).map((r) => r.teacher_id);
+  const removed = had.filter((id) => !teacher_ids.includes(id));
+  const added = teacher_ids.filter((id) => !had.includes(id));
+  if (removed.length) {
+    const { error } = await supabase.from("class_teachers").delete().eq("class_id", classId).in("teacher_id", removed);
+    if (error) return "Could not update the teachers.";
+  }
+  if (added.length) {
     const { error } = await supabase
       .from("class_teachers")
-      .insert(teacher_ids.map((teacher_id) => ({ class_id: classId!, teacher_id })));
+      .insert(added.map((teacher_id) => ({ class_id: classId!, teacher_id })));
     if (error) return "Could not update the teachers.";
   }
 

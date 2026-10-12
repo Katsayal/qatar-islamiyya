@@ -17,7 +17,13 @@ insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data) va
 update public.profiles set active = false where id = '00000000-0000-0000-0000-000000000006';
 
 -- Real academic years may exist on DEV; clear them inside this (rolled back) transaction so the test term can cover all dates.
-delete from public.student_fees; -- real fee rows would block clearing the terms; all of this is rolled back
+-- Real rows pointing at terms would block clearing them; all of this is rolled back.
+delete from public.student_fees;
+delete from public.hifz_entries;
+delete from public.attendance;
+delete from public.exam_results;
+delete from public.report_comments;
+delete from public.payment_proofs;
 delete from public.terms;
 delete from public.academic_years;
 insert into public.academic_years (id, name, starts_on, ends_on)
@@ -382,6 +388,101 @@ begin
   if n <> 1 then raise exception 'FAIL: owner could not edit a teacher profile'; end if;
 end $$;
 reset role;
+
+-- ---------- activity log (L.1) ----------
+-- staff: create / no-op edit / edit / delete a class, one account entry; cannot read or write the log
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
+do $$ begin
+  insert into public.classes (id, name, program, hifz_unit) values ('20000000-0000-0000-0000-00000000000c', 'Audit C', 'tahfiz', 'lines');
+  update public.classes set name = 'Audit C' where id = '20000000-0000-0000-0000-00000000000c'; -- nothing changes
+  update public.classes set name = 'Audit C2' where id = '20000000-0000-0000-0000-00000000000c';
+  delete from public.classes where id = '20000000-0000-0000-0000-00000000000c';
+  perform public.log_action('Reset the password of Teacher A (teacher)', 'profiles', '00000000-0000-0000-0000-000000000003');
+  if (select count(*) from public.audit_log) <> 0 then raise exception 'FAIL: non-owner staff can read the activity log'; end if;
+  begin
+    insert into public.audit_log (action, table_name) values ('create', 'x');
+    raise exception 'FAIL: staff wrote the activity log directly';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+-- teacher and student: cannot write account entries or read the log
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$ begin
+  begin
+    perform public.log_action('x', 'profiles', null);
+    raise exception 'FAIL: teacher wrote an account log entry';
+  exception when others then if sqlerrm like 'FAIL%' then raise; end if;
+  end;
+  if (select count(*) from public.audit_log) <> 0 then raise exception 'FAIL: teacher can read the activity log'; end if;
+end $$;
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$ begin
+  begin
+    perform public.log_action('x', 'profiles', null);
+    raise exception 'FAIL: student wrote an account log entry';
+  exception when others then if sqlerrm like 'FAIL%' then raise; end if;
+  end;
+  if (select count(*) from public.audit_log) <> 0 then raise exception 'FAIL: student can read the activity log'; end if;
+end $$;
+reset role;
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$ begin
+  begin
+    perform count(*) from public.audit_log;
+    raise exception 'FAIL: anon can read the activity log';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+-- owner: reads the rows, cannot delete them
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
+do $$ begin
+  if (select count(*) from public.audit_log where row_id = '20000000-0000-0000-0000-00000000000c') <> 3 then
+    raise exception 'FAIL: owner should read 3 log rows for Audit C (create, edit, delete)'; end if;
+  begin
+    delete from public.audit_log;
+    raise exception 'FAIL: owner deleted activity log rows';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+-- what was written (as postgres)
+do $$
+declare c constant text := '20000000-0000-0000-0000-00000000000c';
+begin
+  if (select count(*) from public.audit_log where row_id = c and action = 'create'
+        and actor_id = '00000000-0000-0000-0000-000000000002' and actor_name = 'Staff' and new ->> 'name' = 'Audit C') <> 1 then
+    raise exception 'FAIL: class create not logged with the staff actor'; end if;
+  if (select count(*) from public.audit_log where row_id = c and action = 'edit') <> 1 then
+    raise exception 'FAIL: expected exactly 1 edit row (the no-change update must not log)'; end if;
+  if (select old::text || new::text from public.audit_log where row_id = c and action = 'edit')
+       <> '{"name": "Audit C"}{"name": "Audit C2"}' then
+    raise exception 'FAIL: edit row should hold only the changed field'; end if;
+  if (select context ->> 'name' from public.audit_log where row_id = c and action = 'edit') <> 'Audit C2' then
+    raise exception 'FAIL: edit row should keep the class name in context'; end if;
+  if (select count(*) from public.audit_log where row_id = c and action = 'delete' and old ->> 'name' = 'Audit C2') <> 1 then
+    raise exception 'FAIL: class delete not logged with the old row'; end if;
+  if (select count(*) from public.audit_log where action = 'account' and actor_id = '00000000-0000-0000-0000-000000000002'
+        and row_id = '00000000-0000-0000-0000-000000000003') <> 1 then
+    raise exception 'FAIL: account entry not logged with the staff actor'; end if;
+  -- teacher records: new entries are not logged, edits are (only changed fields)
+  if (select count(*) from public.audit_log where table_name = 'hifz_entries' and action = 'create') <> 0 then
+    raise exception 'FAIL: a new hifz entry was logged'; end if;
+  if (select count(*) from public.audit_log where table_name = 'hifz_entries' and action = 'edit'
+        and actor_id = '00000000-0000-0000-0000-000000000003' and new ? 'note' and not new ? 'teacher_id') <> 1 then
+    raise exception 'FAIL: teacher hifz edit not logged with only the changed fields'; end if;
+end $$;
 
 -- ---------- bucket limits (F.1) ----------
 do $$ begin

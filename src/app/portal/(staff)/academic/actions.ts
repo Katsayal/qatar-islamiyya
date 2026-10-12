@@ -87,6 +87,12 @@ export async function saveYear(_prev: YearState, formData: FormData): Promise<Ye
     // then set the final dates. On failure, put the old dates back.
     const setTerm = (id: string, starts_on: string, ends_on: string) =>
       supabase.from("terms").update({ starts_on, ends_on }).eq("id", id);
+    // Unchanged dates: leave the terms alone (keeps the activity log free of the parking moves).
+    const same = old.every((t) => t.starts_on === ranges[t.number - 1].starts_on && t.ends_on === ranges[t.number - 1].ends_on);
+    if (same) {
+      revalidatePath("/portal/academic");
+      return { ok: true, error: null };
+    }
     for (const t of old) await setTerm(t.id, `${9000 + t.number}-01-01`, `${9000 + t.number}-01-02`);
     for (const t of old) {
       const r = ranges[t.number - 1];

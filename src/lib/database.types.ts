@@ -238,6 +238,56 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          at: string
+          context: Json | null
+          id: number
+          new: Json | null
+          old: Json | null
+          row_id: string | null
+          summary: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          at?: string
+          context?: Json | null
+          id?: never
+          new?: Json | null
+          old?: Json | null
+          row_id?: string | null
+          summary?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          at?: string
+          context?: Json | null
+          id?: never
+          new?: Json | null
+          old?: Json | null
+          row_id?: string | null
+          summary?: string | null
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       books: {
         Row: {
           author: string | null
@@ -1365,6 +1415,10 @@ export type Database = {
       is_member: { Args: never; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      log_action: {
+        Args: { p_row: string; p_summary: string; p_table: string }
+        Returns: undefined
+      }
       my_class_teacher_names: { Args: never; Returns: string[] }
       my_juz_progress: {
         Args: never

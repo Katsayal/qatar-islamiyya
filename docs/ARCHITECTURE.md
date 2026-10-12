@@ -34,7 +34,7 @@ Supabase
 | Public page text in code files | Rarely changes; no CMS |
 | No i18n library | English UI; Arabic/Hausa blocks just use `lang`/`dir` |
 | No offline mode | Plain mobile pages first; revisit only if network is a real problem |
-| `updated_at`/`updated_by` instead of audit log | Enough accountability for now |
+| Activity log = one table + one generic trigger | The database records every write, so no page or action can forget it; only account actions (service-role) need an explicit call |
 
 ## 3. Auth & roles
 - Supabase email/password auth. Default password settings (no strength rules, no MFA).
@@ -74,6 +74,8 @@ Pattern per table:
 - **Hidden columns:** RLS is per row, so a column a role must not see (students' `notes`, `medical_notes`) is hidden with column privileges plus a security-definer reader (`student_notes()`); see SCHEMA §8a.
 
 Other protections (F.1): `lib/supabase/admin.ts` imports `server-only` (built into Next) so the service-role client can never reach a client bundle; `next.config.ts` sends `X-Frame-Options: DENY`, `nosniff` and a referrer policy; CSV exports put `'` before cells starting with `= + - @` (formula injection; plain numbers like `+234…` are left alone); buckets have size/type limits. Supabase Auth sign-up must be **off** in the dashboard (DEV and PROD): accounts are created only by staff.
+
+**Activity log (L.1):** `audit_log` is filled by the AFTER trigger `audit_row()` (security definer) on the tables listed in SCHEMA §8a: actor = `auth.uid()` + their name at that moment; edits store only changed fields and write nothing when nothing changed. Writes made with the service-role key have no `auth.uid()`, so the account actions in `accounts/actions.ts` call `rpc("log_action", …)` with the staff member's own session (staff only, actor taken from the session, never from the form). Read: owner only (`/portal/audit`); nobody can insert/update/delete rows through the API. **A new table must be added to the trigger list in a migration** (mode `full` or `edits`). Pruning: the owner runs `delete from audit_log where at < '…'` in the Supabase SQL editor.
 
 RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake owner/staff/teacher/student/inactive users + data, asserts the critical rules per role, then rolls back. Run `npx supabase db query --linked -f supabase/rls-checks.sql` after every policy change. All helpers return false for inactive users, so `active = false` locks an account out of the data.
 
