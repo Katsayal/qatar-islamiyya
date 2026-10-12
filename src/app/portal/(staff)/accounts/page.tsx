@@ -3,7 +3,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createStudentLogin, resetPassword, setActive } from "./actions";
-import { AccountsTabs } from "./accounts-tabs";
+import { accountTabs, PageTabs } from "@/components/page-tabs";
 import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
@@ -55,7 +55,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
   return (
     <FreshOnVisit>
       <div className="max-w-2xl">
-        <AccountsTabs active="students" />
+        <PageTabs tabs={accountTabs} active="/portal/accounts" />
         <h1 className="text-2xl font-semibold gold-bar">Student logins</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           A student signs in with their admission number and the password you set here.

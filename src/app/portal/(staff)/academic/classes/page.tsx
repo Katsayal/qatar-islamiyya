@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { btn } from "@/components/buttons";
+import { academicTabs, PageTabs } from "@/components/page-tabs";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -28,13 +30,11 @@ export default async function ClassesPage() {
 
   return (
     <div>
-      <Link href="/portal/academic" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Academic setup
-      </Link>
-      <div className="mt-2 flex items-center justify-between gap-3">
+      <PageTabs tabs={academicTabs} active="/portal/academic/classes" />
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold gold-bar">Classes</h1>
-        <Link href="/portal/academic/classes/new" className={buttonVariants() + " h-10 px-4"}>
-          Add class
+        <Link href="/portal/academic/classes/new" className={btn.create}>
+          <Plus aria-hidden /> Add class
         </Link>
       </div>
 

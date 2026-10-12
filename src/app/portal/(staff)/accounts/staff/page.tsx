@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { resetPassword, setActive } from "../actions";
-import { AccountsTabs } from "../accounts-tabs";
+import { accountTabs, PageTabs } from "@/components/page-tabs";
 import { PasswordForm } from "../password-form";
 import { AddAccount } from "./add-account";
 import { btn } from "@/components/buttons";
@@ -57,7 +57,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
   return (
     <FreshOnVisit>
       <div className="max-w-2xl">
-        <AccountsTabs active="staff" />
+        <PageTabs tabs={accountTabs} active="/portal/accounts/staff" />
         <h1 className="text-2xl font-semibold gold-bar">Teachers &amp; staff</h1>
 
         <PickerForm action="/portal/accounts/staff" className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto]">

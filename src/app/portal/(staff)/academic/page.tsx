@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteYear } from "./delete-year";
 import { YearForm } from "./year-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { academicTabs, PageTabs } from "@/components/page-tabs";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -34,15 +34,9 @@ export default async function AcademicPage() {
   return (
     <FreshOnVisit>
       <div>
-        <div className="flex items-baseline justify-between gap-3">
-          <h1 className="text-2xl font-semibold gold-bar">Academic setup</h1>
-          <Link href="/portal/academic/classes" className="text-sm text-primary underline-offset-4 hover:underline">
-            Classes →
-          </Link>
-        </div>
-
-        <h2 className="mt-6 font-semibold">Academic years</h2>
-        <p className="text-sm text-muted-foreground">
+        <PageTabs tabs={academicTabs} active="/portal/academic" />
+        <h1 className="text-2xl font-semibold gold-bar">Academic years</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Terms follow each other with no gaps. Today&apos;s date decides the current term.
         </p>
 
