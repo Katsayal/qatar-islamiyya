@@ -23,7 +23,7 @@ export default function LoginPage() {
       </Suspense>
       <div className="w-full max-w-sm rounded-2xl border-t-4 border-t-gold bg-card p-6 shadow-xl md:p-8">
         <Link href="/" className="flex flex-col items-center text-center">
-          <Image src="/logo.svg" alt="" width={80} height={80} priority className="size-20" />
+          <Image src="/logo.svg" alt="" width={80} height={80} loading="eager" className="size-20" />
           <span className="mt-3 block font-semibold text-primary">Madrasatu Hajiya Hindatu</span>
           <span lang="ar" dir="rtl" className="font-arabic block text-sm text-muted-foreground">
             مدرسة الحاجة هندة

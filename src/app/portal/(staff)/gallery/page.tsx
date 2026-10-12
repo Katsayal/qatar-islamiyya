@@ -45,6 +45,7 @@ export default async function GalleryAdminPage() {
                     alt={g.caption ?? "School photo"}
                     width={320}
                     height={320}
+                    sizes="(min-width: 768px) 320px, 50vw"
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                   <p className="mt-1 truncate text-xs text-muted-foreground">{g.caption ?? "No caption"}</p>

@@ -9,7 +9,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-t-4 border-t-primary bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/logo.svg" alt="" width={44} height={44} priority className="size-11" />
+          <Image src="/logo.svg" alt="" width={44} height={44} loading="eager" className="size-11" />
           <span className="flex flex-col leading-tight">
             <span className="text-sm font-semibold text-primary">Madrasatu Hajiya Hindatu</span>
             <span lang="ar" dir="rtl" className="font-arabic text-xs text-muted-foreground">

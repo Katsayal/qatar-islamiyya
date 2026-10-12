@@ -13,7 +13,7 @@ export function PortalHeader({ profile }: { profile: Profile }) {
     <header className="sticky top-0 z-40 border-b-4 border-b-gold bg-deep text-white print:hidden">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
         <Link href={menu[0].href} className="flex min-w-0 items-center gap-3">
-          <Image src="/logo.svg" alt="" width={40} height={40} priority className="size-10 shrink-0" />
+          <Image src="/logo.svg" alt="" width={40} height={40} loading="eager" className="size-10 shrink-0" />
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-sm font-semibold">{profile.full_name}</span>
             <span className="block text-xs capitalize text-white/70">

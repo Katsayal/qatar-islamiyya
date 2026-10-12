@@ -24,7 +24,7 @@ async function NewsList() {
 
   return (
     <ul className="grid gap-4 md:grid-cols-2">
-      {posts.map((p) => (
+      {posts.map((p, i) => (
         <li key={p.id} className="overflow-hidden rounded-xl border bg-card shadow-sm">
           {p.cover_path && (
             <Image
@@ -32,6 +32,9 @@ async function NewsList() {
               alt=""
               width={640}
               height={360}
+              sizes="(min-width: 768px) 432px, 100vw"
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : "auto"}
               className="aspect-video w-full object-cover"
             />
           )}
@@ -54,7 +57,8 @@ export default function NewsPage() {
   return (
     <>
       <PageHeader label="What's happening" title="News & events" />
-      <section className="mx-auto max-w-4xl px-4 pt-8 pb-12">
+      {/* min-h: when the list is shorter than the skeleton, the footer would jump up into view (layout shift) */}
+      <section className="mx-auto min-h-[70vh] max-w-4xl px-4 pt-8 pb-12">
         <Suspense fallback={<CardsSkeleton count={4} grid="md:grid-cols-2" image />}>
           <NewsList />
         </Suspense>

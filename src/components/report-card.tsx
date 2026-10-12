@@ -33,7 +33,8 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between gap-3 border-b py-1.5 text-sm">
       <span className="text-muted-foreground">{label}</span>
-      <span className="shrink-0 whitespace-nowrap font-medium">{value}</span>
+      {/* Long values (grade counts) wrap on small phones instead of widening the card */}
+      <span className="text-end font-medium">{value}</span>
     </div>
   );
 }
@@ -70,7 +71,7 @@ export function ReportCard({ d }: { d: CardData }) {
             value={`${h.totalPages} / ${TOTAL_PAGES} pages (${Math.round((h.totalPages / TOTAL_PAGES) * 1000) / 10}%)`}
           />
           <Row label="Days present / absent" value={`${h.presentDays} / ${h.absentDays}`} />
-          <Row label="Grades on new lessons" value={`Jayyid ${h.jayyid} · Jayyid Jiddan ${h.jayyidJiddan} · Mumtaz ${h.mumtaz}`} />
+          <Row label="Grades on new lessons" value={`Jayyid ${h.jayyid} · Jayyid Jiddan ${h.jayyidJiddan} · Mumtaz ${h.mumtaz}`} />
         </section>
       )}
 

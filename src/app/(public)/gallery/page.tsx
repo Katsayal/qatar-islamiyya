@@ -29,6 +29,7 @@ async function GalleryGrid() {
             alt={g.caption ?? "School photo"}
             width={480}
             height={480}
+            sizes="(min-width: 768px) 320px, 50vw"
             className="aspect-square w-full object-cover"
           />
           {g.caption && <p className="p-3 text-xs text-muted-foreground">{g.caption}</p>}
@@ -42,7 +43,8 @@ export default function GalleryPage() {
   return (
     <>
       <PageHeader label="Life at the school" title="Gallery" />
-      <section className="mx-auto max-w-5xl px-4 pt-8 pb-12">
+      {/* min-h: when the list is shorter than the skeleton, the footer would jump up into view (layout shift) */}
+      <section className="mx-auto min-h-[70vh] max-w-5xl px-4 pt-8 pb-12">
         <Suspense fallback={<PhotosSkeleton />}>
           <GalleryGrid />
         </Suspense>

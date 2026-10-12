@@ -123,7 +123,8 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 
 ## 8. Styling
 - Tailwind + shadcn/ui, mobile-first.
-- Fonts via `next/font/google`: **Noto Sans** (supports Hausa ɓ ɗ ƙ ƴ), **Noto Naskh Arabic** (`font-arabic`), **Amiri Quran** (`font-quran`).
+- Fonts via `next/font/google`: **Noto Sans** (supports Hausa ɓ ɗ ƙ ƴ), **Noto Naskh Arabic** (`font-arabic`), **Amiri Quran** (`font-quran`). `subsets` only decides what is **preloaded**: keep it at Noto Sans `latin`; the Arabic fonts are `preload: false` (F.2: was ≈ 345 KB on every page). Other subsets still load on demand by unicode-range. **₦** is drawn by a local `@font-face "Naira Sign"` in `globals.css` (first in `--font-sans`), otherwise any page with a fee downloads Noto's 165 KB latin-ext file for that one character.
+- Small gold text on a light background uses `text-gold-ink` (`--gold-ink`, 5:1 contrast); `text-gold` is for dark green backgrounds only.
 - **Brand tokens** (`globals.css`, taken from the logo): `--primary` deep green, `--gold` (`bg-gold`, `text-gold`), `--deep` (`bg-deep`, the darkest green), warm page background (`--background` ≈ `oklch(0.962 0.012 100)`, `--muted` a step darker; cards are white `bg-card`). No dark mode (the `.dark` block is unused). Two CSS helpers: `.pattern-star` (faint gold eight-point star on dark green; put it on its own layer if the element also has a gradient, both use `background-image`) and `.gold-bar` (short gold bar under a page title: add it to every portal `<h1>`).
 - **Card look:** `rounded-xl border bg-card shadow-sm`.
 - **Buttons by function** (`components/buttons.ts`, `btn.*`; add `big` via `cn()` for a form's main action; always pair with a lucide icon):

@@ -39,7 +39,9 @@ async function Post({ params }: Props) {
           alt=""
           width={960}
           height={540}
-          priority
+          sizes="(min-width: 768px) 736px, 100vw"
+          loading="eager"
+          fetchPriority="high"
           className="aspect-video w-full rounded-xl object-cover shadow-sm"
         />
       )}

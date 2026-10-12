@@ -7,7 +7,7 @@ export function HomeHero() {
     <>
       <section className="pattern-star bg-deep text-white">
         <div className="mx-auto max-w-5xl px-4 pb-20 pt-10 text-center md:pb-28 md:pt-16">
-          <Image src="/logo.svg" alt="" width={104} height={104} priority className="mx-auto size-24 md:size-28" />
+          <Image src="/logo.svg" alt="" width={104} height={104} loading="eager" className="mx-auto size-24 md:size-28" />
           <p lang="ar" dir="rtl" className="font-arabic mt-5 text-xl text-gold">
             بسم الله الرحمن الرحيم
           </p>

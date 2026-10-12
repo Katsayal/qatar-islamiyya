@@ -4,10 +4,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ₦ is not in Noto Sans' latin file: without this, any page showing a fee downloads the 165 KB latin-ext file
+   for one character. Draw ₦ with the device's own font; if none of these exist, Noto is used as before. */
+@font-face {
+  font-family: "Naira Sign";
+  src: local("Roboto"), local("Segoe UI"), local("Arial"), local("Helvetica Neue");
+  unicode-range: U+20A6;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans), sans-serif;
+  --font-sans: "Naira Sign", var(--font-noto-sans), sans-serif;
   --font-arabic: var(--font-noto-naskh), serif;
   --font-quran: var(--font-amiri-quran), serif;
   --font-heading: var(--font-sans);
@@ -26,6 +34,7 @@
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-gold: var(--gold);
+  --color-gold-ink: var(--gold-ink);
   --color-deep: var(--deep);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -72,6 +81,8 @@
   --input: oklch(0.89 0.015 110);
   --ring: oklch(0.55 0.12 148);
   --gold: oklch(0.77 0.15 82);
+  /* Darker gold for small text on light backgrounds (5:1 contrast; --gold is only 1.9:1 there) */
+  --gold-ink: oklch(0.52 0.11 75);
   --deep: oklch(0.3 0.09 150);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);

@@ -27,6 +27,7 @@ export async function LatestNews() {
               alt=""
               width={640}
               height={360}
+              sizes="(min-width: 768px) 320px, 100vw"
               className="aspect-video w-full object-cover"
             />
           )}

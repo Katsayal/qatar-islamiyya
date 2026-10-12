@@ -10,7 +10,7 @@ export function SectionHeading({
 }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-widest text-gold">{label}</p>
+      <p className={`text-xs font-semibold uppercase tracking-widest ${light ? "text-gold" : "text-gold-ink"}`}>{label}</p>
       <h2 className={`mt-1 text-2xl font-semibold md:text-3xl ${light ? "text-white" : ""}`}>
         {title}
       </h2>
