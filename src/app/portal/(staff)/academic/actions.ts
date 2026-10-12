@@ -101,3 +101,28 @@ export async function saveYear(_prev: YearState, formData: FormData): Promise<Ye
   revalidatePath("/portal/academic");
   return { ok: true, error: null };
 }
+
+// Only an empty year can go: records (hifz, attendance, marks, comments, fees, proofs) point at its terms,
+// and the database refuses to delete a term that is in use (23503). One statement = all three terms or none.
+export async function deleteYear(_prev: YearState, formData: FormData): Promise<YearState> {
+  await requireRole("staff");
+  const id = z.string().uuid().safeParse(formData.get("id"));
+  if (!id.success) return { ok: false, error: "Year not found." };
+
+  const supabase = await createClient();
+  const { error: termError } = await supabase.from("terms").delete().eq("academic_year_id", id.data);
+  if (termError) {
+    return {
+      ok: false,
+      error:
+        termError.code === "23503"
+          ? "This year already has records (hifz, attendance, marks, comments or fees), so it cannot be deleted. Edit its dates instead."
+          : "Could not delete the academic year.",
+    };
+  }
+  const { error } = await supabase.from("academic_years").delete().eq("id", id.data);
+  if (error) return { ok: false, error: "Could not delete the academic year." };
+
+  revalidatePath("/portal/academic");
+  return { ok: true, error: null };
+}

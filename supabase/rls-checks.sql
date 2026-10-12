@@ -31,7 +31,8 @@ insert into public.classes (id, name, program, hifz_unit) values
 insert into public.class_teachers (class_id, teacher_id) values
   ('20000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-000000000003'),
   ('20000000-0000-0000-0000-00000000000b', '00000000-0000-0000-0000-000000000004'),
-  ('20000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-000000000006');
+  ('20000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-000000000006'),
+  ('20000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-000000000002'); -- a staff member who also teaches
 
 insert into public.students (id, admission_no, full_name, gender, class_id, user_id, photo_path) values
   ('30000000-0000-0000-0000-000000000001', 'RLS1', 'Student One', 'male',   '20000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-000000000005', 'students/rls1.jpg'),
@@ -150,9 +151,9 @@ do $$ begin
   end;
   if (select count(*) from public.student_notes()) <> 0 then raise exception 'FAIL: student got notes through student_notes()'; end if;
 
-  -- my teachers: only the active teachers of own class (Teacher A; not the inactive one, not class B's)
-  if (select count(*) from public.my_class_teacher_names()) <> 1
-     or (select * from public.my_class_teacher_names()) <> 'Teacher A' then
+  -- my teachers: only the active teachers of own class, staff who teach included
+  -- (Staff + Teacher A; not the inactive one, not class B's)
+  if (select array_agg(n) from public.my_class_teacher_names() n) <> array['Staff', 'Teacher A'] then
     raise exception 'FAIL: student should see exactly their class teacher names';
   end if;
 

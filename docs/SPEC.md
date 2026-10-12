@@ -98,7 +98,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 ## 9. Staff portal (all teacher features +)
 - **Dashboard:** totals by program/class/gender, unpaid fees count, Ma'ahad students below pace.
 - **Students:** list (search/filter), add/edit with photo upload, archive/restore, delete (with confirm), CSV import (template provided), CSV export. The CSV has 16 columns: admission_no, full_name, gender, date_of_birth, blood_group, address, local_government, previous_islamiyya, student_phone, class, entry_level, medical_notes, guardian_name, guardian_phone, guardian_address, guardian_local_government. The first 8 are required on every row; import is all-or-nothing and adds active students only (status, admitted-on, Arabic name and staff notes are edited in the student form). Export uses the same columns.
-- **Classes:** create/edit classes (program, level, hifz unit, name), assign teachers.
+- **Classes:** create/edit classes (program, level, hifz unit, name, position in lists), assign teachers. Staff members who also teach can be assigned too (and as a Barnamaj book's teacher); the form has a name search. Academic years can be deleted only while nothing has been recorded in them (otherwise edit the dates).
 - **Promotion:** end-of-year bulk move students to next class.
 - **Barnamaj books:** manage curriculum, assign teacher, mark started/finished.
 - **Applications:** review → accept (creates student) / reject. Accepting requires confirming the one-off ₦2,000 form fee was received and creates the current term's fee record.

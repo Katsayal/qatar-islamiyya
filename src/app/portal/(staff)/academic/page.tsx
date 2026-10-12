@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { DeleteYear } from "./delete-year";
 import { YearForm } from "./year-form";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -73,6 +74,7 @@ export default async function AcademicPage() {
                       term3_end: terms[2].ends_on,
                     }}
                   />
+                  <DeleteYear id={yr.id} name={yr.name} />
                 </div>
               </details>
             </li>

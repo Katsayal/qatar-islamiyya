@@ -11,8 +11,8 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
 
   const { data: teachers } = await supabase
     .from("profiles")
-    .select("id, full_name")
-    .eq("role", "teacher")
+    .select("id, full_name, role")
+    .in("role", ["teacher", "staff"]) // some staff also teach
     .eq("active", true)
     .order("full_name");
 

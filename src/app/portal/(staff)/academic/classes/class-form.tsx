@@ -4,6 +4,7 @@ import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveClass } from "./actions";
 import { controlClass } from "@/components/form-parts";
+import { TeacherPicker, type Person } from "./teacher-picker";
 
 export type ClassDefaults = {
   id?: string;
@@ -33,7 +34,7 @@ export function ClassForm({
   teachers,
 }: {
   defaults: ClassDefaults;
-  teachers: { id: string; full_name: string }[];
+  teachers: Person[];
 }) {
   const [error, formAction, pending] = useActionState(saveClass, null);
 
@@ -69,28 +70,15 @@ export function ClassForm({
           <option value="pages">Pages</option>
         </select>
       </Field>
-      <Field label="Sort order (smaller shows first)">
-        <input name="sort_order" type="number" defaultValue={defaults.sort_order} className={input} />
+      <Field label="Position in lists">
+        <input name="sort_order" type="number" min={0} defaultValue={defaults.sort_order} className={input} />
+        <span className="text-xs text-muted-foreground">
+          Where this class appears in class lists and menus: smaller numbers come first (1, 2, 3…). Classes with
+          the same number are sorted by name.
+        </span>
       </Field>
 
-      <fieldset>
-        <legend className="text-sm">Teachers (Tahfiz and Ma&apos;ahad: one; Barnamaj: several)</legend>
-        <div className="mt-2 space-y-1">
-          {teachers.map((t) => (
-            <label key={t.id} className="flex h-10 items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="teacher_ids"
-                value={t.id}
-                defaultChecked={defaults.teacher_ids.includes(t.id)}
-                className="size-4"
-              />
-              {t.full_name}
-            </label>
-          ))}
-          {!teachers.length && <p className="text-sm text-muted-foreground">No teacher accounts yet (task 2.7).</p>}
-        </div>
-      </fieldset>
+      <TeacherPicker people={teachers} initial={defaults.teacher_ids} />
 
       <label className="flex h-10 items-center gap-2 text-sm">
         <input type="checkbox" name="active" defaultChecked={defaults.active} className="size-4" />
