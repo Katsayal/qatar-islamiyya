@@ -6,6 +6,7 @@ import { monthLabel, monthStart } from "@/lib/months";
 import { createClient } from "@/lib/supabase/server";
 import { btn } from "@/components/buttons";
 import { controlClass } from "@/components/form-parts";
+import { Pager } from "@/components/pager";
 import { PickerForm } from "@/components/picker-form";
 import { AuditItem } from "./entry";
 
@@ -14,7 +15,6 @@ export const instant = true;
 
 const PAGE_SIZE = 50;
 const input = controlClass;
-const pager = "inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary";
 const KIND_OF_TABLE: Record<string, Kind> = { students: "students", classes: "classes", books: "books", terms: "terms", profiles: "people" };
 const areaList =Object.entries(AREAS).sort((a, b) => a[1].label.localeCompare(b[1].label));
 
@@ -91,11 +91,6 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
 
   const total = count ?? 0;
   const lastPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const pageHref = (n: number) => {
-    const params = new URLSearchParams();
-    for (const [k, v] of Object.entries({ person, area, action, month, page: String(n) })) if (v) params.set(k, v);
-    return `/portal/audit?${params}`;
-  };
   const filtered = person || area || action || month;
 
   return (
@@ -148,13 +143,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         )}
       </ul>
 
-      {lastPage > 1 && (
-        <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className={pager}>← Previous</Link> : <span />}
-          <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className={pager}>Next →</Link> : <span />}
-        </nav>
-      )}
+      <Pager path="/portal/audit" params={{ person, area, action, month }} page={page} lastPage={lastPage} />
     </div>
   );
 }

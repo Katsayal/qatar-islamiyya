@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { btn } from "@/components/buttons";
 import { controlClass, SearchField } from "@/components/form-parts";
 import { PageTabs, studentTabs } from "@/components/page-tabs";
+import { Pager } from "@/components/pager";
 import { PickerForm } from "@/components/picker-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 import { StudentList } from "./student-list";
@@ -12,7 +13,7 @@ import { StudentList } from "./student-list";
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 const programs = [
   { key: "tahfiz", label: "Tahfiz" },
   { key: "maahad", label: "Ma'ahad" },
@@ -46,6 +47,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
     .from("students")
     .select("id, admission_no, full_name, gender, status, class_id", { count: "exact" })
     .order("full_name")
+    .order("admission_no")
     .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
   if (status !== "all") query = query.eq("status", status);
   if (q) query = query.or(`full_name.ilike.%${q}%,admission_no.ilike.%${q}%`);
@@ -65,13 +67,6 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
 
   const total = count ?? 0;
   const lastPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const pageHref = (n: number) => {
-    const params = new URLSearchParams();
-    for (const [k, v] of Object.entries({ q, program, class: sp.class, status, page: String(n) })) {
-      if (v) params.set(k, v);
-    }
-    return `/portal/students?${params}`;
-  };
 
   return (
     <div>
@@ -136,13 +131,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         />
       </FreshOnVisit>
 
-      {lastPage > 1 && (
-        <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
-          <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
-        </nav>
-      )}
+      <Pager path="/portal/students" params={{ q, program, class: sp.class, status }} page={page} lastPage={lastPage} />
     </div>
   );
 }

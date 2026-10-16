@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
+import { Pager } from "@/components/pager";
 import { createClient } from "@/lib/supabase/server";
 import { setProofStatus } from "./actions";
 import { StatusBadge } from "@/components/status-badge";
@@ -43,7 +44,6 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
   );
 
   const lastPage = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
-  const pageHref = (n: number) => `?${new URLSearchParams({ show, page: String(n) })}`;
 
   return (
     <div className="max-w-2xl">
@@ -136,13 +136,7 @@ export default async function PaymentProofsPage({ searchParams }: { searchParams
         {!proofs?.length && <li className="text-sm text-muted-foreground">No proofs here.</li>}
       </ul>
 
-      {lastPage > 1 && (
-        <nav className="mt-4 flex items-center justify-between text-sm">
-          {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Newer</Link> : <span />}
-          <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-          {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Older →</Link> : <span />}
-        </nav>
-      )}
+      <Pager path="/portal/fees/proofs" params={{ show }} page={page} lastPage={lastPage} prevLabel="Newer" nextLabel="Older" />
     </div>
   );
 }

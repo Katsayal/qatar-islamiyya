@@ -9,6 +9,7 @@ import { controlClass, SearchField } from "@/components/form-parts";
 import { PickerForm } from "@/components/picker-form";
 import { StatusBadge } from "@/components/status-badge";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { Pager } from "@/components/pager";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -79,6 +80,7 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
     .select("id, admission_no, full_name, class_id")
     .eq("status", "active")
     .order("full_name")
+    .order("admission_no")
     .range(0, 1999);
   if (q) studentQuery = studentQuery.or(`full_name.ilike.%${q}%,admission_no.ilike.%${q}%`);
   if (sp.class) studentQuery = studentQuery.eq("class_id", sp.class);
@@ -105,11 +107,6 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
   const shown = rows.filter((r) => status === "all" || (status === "notpaid" ? r.key !== "paid" : r.key === status));
   const lastPage = Math.max(1, Math.ceil(shown.length / PAGE_SIZE));
   const pageRows = shown.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const pageHref = (n: number) => {
-    const params = new URLSearchParams({ term: term.id, status, page: String(n) });
-    for (const [k, v] of Object.entries({ q, program, class: sp.class })) if (v) params.set(k, v);
-    return `/portal/fees?${params}`;
-  };
 
   const { count: pendingProofs } = await supabase
     .from("payment_proofs")
@@ -206,13 +203,7 @@ export default async function FeesPage({ searchParams }: { searchParams: Promise
           {!pageRows.length && <li className="p-4 text-sm text-muted-foreground">No students match these filters.</li>}
         </ul>
 
-        {lastPage > 1 && (
-          <nav className="mt-4 flex items-center justify-between text-sm">
-            {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
-            <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-            {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
-          </nav>
-        )}
+        <Pager path="/portal/fees" params={{ term: term.id, status, q, program, class: sp.class }} page={page} lastPage={lastPage} />
       </div>
     </FreshOnVisit>
   );

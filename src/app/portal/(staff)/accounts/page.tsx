@@ -1,9 +1,9 @@
 import { Ban, CircleCheck } from "lucide-react";
-import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createStudentLogin, resetPassword, setActive } from "./actions";
 import { accountTabs, PageTabs } from "@/components/page-tabs";
+import { Pager } from "@/components/pager";
 import { BulkLoginForm } from "./bulk-login-form";
 import { LOGIN_BATCH } from "./constants";
 import { PasswordForm } from "./password-form";
@@ -16,7 +16,7 @@ import { FreshOnVisit } from "@/components/fresh-on-visit";
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 const shows = [
   { key: "needs", label: "Needs login" },
   { key: "has", label: "Has login" },
@@ -39,6 +39,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
     .select("id, admission_no, full_name, user_id, profiles!students_user_id_fkey(active)", { count: "exact" })
     .eq("status", "active")
     .order("full_name")
+    .order("admission_no")
     .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
   if (show === "needs") query = query.is("user_id", null);
   if (show === "has") query = query.not("user_id", "is", null);
@@ -50,7 +51,6 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
   const remaining = needLogin ?? 0;
 
   const lastPage = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
-  const pageHref = (n: number) => `/portal/accounts?${new URLSearchParams({ q, show, page: String(n) })}`;
 
   return (
     <FreshOnVisit>
@@ -137,13 +137,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
           {!students?.length && <li className="p-4 text-sm text-muted-foreground">No students here.</li>}
         </ul>
 
-        {lastPage > 1 && (
-          <nav className="mt-4 flex items-center justify-between text-sm">
-            {page > 1 ? <Link href={pageHref(page - 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">← Previous</Link> : <span />}
-            <span className="text-muted-foreground">Page {page} of {lastPage}</span>
-            {page < lastPage ? <Link href={pageHref(page + 1)} className="inline-flex h-11 items-center rounded-lg border bg-card px-4 font-medium text-primary hover:border-primary">Next →</Link> : <span />}
-          </nav>
-        )}
+        <Pager path="/portal/accounts" params={{ q, show }} page={page} lastPage={lastPage} />
       </div>
     </FreshOnVisit>
   );
