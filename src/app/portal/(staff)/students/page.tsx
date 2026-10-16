@@ -1,6 +1,7 @@
-import { UserPlus, X } from "lucide-react";
+import { Download, UserPlus, X } from "lucide-react";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
+import { STUDENT_PROGRAMS, STUDENT_STATUSES, parseStudentFilters } from "@/lib/student-filters";
 import { createClient } from "@/lib/supabase/server";
 import { btn } from "@/components/buttons";
 import { controlClass, SearchField } from "@/components/form-parts";
@@ -14,12 +15,8 @@ import { StudentList } from "./student-list";
 export const instant = true;
 
 const PAGE_SIZE = 50;
-const programs = [
-  { key: "tahfiz", label: "Tahfiz" },
-  { key: "maahad", label: "Ma'ahad" },
-  { key: "barnamaj", label: "Barnamaj" },
-];
-const statuses = ["active", "graduated", "withdrawn", "archived", "all"];
+const programs = STUDENT_PROGRAMS;
+const statuses = STUDENT_STATUSES;
 
 type Search = { q?: string; program?: string; class?: string; status?: string; page?: string };
 
@@ -30,9 +27,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const supabase = await createClient();
 
-  const q = (sp.q ?? "").replace(/[%,()*]/g, " ").trim();
-  const program = programs.some((p) => p.key === sp.program) ? sp.program : undefined;
-  const status = statuses.includes(sp.status ?? "") ? sp.status! : "active";
+  const { q, program, status } = parseStudentFilters(sp);
   const page = Math.max(1, Number(sp.page) || 1);
 
   const { data: classes } = await supabase
@@ -114,9 +109,27 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         )}
       </PickerForm>
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        {total} student{total === 1 ? "" : "s"} found
-      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <p className="text-sm text-muted-foreground">
+          {total} student{total === 1 ? "" : "s"} found
+        </p>
+        {total > 0 && (
+          // A file download: a plain GET form (no JavaScript needed). It exports every page of what the list shows.
+          <form action="/portal/students/export" method="get" className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {q && <input type="hidden" name="q" value={q} />}
+            {program && <input type="hidden" name="program" value={program} />}
+            {sp.class && <input type="hidden" name="class" value={sp.class} />}
+            <input type="hidden" name="status" value={status} />
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" name="medical" value="1" className="size-5" />
+              Include medical notes
+            </label>
+            <button type="submit" className={btn.secondary}>
+              <Download aria-hidden /> Export CSV ({total})
+            </button>
+          </form>
+        )}
+      </div>
 
       {/* key: ticks belong to one page of one filter; FreshOnVisit: no stale ticks after visiting a profile and coming back */}
       <FreshOnVisit>

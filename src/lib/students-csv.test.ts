@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { COLUMNS, REQUIRED_COLUMNS, cleanCell, columnFor, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
+import { COLUMNS, REQUIRED_COLUMNS, cleanCell, columnFor, exportFileName, exportKeys, headingFor, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
 
 test("the template has the 16 agreed columns and the required ones are among them", () => {
   assert.equal(COLUMNS.length, 16);
@@ -77,4 +77,23 @@ test("cleanCell empties no-data marks and collapses spaces", () => {
   for (const mark of ["X", " x ", "-", "N/A", ""]) assert.equal(cleanCell(mark), "");
   assert.equal(cleanCell("ALIYU SANI  USMAN "), "ALIYU SANI USMAN");
   assert.equal(cleanCell("MAX"), "MAX");
+});
+
+test("every heading maps back to its import column, so an export can be re-used", () => {
+  for (const key of [...COLUMNS, "program", "status"]) assert.equal(columnFor(headingFor(key)), key);
+  assert.equal(headingFor("full_name"), "Full Name");
+});
+
+test("export columns: medical notes only when asked for", () => {
+  assert.ok(!exportKeys(false).includes("medical_notes"));
+  assert.equal(exportKeys(true).at(-1), "medical_notes");
+  assert.equal(exportKeys(true).length, exportKeys(false).length + 1);
+  for (const k of exportKeys(true)) assert.ok(k === "program" || k === "status" || (COLUMNS as readonly string[]).includes(k), k);
+});
+
+test("export file name carries the filter and the date", () => {
+  assert.equal(exportFileName([], "2026-10-16"), "students-2026-10-16.csv");
+  assert.equal(exportFileName(["Ma'ahad"], "2026-10-16"), "students-ma-ahad-2026-10-16.csv");
+  assert.equal(exportFileName(["Tahfiz-Imam Nafi'u", "graduated"], "2026-10-16"), "students-tahfiz-imam-nafi-u-graduated-2026-10-16.csv");
+  assert.equal(exportFileName([undefined, ""], "2026-10-16"), "students-2026-10-16.csv");
 });

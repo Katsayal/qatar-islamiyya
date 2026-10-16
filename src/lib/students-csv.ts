@@ -95,3 +95,30 @@ export function fixBloodGroup(v: string): string {
   const s = v.trim().toUpperCase().replace(/[\s]/g, "").replace(/[−–‒]/g, "-");
   return s === "UNKNOWN" ? "Unknown" : s;
 }
+
+// Friendly headings for the export and the template. Every one maps back to its import column through
+// columnFor (case, spaces, "_" and "-" are ignored), so an exported file can be edited and used in Move by CSV.
+const HEADINGS: Record<string, string> = {
+  admission_no: "Admission No.", full_name: "Full Name", gender: "Gender", class: "Class", program: "Program", status: "Status",
+  date_of_birth: "Date of Birth", blood_group: "Blood Group", address: "Address", local_government: "Local Government",
+  previous_islamiyya: "Previous Islamiyya", student_phone: "Student Phone", entry_level: "Entry Level",
+  guardian_name: "Guardian Name", guardian_phone: "Guardian Phone", guardian_address: "Guardian Address",
+  guardian_local_government: "Guardian Local Government", medical_notes: "Medical Notes",
+};
+
+export const headingFor = (key: string): string => HEADINGS[key] ?? key;
+
+// Export column order (a register / contact list). Medical notes only when asked for: it is sensitive.
+const EXPORT_KEYS = [
+  "admission_no", "full_name", "gender", "class", "program", "status", "date_of_birth", "blood_group", "address",
+  "local_government", "previous_islamiyya", "student_phone", "entry_level", "guardian_name", "guardian_phone",
+  "guardian_address", "guardian_local_government",
+] as const;
+
+export const exportKeys = (includeMedical: boolean): string[] => (includeMedical ? [...EXPORT_KEYS, "medical_notes"] : [...EXPORT_KEYS]);
+
+// students-ma-ahad-2026-10-16.csv: the filter parts (class or program, status) then the date.
+export function exportFileName(parts: (string | undefined)[], date: string): string {
+  const slug = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return ["students", ...parts.filter((p): p is string => !!p).map(slug).filter(Boolean), date].join("-") + ".csv";
+}

@@ -14,9 +14,9 @@ export default async function MoveStudentsPage() {
 
         <ol className="mt-4 list-decimal space-y-2 ps-5 text-sm">
           <li>
-            On the Import CSV tab use <strong>Export all students</strong>, then change the <strong>class</strong> column to the new
-            class (for example a halqa), or paste the school&apos;s list into it. Only <strong>admission_no</strong> and{" "}
-            <strong>class</strong> are read; other columns are ignored.
+            On the Students tab filter to the class you want and use <strong>Export CSV</strong>, then change the <strong>Class</strong> column to the new
+            class (for example a halqa), or paste the school&apos;s list into it. Only <strong>Admission No.</strong> and{" "}
+            <strong>Class</strong> are read; other columns are ignored.
           </li>
           <li>
             Delete the rows of students who stay where they are (or leave them: students already in that class are
