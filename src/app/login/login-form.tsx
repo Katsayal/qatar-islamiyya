@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { Field, inputClass } from "@/components/form-parts";
+import { PasswordInput } from "@/components/password-input";
 import { login } from "./actions";
 
 export function LoginForm() {
@@ -25,9 +26,8 @@ export function LoginForm() {
         />
       </Field>
       <Field label="Password">
-        <input
+        <PasswordInput
           name="password"
-          type="password"
           required
           autoComplete="current-password"
           className={inputClass}

@@ -5,6 +5,7 @@ import { startTransition, useActionState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { big, btn } from "@/components/buttons";
 import { controlClass } from "@/components/form-parts";
+import { PasswordInput } from "@/components/password-input";
 
 type Result = { ok: boolean; message: string } | null;
 
@@ -32,11 +33,11 @@ export function PasswordChangeForm({ action }: { action: (prev: Result, formData
     >
       <label className="flex flex-col gap-1 text-sm">
         New password (at least 6 characters)
-        <input name="password" type="password" required minLength={6} autoComplete="new-password" className={input} />
+        <PasswordInput name="password" required minLength={6} autoComplete="new-password" className={input} />
       </label>
       <label className="flex flex-col gap-1 text-sm">
         Type it again
-        <input name="confirm" type="password" required minLength={6} autoComplete="new-password" className={input} />
+        <PasswordInput name="confirm" required minLength={6} autoComplete="new-password" className={input} />
       </label>
       {result && (
         <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
