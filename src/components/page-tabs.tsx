@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 // Two (or more) tabs at the top of a section with sub-pages: Accounts (Student logins | Teachers & staff),
-// Academic setup (Academic years | Classes). The active tab is solid green.
+// Academic setup (Academic years | Classes), Students (Students | Import CSV | Move by CSV). The active tab is solid green.
 export function PageTabs({ tabs, active }: { tabs: { href: string; label: string }[]; active: string }) {
   const tab = (on: boolean) =>
     `flex h-11 flex-1 items-center justify-center rounded-lg border text-sm font-medium ${on ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`;
@@ -24,4 +24,10 @@ export const accountTabs = [
 export const academicTabs = [
   { href: "/portal/academic", label: "Academic years" },
   { href: "/portal/academic/classes", label: "Classes" },
+];
+
+export const studentTabs = [
+  { href: "/portal/students", label: "Students" },
+  { href: "/portal/students/import", label: "Import CSV" },
+  { href: "/portal/students/move", label: "Move by CSV" },
 ];

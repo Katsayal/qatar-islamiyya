@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { moveToClasses } from "@/lib/move-students";
 import { studentSchema as schema } from "@/lib/student-schema";
 import { createClient } from "@/lib/supabase/server";
 
@@ -97,4 +98,27 @@ export async function deleteStudent(_prev: string | null, formData: FormData): P
 
   revalidatePath("/portal/students");
   redirect("/portal/students");
+}
+
+const moveSchema = z.object({
+  to: z.string().uuid("Please choose a class."),
+  ids: z.array(z.string().uuid()).min(1, "Tick at least one student.").max(200, "Move at most 200 students at a time."),
+});
+
+export type MoveResult = { ok: boolean; message: string } | null;
+
+// Students list: move the ticked students to one class (only the class changes).
+export async function moveStudents(_prev: MoveResult, formData: FormData): Promise<MoveResult> {
+  await requireRole("staff");
+  const parsed = moveSchema.safeParse({ to: String(formData.get("to") ?? ""), ids: formData.getAll("student") });
+  if (!parsed.success) return { ok: false, message: parsed.error.issues[0].message };
+  const { to, ids } = parsed.data;
+
+  const supabase = await createClient();
+  const { data: target } = await supabase.from("classes").select("name").eq("id", to).eq("active", true).maybeSingle();
+  if (!target) return { ok: false, message: "That class is not active." };
+
+  const { moved, error } = await moveToClasses(supabase, new Map([[to, ids]]));
+  if (error) return { ok: false, message: error };
+  return { ok: true, message: `Moved ${moved} student${moved === 1 ? "" : "s"} to ${target.name}.` };
 }

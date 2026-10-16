@@ -4,8 +4,10 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { btn } from "@/components/buttons";
 import { controlClass, SearchField } from "@/components/form-parts";
+import { PageTabs, studentTabs } from "@/components/page-tabs";
 import { PickerForm } from "@/components/picker-form";
-import { StatusBadge } from "@/components/status-badge";
+import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { StudentList } from "./student-list";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -73,24 +75,13 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div>
+      <PageTabs tabs={studentTabs} active="/portal/students" />
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold gold-bar">Students</h1>
         <Link href="/portal/students/new" className={btn.create}>
           <UserPlus aria-hidden /> Add student
         </Link>
       </div>
-
-      <p className="mt-2 text-sm">
-        <Link href="/portal/students/import" className="text-primary underline-offset-4 hover:underline">
-          Import CSV
-        </Link>
-        {" · "}
-        {/* A file download, not a page: a plain <a> is correct here. */}
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-        <a href="/portal/students/export" className="text-primary underline-offset-4 hover:underline">
-          Export CSV
-        </a>
-      </p>
 
       <ul className="mt-3 flex flex-wrap gap-2 text-sm">
         {programs.map((p, i) => (
@@ -132,32 +123,18 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
         {total} student{total === 1 ? "" : "s"} found
       </p>
 
-      <ul className="mt-2 divide-y rounded-xl border bg-card shadow-sm">
-        {(students ?? []).map((s) => {
-          const c = s.class_id ? classById.get(s.class_id) : undefined;
-          return (
-            <li key={s.id}>
-            <Link href={`/portal/students/${s.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
-              <div className="min-w-0">
-                <p className="truncate font-medium">{s.full_name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {s.admission_no} · {c ? `${c.name} (${c.program})` : "No class"}
-                </p>
-              </div>
-              <div className="shrink-0 text-end text-xs capitalize text-muted-foreground">
-                <p>{s.gender}</p>
-                {s.status !== "active" && <StatusBadge tone="muted">{s.status}</StatusBadge>}
-              </div>
-            </Link>
-          </li>
-          );
-        })}
-        {!students?.length && (
-          <li className="p-4 text-sm text-muted-foreground">
-            {q || program || sp.class || status !== "active" ? "No students match these filters." : "No students yet. Use Add student."}
-          </li>
-        )}
-      </ul>
+      {/* key: ticks belong to one page of one filter; FreshOnVisit: no stale ticks after visiting a profile and coming back */}
+      <FreshOnVisit>
+        <StudentList
+          key={[q, program, sp.class, status, page].join("|")}
+          students={(students ?? []).map((s) => {
+            const c = s.class_id ? classById.get(s.class_id) : undefined;
+            return { id: s.id, full_name: s.full_name, admission_no: s.admission_no, gender: s.gender, status: s.status, classLabel: c ? `${c.name} (${c.program})` : "No class" };
+          })}
+          classes={(classes ?? []).filter((c) => c.active).map((c) => ({ id: c.id, name: c.name, program: c.program }))}
+          emptyText={q || program || sp.class || status !== "active" ? "No students match these filters." : "No students yet. Use Add student."}
+        />
+      </FreshOnVisit>
 
       {lastPage > 1 && (
         <nav className="mt-4 flex items-center justify-between text-sm">

@@ -1,5 +1,7 @@
-import Link from "next/link";
+import { Download } from "lucide-react";
 import { requireRole } from "@/lib/auth";
+import { btn } from "@/components/buttons";
+import { PageTabs, studentTabs } from "@/components/page-tabs";
 import { ImportForm } from "./import-form";
 
 export default async function ImportPage() {
@@ -7,10 +9,8 @@ export default async function ImportPage() {
 
   return (
     <div className="max-w-xl">
-      <Link href="/portal/students" className="text-sm text-primary underline-offset-4 hover:underline">
-        ← Students
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold gold-bar">Import students (CSV)</h1>
+      <PageTabs tabs={studentTabs} active="/portal/students/import" />
+      <h1 className="text-2xl font-semibold gold-bar">Import students (CSV)</h1>
 
       <ol className="mt-4 list-decimal space-y-2 ps-5 text-sm">
         <li>
@@ -46,6 +46,18 @@ export default async function ImportPage() {
       <div className="mt-6">
         <ImportForm />
       </div>
+
+      <section className="mt-8 rounded-xl border bg-card p-4 shadow-sm">
+        <h2 className="font-semibold">Export</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Download every student with the same columns, to keep a copy, to edit in Excel, or to use in Move by CSV.
+        </p>
+        {/* A file download, not a page: a plain <a> is correct here. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a href="/portal/students/export" className={`${btn.secondary} mt-3`}>
+          <Download aria-hidden /> Export all students (CSV)
+        </a>
+      </section>
     </div>
   );
 }
