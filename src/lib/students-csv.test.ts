@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { COLUMNS, REQUIRED_COLUMNS, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
+import { COLUMNS, REQUIRED_COLUMNS, cleanCell, columnFor, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv, toCsv } from "./students-csv.ts";
 
-test("the template has the 16 agreed columns and the 8 required ones are among them", () => {
+test("the template has the 16 agreed columns and the required ones are among them", () => {
   assert.equal(COLUMNS.length, 16);
-  assert.equal(REQUIRED_COLUMNS.length, 8);
+  assert.equal(REQUIRED_COLUMNS.length, 3);
   for (const c of REQUIRED_COLUMNS) assert.ok((COLUMNS as readonly string[]).includes(c), c);
   for (const gone of ["status", "admitted_on", "full_name_ar", "notes"]) assert.ok(!(COLUMNS as readonly string[]).includes(gone), gone);
 });
@@ -59,4 +59,22 @@ test("fixDate accepts day-first dates", () => {
 test("fixGender accepts m/f in any case", () => {
   assert.equal(fixGender("M"), "male");
   assert.equal(fixGender(" Female "), "female");
+});
+
+test("columnFor accepts the school's headers and the template's", () => {
+  assert.equal(columnFor("Name"), "full_name");
+  assert.equal(columnFor("Admission Number"), "admission_no");
+  assert.equal(columnFor("admission_no"), "admission_no");
+  assert.equal(columnFor("Blood Group"), "blood_group");
+  assert.equal(columnFor(" Date of Birth "), "date_of_birth");
+  assert.equal(columnFor("Local Government"), "local_government");
+  assert.equal(columnFor("Previous Islamiyya"), "previous_islamiyya");
+  assert.equal(columnFor("Class"), "class");
+  assert.equal(columnFor("Something else"), "something else");
+});
+
+test("cleanCell empties no-data marks and collapses spaces", () => {
+  for (const mark of ["X", " x ", "-", "N/A", ""]) assert.equal(cleanCell(mark), "");
+  assert.equal(cleanCell("ALIYU SANI  USMAN "), "ALIYU SANI USMAN");
+  assert.equal(cleanCell("MAX"), "MAX");
 });

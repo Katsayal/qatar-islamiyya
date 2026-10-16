@@ -51,3 +51,13 @@ export const studentSchema = z.object({
   guardian_address: text(200),
   guardian_local_government: text(100),
 });
+
+// CSV import only: the school's lists are incomplete, so five bio fields may be empty (stored as null).
+// A filled value must still be valid. Staff complete the rest in the student form, which uses studentSchema.
+export const importStudentSchema = studentSchema.extend({
+  date_of_birth: isoDate.or(z.literal("")).transform((v) => v || null),
+  blood_group: z.enum(BLOOD_GROUPS).or(z.literal("")).transform((v) => v || null),
+  address: text(200),
+  local_government: text(100),
+  previous_islamiyya: text(150),
+});

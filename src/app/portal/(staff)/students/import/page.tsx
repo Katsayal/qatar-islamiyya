@@ -23,10 +23,14 @@ export default async function ImportPage() {
           and fill it in with Excel. Save as <strong>CSV UTF-8</strong> so Arabic names stay correct.
         </li>
         <li>
-          Required on every row: <strong>admission_no</strong>, <strong>full_name</strong>, <strong>gender</strong> (male or
-          female), <strong>date_of_birth</strong>, <strong>blood_group</strong> (A+, A-, B+, B-, AB+, AB-, O+, O- or Unknown),{" "}
-          <strong>address</strong>, <strong>local_government</strong> and <strong>previous_islamiyya</strong>.
-          Dates are <code>2015-03-21</code> or <code>21/03/2015</code>.
+          Required on every row: <strong>admission_no</strong>, <strong>full_name</strong> and <strong>gender</strong> (male or
+          female). Headers may also be written like <code>Name</code> or <code>Admission Number</code>.
+        </li>
+        <li>
+          Can be empty (write <code>X</code> or leave blank), then completed later in the student form:{" "}
+          <strong>date_of_birth</strong>, <strong>blood_group</strong> (A+, A-, B+, B-, AB+, AB-, O+, O- or Unknown),{" "}
+          <strong>address</strong>, <strong>local_government</strong> and <strong>previous_islamiyya</strong>. A value that is
+          filled must be valid. Dates are <code>2015-03-21</code> or <code>21/03/2015</code>.
         </li>
         <li>
           Optional: student_phone, class (must match a class name exactly), entry_level (hadda or sauka), medical_notes

@@ -7,10 +7,8 @@ export const COLUMNS = [
   "guardian_name", "guardian_phone", "guardian_address", "guardian_local_government",
 ] as const;
 
-// Columns every row must fill (SPEC §3). The others may be empty.
-export const REQUIRED_COLUMNS = [
-  "admission_no", "full_name", "gender", "date_of_birth", "blood_group", "address", "local_government", "previous_islamiyya",
-] as const;
+// Columns every imported row must fill (SPEC §3). The others may be empty: the school's lists are incomplete.
+export const REQUIRED_COLUMNS = ["admission_no", "full_name", "gender"] as const;
 
 export type Column = (typeof COLUMNS)[number];
 export type CsvRecord = Partial<Record<Column, string>>;
@@ -53,6 +51,25 @@ export function parseCsv(text: string): string[][] {
   }
   if (field !== "" || row.length) { row.push(field); rows.push(row); }
   return rows.filter((r) => r.some((f) => f.trim() !== ""));
+}
+
+// Extra header spellings, as written in the school's sheets. Compared without case, spaces, "_" or "-".
+const HEADER_ALIASES: Record<string, Column> = {
+  name: "full_name", studentname: "full_name",
+  admissionnumber: "admission_no", admno: "admission_no",
+  dob: "date_of_birth", lga: "local_government", sex: "gender",
+};
+
+// "Admission Number", "admission_no" and "ADMISSION NO" -> "admission_no". Unknown headers are returned as is.
+export function columnFor(header: string): string {
+  const key = header.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return COLUMNS.find((c) => c.replace(/_/g, "") === key) ?? HEADER_ALIASES[key] ?? header.trim().toLowerCase();
+}
+
+// Trims, collapses repeated spaces, and turns the sheet's "no data" marks (X, -, N/A) into an empty cell.
+export function cleanCell(v: string): string {
+  const s = v.replace(/\s+/g, " ").trim();
+  return /^(x|-|n\/a)$/i.test(s) ? "" : s;
 }
 
 // Excel drops the leading 0 of phone numbers: 8038102495 -> 08038102495.

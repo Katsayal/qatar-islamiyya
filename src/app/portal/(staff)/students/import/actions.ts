@@ -2,15 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
-import { studentSchema } from "@/lib/student-schema";
-import { COLUMNS, REQUIRED_COLUMNS, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv } from "@/lib/students-csv";
+import { importStudentSchema } from "@/lib/student-schema";
+import { COLUMNS, REQUIRED_COLUMNS, cleanCell, columnFor, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv } from "@/lib/students-csv";
 import { createClient } from "@/lib/supabase/server";
 
 const MAX_ROWS = 500;
 
 export type Report = { rowCount: number; errors: string[] };
 
-type StudentRow = ReturnType<typeof studentSchema.parse>;
+type StudentRow = ReturnType<typeof importStudentSchema.parse>;
 
 // Checks the whole file and returns the rows to insert plus every problem found.
 async function validate(text: string) {
@@ -20,7 +20,7 @@ async function validate(text: string) {
   const [header, ...data] = parseCsv(text);
   if (!header) return { rowCount: 0, errors: ["The file is empty."], valid };
 
-  const cols = header.map((h) => h.trim().toLowerCase());
+  const cols = header.map(columnFor);
   const missing = REQUIRED_COLUMNS.filter((c) => !cols.includes(c));
   if (missing.length) return { rowCount: 0, errors: [`Missing column(s): ${missing.join(", ")}.`], valid };
   if (data.length > MAX_ROWS) return { rowCount: data.length, errors: [`Too many rows: the limit is ${MAX_ROWS} per file.`], valid };
@@ -36,7 +36,7 @@ async function validate(text: string) {
   const { data: existing } = await supabase
     .from("students")
     .select("admission_no")
-    .in("admission_no", data.map((r) => (r[cols.indexOf("admission_no")] ?? "").trim().toUpperCase()).filter(Boolean));
+    .in("admission_no", data.map((r) => cleanCell(r[cols.indexOf("admission_no")] ?? "").toUpperCase()).filter(Boolean));
   const taken = new Set((existing ?? []).map((s) => s.admission_no));
   const seen = new Set<string>();
 
@@ -45,7 +45,7 @@ async function validate(text: string) {
     const rec: Record<string, string> = {};
     COLUMNS.forEach((c) => {
       const at = cols.indexOf(c);
-      rec[c] = at >= 0 ? (cells[at] ?? "").trim() : "";
+      rec[c] = at >= 0 ? cleanCell(cells[at] ?? "") : "";
     });
 
     const className = rec.class.toLowerCase();
@@ -53,7 +53,7 @@ async function validate(text: string) {
     if (className && !ids?.length) return void errors.push(`Row ${row}: class "${rec.class}" not found.`);
     if (ids && ids.length > 1) return void errors.push(`Row ${row}: more than one class is named "${rec.class}".`);
 
-    const parsed = studentSchema.safeParse({
+    const parsed = importStudentSchema.safeParse({
       ...rec,
       gender: fixGender(rec.gender),
       date_of_birth: fixDate(rec.date_of_birth),
