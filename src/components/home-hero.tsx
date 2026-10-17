@@ -12,12 +12,14 @@ export function HomeHero() {
             بسم الله الرحمن الرحيم
           </p>
           <h1 className="mt-3 text-3xl font-semibold md:text-5xl">Madrasatu Hajiya Hindatu</h1>
-          <p lang="ar" dir="rtl" className="font-arabic mt-2 text-xl text-white/80">
-            مدرسة الحاجة هندة (قطر دورا)
+          <p className="mx-auto mt-1 max-w-xl text-white/80">
+            For Memorising the Qur&apos;an and learning the basics of Islam, with care and discipline.
           </p>
-          <p className="mx-auto mt-4 max-w-xl text-white/80">
-            Qatar Multi-Purpose Centre, Zango Road, Daura. Memorising the Qur&apos;an and learning
-            the basics of Islam, with care and discipline.
+          <p className="mx-auto mt-1 max-w-xl text-white/80">
+            Qatar Multi-Purpose Centre, Zango Road, Daura, Katsina State.
+          </p>
+          <p lang="ar" dir="rtl" className="font-arabic mt-5 text-xl text-white/80">
+            مدرسة الحاجة هندة (قطر دورا)
           </p>
           <p lang="ar" dir="rtl" className="font-quran mt-6 text-3xl text-gold">
             ٱقۡرَأۡ بِٱسۡمِ رَبِّكَ ٱلَّذِي خَلَقَ

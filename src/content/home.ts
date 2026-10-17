@@ -22,10 +22,10 @@ export const programs: { slug: string; name: string; nameAr: string; text: strin
 
 // Quick facts strip under the hero (all from the SPEC).
 export const facts = [
-  { value: "3", label: "Programs" },
-  { value: "Ethical", label: "Guidance & Counselling" },
-  { value: "All Week", label: "Sat to Fri" },
-  { value: "Daura", label: "Katsina State, Nigeria" },
+  { value: "289+", label: "Students Enrolled" },
+  { value: "29+", label: "Expert Staffs" },
+  { value: "5", label: "Tahfiz Classes" },
+  { value: "7+", label: "Ma'ahad Halqas" },
 ];
 
 // How admission works (from the school's rules on /admissions; the fees line is built in the page).

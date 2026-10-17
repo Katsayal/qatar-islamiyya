@@ -119,6 +119,27 @@ Goal: a more professional look, mobile first, no change to features. Style = mod
 
 ---
 
+## Planned, decided but NOT started (discussed 2026-10-17)
+### T.1 Teachers & staff (asatiz) listing
+Source: `data/asatiz_data.csv` (gitignored, from the school): 28 names with a program only (Barnamaj 12, Ma'ahad 10, Tahfiz 6); no phone, no role, no halqa/class yet. A person only exists in the app as an account (profile = login), so "listing them" = creating their accounts.
+
+**Decisions (owner, 2026-10-17):**
+- **No import tool** for now (28 people, once; roles/classes arrive in pieces; the single add form is enough). Revisit only if volumes grow.
+- **Login = a code, not an email**, like admission numbers for students: format `QAT` + number (e.g. `QAT001`, three digits assumed: confirm), assigned by the school/owner. Role-neutral (a role can change later), letters/digits/`-`, 3 to 30 characters, unique. Underneath it reuses the synthetic address trick (`qat001@students.qatar.local` via `admissionToEmail`), so the login code does not change; a real email (contains `@`) still works, so the owner and the DEV test accounts are untouched. Note the "students" domain name in ARCHITECTURE when built.
+- **Titles stay in the names**, title-cased: `Ustaz Sani Hamisu`, `Dr. Shuaibu Salisu`, `UTAZ` fixed to `Ustaz`; `USAMATU SANI NADEDE` is the correct spelling.
+- **Everyone is created as a teacher** (lowest privilege) until the school names who gets staff accounts.
+- **Per-person passwords** (not one shared password): teachers see guardian phones and medical notes. They change theirs on My account.
+- **Reminder banner for teachers, staff and owner** with the same look as the student one ("You are using the password the school gave you. You can set your own…"), shown until they change their own password (same `password_changed` flag idea as students; a reset clears it).
+- **Role change (teacher ⇄ staff) is owner-only**, with a confirm; recorded in the Activity log (profiles edit, old → new role); class assignments are unaffected.
+
+**The four small changes to build later:** (1) add form: "Login ID (a code, or an email)" replaces "Email"; server accepts a valid email or a code of the allowed shape; (2) show the code (not the synthetic address) in the directory, the "account created" message and My account; (3) owner-only "Change role" on the directory rows (not on the owner row); (4) "add another" flow: after success keep the role, clear name, code, phone and password. Plus the reminder banner above. Each with tests; update SPEC §3 and §9 first, ARCHITECTURE after.
+
+**Working sheet (to prepare when we start):** `data/asatiz.csv` with Full Name, Login ID, Role, Phone, Program (info only); names title-cased, codes pre-filled sequentially or left for the school, all roles `teacher`; one sheet updated as information arrives; used to drive the form on DEV (agent can do it) and again on PROD at go-live.
+
+**Sequence:** (1) build the changes above; (2) create the accounts on DEV from the sheet; (3) when the school sends the halqas / classes: create the halqa classes, move the students with Move by CSV, assign each teacher in the class form (search picker), assign Barnamaj teachers to their books; (4) go-live: repeat the accounts on PROD.
+
+**Waiting on the school:** which asatiz get staff accounts; phone numbers; the codes if they assign them; Ma'ahad halqas and Tahfiz classes per teacher; confirm that `Abubakar Sani Hamisu` (Tahfiz) and `Ustaz Sani Hamisu` (Barnamaj) are two different people (the owner believes so and will reconfirm).
+
 ## Pending from the school
 - [x] Logo & brand colours *(logo received 2026-10-11; colours taken from it; confirm they are right)*
 - [ ] Tahfiz class names (qurra) and Ma'ahad halqa names
@@ -130,6 +151,8 @@ Goal: a more professional look, mobile first, no change to features. Style = mod
 - [ ] **Confirm the school days and times.** Two places disagree: `src/content/admissions.ts` (Sat–Sun 8:00am–6:00pm, Mon–Fri 3:00pm–6:00pm, edited by the owner), and the programs page Barnamaj bullet and SPEC §5.3 (Sat–Sun 8:30–4:00, Tue–Wed 3:00–6:00). (The code no longer checks school days: the attendance note and `isSchoolDay` were removed on 2026-10-12.) Admission rule 7 now just says "on the school days shown above" so the times are written once. Also check the home quick-facts tiles in `src/content/home.ts` ("Ethical Guidance & Counselling", "All Week, Mon to Sun").
 - [ ] Have someone who reads Hausa check the English translation of the admission rules (rule 6 "dress or conduct" is the least certain), and approve the donate page wording.
 - [ ] Photos for website & gallery
+- [ ] **Asatiz (see T.1):** who gets staff accounts vs teacher accounts; phone numbers; login codes (`QAT###`) if the school assigns them; Ma'ahad halqas and Tahfiz classes per teacher; confirm the two Sani Hamisu / Abubakar entries are different people
+- [ ] Ma'ahad halqa names, teachers and the student-to-halqa list (students are all in one "Ma'ahad" class for now; move them with Move by CSV)
 
 ## Notes log
 - 2026-10-11 — Visual overhaul finished (see section above). Built with the DEV test accounts and temporary `ZZ` rows (all deleted afterwards; counts checked). Lessons: (1) the Turbopack dev cache served stale CSS/components three times: stop the server, delete `.next/dev`, restart. (2) A login form submitted before hydration does a native GET and leaks the credentials into the URL; wait for hydration. (3) `X-Frame-Options: DENY` stops iframe-based page checks, which is intended. (4) An edit to `src/content/admissions.ts` (school days, fee labels) made outside the Claude sessions was committed together with the overhaul; the school days question is open (Pending list).
