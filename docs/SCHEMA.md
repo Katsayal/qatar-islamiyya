@@ -151,6 +151,7 @@ Unique: (profile_id, month). Profiles are never deleted (accounts are disabled),
 
 ### school_settings  (single row)
 | id = 1 | bank_name | account_name | account_number | signature_path |
+Exactly one row, `id = 1` (check constraint). The app only ever updates it (staff have no insert policy), so **never delete it**: a missing row makes "Save bank details" and "Upload signature" match nothing and still say "saved". The live row went missing and was re-created on 2026-10-18 by migration `…_restore_school_settings_row` (`insert … on conflict do nothing`).
 
 ## 8. Server-set fields (triggers)
 A `before insert` trigger fills these; values sent from forms are ignored:

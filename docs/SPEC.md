@@ -77,7 +77,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 | Page | Content |
 |---|---|
 | Home | Hero/welcome (some Arabic) and a quick-facts strip, three program cards, how admission works, school days and fees, latest news, Apply / WhatsApp / Call band, donation section |
-| About | History, vision, mission, leadership (content pending) |
+| About | History, vision, mission, leadership. Vision and mission are drafted (the school should approve the wording); history and leadership are pending. |
 | Programs | Tahfiz, Ma'ahad, Barnamaj: what each one is, how it works, and an Apply button. No curriculum table on the site (the curriculum stays in the portal's Barnamaj books). Ends with the same Apply / WhatsApp / Call band as the home page. |
 | Admissions | Requirements & rules (English; translated from the school's Hausa original), fees, schedule, **online application**, downloadable PDF form, bank details |
 | News & Events | Posts with audience = public |
@@ -138,6 +138,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Nigeria Data Protection Act 2023: consent checkbox on application form; collect only needed data.
 - Daily Supabase backups (built-in).
 - Change tracking: `updated_at` / `updated_by` on editable tables, plus the owner-only activity log (§9).
+- Health check: `GET /health` answers `{"ok":true}` after one database read (503 if the read fails). Not linked anywhere; an uptime monitor calls it to keep the free hosting awake and to email the owner when the site is down.
 
 ## 13. Deliberately deferred (keep simple)
 - Offline/PWA mode · full Arabic/Hausa translation & i18n library · sign-in log · MFA / password rules · absence alerts · guardian accounts · online payments · SMS/WhatsApp notifications · certificates · recitation audio.
