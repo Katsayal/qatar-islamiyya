@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ConfirmSubmit } from "@/components/confirm-submit";
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { Trash2, Upload } from "lucide-react";
 import { resizeImage } from "@/lib/resize-image";
@@ -68,13 +69,12 @@ export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (!window.confirm("Remove the signature from report cards?")) return;
             startTransition(() => removeAction());
           }}
         >
-          <button disabled={removing} className={`${btn.danger} w-full`}>
+          <ConfirmSubmit ask="Remove the signature from report cards?" yes="Yes, remove" disabled={removing} className={`${btn.danger} w-full`}>
             <Trash2 aria-hidden /> {removing ? "Removing…" : "Remove signature"}
-          </button>
+          </ConfirmSubmit>
         </form>
       )}
       {/* Outside the conditional so the message stays after the form disappears. */}

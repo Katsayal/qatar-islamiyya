@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
+import { ConfirmSubmit } from "@/components/confirm-submit";
 import { deleteYear } from "./actions";
 
 export function DeleteYear({ id, name }: { id: string; name: string }) {
@@ -10,18 +11,19 @@ export function DeleteYear({ id, name }: { id: string; name: string }) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (!window.confirm(`Delete the academic year ${name} and its three terms? This cannot be undone.`)) return;
         startTransition(() => formAction(new FormData(e.currentTarget)));
       }}
       className="mt-4 border-t pt-4"
     >
       <input type="hidden" name="id" value={id} />
-      <button
+      <ConfirmSubmit
+        ask={`Delete the academic year ${name} and its three terms? This cannot be undone.`}
+        yes="Yes, delete"
         disabled={pending}
         className="h-11 w-full rounded-lg border border-destructive/40 px-4 text-sm font-medium text-destructive disabled:opacity-50"
       >
         {pending ? "Deleting…" : "Delete this year"}
-      </button>
+      </ConfirmSubmit>
       <p className="mt-2 text-xs text-muted-foreground">Only possible while nothing has been recorded in this year.</p>
       {state.error && (
         <p role="alert" className="mt-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">

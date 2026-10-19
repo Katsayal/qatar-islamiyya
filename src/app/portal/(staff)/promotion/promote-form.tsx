@@ -6,6 +6,7 @@ import { controlClass } from "@/components/form-parts";
 import { ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { big, btn } from "@/components/buttons";
+import { ConfirmSubmit } from "@/components/confirm-submit";
 
 type Student = { id: string; full_name: string; admission_no: string };
 type Destination = { id: string; name: string; program: string; level: number | null };
@@ -52,10 +53,6 @@ export function PromoteForm({
       onSubmit={(e) => {
         e.preventDefault();
         const form = new FormData(e.currentTarget);
-        const to = String(form.get("to") ?? "");
-        const count = form.getAll("student").length;
-        const label = to === "graduate" ? "graduate" : `move to ${destinations.find((d) => d.id === to)?.name ?? "the chosen class"}`;
-        if (to && count && !window.confirm(`${count} student${count === 1 ? "" : "s"}: ${label}?`)) return;
         startTransition(() => formAction(form));
       }}
       className="mt-4 flex flex-col gap-4"
@@ -94,9 +91,22 @@ export function PromoteForm({
       </label>
 
       <Message result={result} />
-      <button disabled={pending} className={cn(btn.save, big)}>
+      <ConfirmSubmit
+        ask={(f) => {
+          const form = new FormData(f);
+          const to = String(form.get("to") ?? "");
+          const count = form.getAll("student").length;
+          if (!to || !count) return null; // nothing to confirm: the server explains what is missing
+          const label = to === "graduate" ? "graduate" : `move to ${destinations.find((d) => d.id === to)?.name ?? "the chosen class"}`;
+          return `${count} student${count === 1 ? "" : "s"}: ${label}?`;
+        }}
+        yes="Yes, move"
+        tone="save"
+        disabled={pending}
+        className={cn(btn.save, big)}
+      >
         <ArrowRightLeft aria-hidden /> {pending ? "Moving…" : "Move students"}
-      </button>
+      </ConfirmSubmit>
     </form>
   );
 }

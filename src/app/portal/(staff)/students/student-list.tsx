@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { ArrowRightLeft } from "lucide-react";
 import { btn } from "@/components/buttons";
+import { ConfirmSubmit } from "@/components/confirm-submit";
 import { controlClass } from "@/components/form-parts";
 import { StatusBadge } from "@/components/status-badge";
 import { moveStudents, type MoveResult } from "./actions";
@@ -30,10 +31,7 @@ export function StudentList({ students, classes, emptyText }: { students: ListSt
   function move(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const n = form.getAll("student").length;
-    const name = classes.find((c) => c.id === to)?.name;
-    if (!n || !name) return;
-    if (!window.confirm(`Move ${n} student${n === 1 ? "" : "s"} to ${name}?`)) return;
+    if (!form.getAll("student").length || !to) return;
     start(async () => {
       const r = await moveStudents(null, form);
       setResult(r);
@@ -96,9 +94,15 @@ export function StudentList({ students, classes, emptyText }: { students: ListSt
               </option>
             ))}
           </select>
-          <button disabled={!to || pending} className={btn.save}>
+          <ConfirmSubmit
+            ask={`Move ${picked.size} student${picked.size === 1 ? "" : "s"} to ${classes.find((c) => c.id === to)?.name ?? "the chosen class"}?`}
+            yes="Yes, move"
+            tone="save"
+            disabled={!to || pending}
+            className={btn.save}
+          >
             <ArrowRightLeft aria-hidden /> {pending ? "Moving…" : "Move"}
-          </button>
+          </ConfirmSubmit>
         </div>
       )}
     </form>

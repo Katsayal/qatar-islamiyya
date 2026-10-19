@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
+import { ConfirmSubmit } from "@/components/confirm-submit";
 import { deletePhoto, saveCaption } from "./actions";
 import { Check, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,14 +42,13 @@ export function DeletePhoto({ id }: { id: string }) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (!window.confirm("Delete this photo? This cannot be undone.")) return;
         startTransition(() => formAction(new FormData(e.currentTarget)));
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className={`${btn.danger} w-full`}>
+      <ConfirmSubmit ask="Delete this photo? This cannot be undone." yes="Yes, delete" disabled={pending} className={`${btn.danger} w-full`}>
         <Trash2 aria-hidden /> {pending ? "Deleting…" : "Delete photo"}
-      </button>
+      </ConfirmSubmit>
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {error}
