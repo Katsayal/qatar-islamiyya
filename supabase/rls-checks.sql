@@ -374,6 +374,10 @@ begin
   update public.profiles set active = false where id in ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002');
   get diagnostics n = row_count;
   if n <> 0 then raise exception 'FAIL: non-owner staff edited the owner or a staff profile'; end if;
+  -- staff cannot make themselves owner
+  update public.profiles set is_owner = true where id = '00000000-0000-0000-0000-000000000002';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: staff made themselves owner'; end if;
 end $$;
 reset role;
 
@@ -386,6 +390,19 @@ begin
   update public.profiles set phone = '08000000000' where id = '00000000-0000-0000-0000-000000000003';
   get diagnostics n = row_count;
   if n <> 1 then raise exception 'FAIL: owner could not edit a teacher profile'; end if;
+  -- owner changes roles: teacher B → owner (staff + flag) → back to teacher
+  update public.profiles set role = 'staff', is_owner = true where id = '00000000-0000-0000-0000-000000000004';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: owner could not make a teacher owner'; end if;
+  update public.profiles set role = 'teacher', is_owner = false where id = '00000000-0000-0000-0000-000000000004';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: owner could not make an owner a teacher again'; end if;
+  -- an owner flag on a teacher is refused by the check constraint
+  begin
+    update public.profiles set is_owner = true where id = '00000000-0000-0000-0000-000000000004';
+    raise exception 'FAIL: a teacher was made owner without the staff role';
+  exception when check_violation then null;
+  end;
 end $$;
 reset role;
 

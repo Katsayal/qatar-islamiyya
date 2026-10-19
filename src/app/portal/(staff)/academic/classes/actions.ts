@@ -21,10 +21,6 @@ const schema = z
   .refine((v) => v.program === "barnamaj" || v.program === "maahad" || v.hifz_unit, {
     message: "Choose the hifz unit (lines or pages) for a Tahfiz class.",
     path: ["hifz_unit"],
-  })
-  .refine((v) => v.program === "barnamaj" || v.teacher_ids.length <= 1, {
-    message: "A Tahfiz or Ma'ahad class has one teacher. Barnamaj can have several.",
-    path: ["teacher_ids"],
   });
 
 export async function saveClass(_prev: string | null, formData: FormData): Promise<string | null> {

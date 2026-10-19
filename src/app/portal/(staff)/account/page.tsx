@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { changeOwnPassword } from "./actions";
+import { loginLabel } from "@/lib/login-id";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -32,12 +33,12 @@ export default async function MyAccountPage() {
             </div>
           </div>
           <dl className="grid grid-cols-3 gap-2 p-4 text-sm">
-            <dt className="text-muted-foreground">Email</dt>
-            <dd className="col-span-2 break-all">{data.user?.email}</dd>
+            <dt className="text-muted-foreground">Login</dt>
+            <dd className="col-span-2 break-all">{loginLabel(data.user?.email)}</dd>
           </dl>
         </section>
 
-        <section className="rounded-xl border bg-card p-4 shadow-sm">
+        <section id="password" className="scroll-mt-4 rounded-xl border bg-card p-4 shadow-sm">
           <h2 className="flex items-center gap-2 font-semibold">
             <KeyRound aria-hidden className="size-4 text-primary" /> Change my password
           </h2>

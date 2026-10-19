@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useRef } from "react";
 import { UserPlus } from "lucide-react";
 import { btn } from "@/components/buttons";
 import { createStaffAccount, type Result } from "../actions";
@@ -8,12 +8,24 @@ import { controlClass } from "@/components/form-parts";
 
 const input = controlClass;
 
-// Staff can add teachers only; the owner can also add staff (the server checks this too).
-export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
-  const [state, formAction, pending] = useActionState<Result, FormData>(createStaffAccount, { ok: false, message: null });
+// Staff can add teachers only; an owner can also add staff and owners (the server checks this too).
+// After a successful add everything but the role is cleared, so the next person can be typed straight away.
+export function AddAccount({ isOwner }: { isOwner: boolean }) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction, pending] = useActionState<Result, FormData>(async (prev, fd) => {
+    const result = await createStaffAccount(prev, fd);
+    if (result.ok && formRef.current) {
+      for (const name of ["full_name", "login", "phone", "password"]) {
+        const field = formRef.current.elements.namedItem(name);
+        if (field instanceof HTMLInputElement) field.value = "";
+      }
+    }
+    return result;
+  }, { ok: false, message: null });
 
   return (
     <form
+      ref={formRef}
       onSubmit={(e) => {
         e.preventDefault();
         startTransition(() => formAction(new FormData(e.currentTarget)));
@@ -25,8 +37,8 @@ export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
         <input name="full_name" required autoComplete="off" className={input} />
       </label>
       <label className="flex flex-col gap-1 text-sm">
-        Email * (used to sign in)
-        <input name="email" type="email" required autoComplete="off" autoCapitalize="none" className={input} />
+        Login ID * (a code like QAT001, or an email)
+        <input name="login" required autoComplete="off" autoCapitalize="none" spellCheck={false} className={input} />
       </label>
       <label className="flex flex-col gap-1 text-sm">
         Phone
@@ -36,7 +48,8 @@ export function AddAccount({ canCreateStaff }: { canCreateStaff: boolean }) {
         Role *
         <select name="role" required defaultValue="teacher" className={input}>
           <option value="teacher">Teacher</option>
-          {canCreateStaff && <option value="staff">Staff</option>}
+          {isOwner && <option value="staff">Staff</option>}
+          {isOwner && <option value="owner">Owner</option>}
         </select>
       </label>
       <label className="flex flex-col gap-1 text-sm">

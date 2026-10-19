@@ -11,12 +11,7 @@ export type Profile = {
   is_owner: boolean;
 };
 
-// Students log in with their admission number; Supabase needs an email.
-// "QIS/2026/001" → "qis-2026-001@students.qatar.local". Also used when creating student accounts.
-export function admissionToEmail(admissionNo: string) {
-  const local = admissionNo.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  return `${local}@students.qatar.local`;
-}
+export { admissionToEmail } from "@/lib/login-id";
 
 export function homeFor(role: Role) {
   return role === "student" ? "/portal/student" : "/portal";

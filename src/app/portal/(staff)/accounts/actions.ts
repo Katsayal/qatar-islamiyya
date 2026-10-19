@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { admissionToEmail, requireRole } from "@/lib/auth";
+import { admissionToEmail, requireOwner, requireRole } from "@/lib/auth";
+import { isLoginCode, loginLabel, loginToEmail } from "@/lib/login-id";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { LOGIN_BATCH, LOGIN_CHUNK } from "./constants";
@@ -119,19 +120,27 @@ export async function createStudentLoginsBatch(_prev: BatchResult, formData: For
   };
 }
 
+// The add form's role choice. "owner" = role staff + is_owner (the profiles check requires it).
+const accountRole = z.enum(["teacher", "staff", "owner"]);
+const asProfile = (r: z.infer<typeof accountRole>) => ({ role: r === "teacher" ? "teacher" : "staff", is_owner: r === "owner" });
+
 export async function createStaffAccount(_prev: Result, formData: FormData): Promise<Result> {
   const me = await requireRole("staff");
 
   const parsed = z
     .object({
       full_name: z.string().trim().min(2).max(120),
-      email: z.string().trim().toLowerCase().email(),
+      // A login code (QAT001) or a real email.
+      login: z
+        .string()
+        .trim()
+        .refine((v) => (v.includes("@") ? z.string().email().safeParse(v).success : isLoginCode(v))),
       phone: z
         .string()
         .trim()
         .transform((v) => v.replace(/[\s-]/g, ""))
         .pipe(z.union([z.literal(""), z.string().regex(/^(\+234|0)\d{10}$/)])),
-      role: z.enum(["teacher", "staff"]),
+      role: accountRole,
       password,
     })
     .safeParse(Object.fromEntries(formData));
@@ -140,28 +149,50 @@ export async function createStaffAccount(_prev: Result, formData: FormData): Pro
     return fail(
       field === "password" ? parsed.error.issues[0].message
         : field === "phone" ? "Phone must be a Nigerian number, e.g. 08012345678."
-        : field === "email" ? "Enter a valid email address."
-        : "Please fill in the name, email, role and password.",
+        : field === "login" ? "Login ID: a code of 3 to 30 letters, digits or - (e.g. QAT001), or a valid email."
+        : "Please fill in the name, login ID, role and password.",
     );
   }
   const v = parsed.data;
-  // Staff create teachers; only the owner creates staff accounts (a staff member must not be able to mint more staff).
-  if (v.role === "staff" && !me.is_owner) return fail("Only the owner can create staff accounts.");
+  // Staff create teachers; only an owner creates staff and owner accounts (a staff member must not be able to mint more staff).
+  if (v.role !== "teacher" && !me.is_owner) return fail("Only the owner can create staff or owner accounts.");
 
+  const email = loginToEmail(v.login);
   const { data, error } = await createAdminClient().auth.admin.createUser({
-    email: v.email,
+    email,
     password: v.password,
     email_confirm: true,
-    app_metadata: { role: v.role, full_name: v.full_name, is_owner: false },
+    app_metadata: { ...asProfile(v.role), full_name: v.full_name },
   });
-  if (error) return fail(error.code === "email_exists" ? "An account with this email already exists." : "Could not create the account.");
+  if (error) {
+    return fail(error.code === "email_exists" ? "This login ID is already used by another account (or a student's admission number)." : "Could not create the account.");
+  }
 
   const supabase = await createClient();
   if (v.phone) await supabase.from("profiles").update({ phone: v.phone }).eq("id", data.user.id);
-  await logAccount(supabase, `Created a ${v.role} account for ${v.full_name} (${v.email})`, "profiles", data.user.id);
+  await logAccount(supabase, `Created ${v.role === "owner" ? "an" : "a"} ${v.role} account for ${v.full_name} (${loginLabel(email)})`, "profiles", data.user.id);
 
   revalidatePath("/portal/accounts/staff");
-  return done(`Account created for ${v.full_name}. They sign in with ${v.email} and the password you set.`);
+  return done(`Account created for ${v.full_name}. They sign in with ${loginLabel(email)} and the password you set.`);
+}
+
+// An owner changes someone's role: Teacher · Staff · Owner. Never their own row, so an owner always remains.
+// A plain profiles update with the owner's own session (RLS owner_update); the activity log records it.
+export async function changeRole(_prev: Result, formData: FormData): Promise<Result> {
+  const me = await requireOwner();
+  const parsed = z.object({ userId: z.string().uuid(), role: accountRole }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return fail("Choose a role.");
+  if (parsed.data.userId === me.id) return fail("You cannot change your own role.");
+
+  const supabase = await createClient();
+  const { data: target } = await supabase.from("profiles").select("role").eq("id", parsed.data.userId).maybeSingle();
+  if (!target || target.role === "student") return fail("Account not found.");
+
+  const { error } = await supabase.from("profiles").update(asProfile(parsed.data.role)).eq("id", parsed.data.userId);
+  if (error) return fail("Could not change the role.");
+
+  revalidatePath("/portal/accounts/staff");
+  return done("Role changed.");
 }
 
 export async function resetPassword(_prev: Result, formData: FormData): Promise<Result> {
@@ -177,8 +208,8 @@ export async function resetPassword(_prev: Result, formData: FormData): Promise<
 
   const { error } = await createAdminClient().auth.admin.updateUserById(parsed.data.userId, {
     password: parsed.data.password,
-    // A student whose password staff reset sees the "set your own password" reminder again.
-    ...(target.role === "student" ? { user_metadata: { password_changed: false } } : {}),
+    // Whoever's password was reset sees the "set your own password" reminder again.
+    user_metadata: { password_changed: false },
   });
   if (error) return fail("Could not change the password.");
   await logAccount(supabase, `Reset the password of ${target.full_name} (${target.role})`, "profiles", parsed.data.userId);

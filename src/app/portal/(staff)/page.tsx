@@ -4,6 +4,7 @@ import { DashboardFees } from "@/components/dashboard-fees";
 import { DashboardPace } from "@/components/dashboard-pace";
 import { DashboardTotals } from "@/components/dashboard-totals";
 import { requireRole } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { PortalBanner } from "@/components/portal-banner";
 import { menuFor } from "@/components/portal-menu";
 
@@ -17,8 +18,21 @@ export default async function PortalHome() {
   const profile = await requireRole("teacher", "staff");
   const shortcuts = menuFor(profile).filter((m) => m.href !== "/portal");
 
+  // Set when they change their own password on My account; a reset by staff or the owner clears it.
+  const { data: claims } = await (await createClient()).auth.getClaims();
+  const ownPassword = claims?.claims.user_metadata?.password_changed === true;
+
   return (
     <div>
+      {!ownPassword && (
+        <p className="mb-6 rounded-xl border border-gold/60 bg-gold/15 p-4 text-sm">
+          You are using the password the school gave you. You can set your own in{" "}
+          <Link href="/portal/account#password" className="font-medium text-primary underline-offset-4 hover:underline">
+            My account
+          </Link>
+          .
+        </p>
+      )}
       <PortalBanner
         title={`Assalamu alaykum, ${profile.full_name}`}
         subtitle={profile.role === "staff" ? "Staff portal" : "Teacher portal"}

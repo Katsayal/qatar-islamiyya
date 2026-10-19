@@ -6,6 +6,8 @@ import { resetPassword, setActive } from "../actions";
 import { accountTabs, PageTabs } from "@/components/page-tabs";
 import { PasswordForm } from "../password-form";
 import { AddAccount } from "./add-account";
+import { RoleForm } from "./role-form";
+import { loginLabel } from "@/lib/login-id";
 import { btn } from "@/components/buttons";
 import { controlClass, SearchField } from "@/components/form-parts";
 import { PickerForm } from "@/components/picker-form";
@@ -47,12 +49,13 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
   if (status !== "all") query = query.eq("active", status === "active");
   if (q) query = query.ilike("full_name", `%${q}%`);
 
-  const [{ data: people }, { data: users }] = await Promise.all([
-    query,
-    createAdminClient().auth.admin.listUsers({ perPage: 200 }), // emails live in auth.users
-  ]);
-  const email = new Map((users?.users ?? []).map((u) => [u.id, u.email]));
+  const { data: people } = await query;
   const list = people ?? [];
+  // Logins live in auth.users. Look up only the people listed: student logins (hundreds) would push
+  // teachers and staff off a listUsers page.
+  const admin = createAdminClient();
+  const users = await Promise.all(list.map((p) => admin.auth.admin.getUserById(p.id)));
+  const email = new Map(users.map(({ data }) => [data.user?.id, data.user?.email]));
 
   return (
     <FreshOnVisit>
@@ -87,7 +90,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
                     <span className="min-w-0">
                       <span className="block truncate font-medium">{p.full_name}</span>
-                      <span className="block truncate text-sm text-muted-foreground">{email.get(p.id) ?? "—"}</span>
+                      <span className="block truncate text-sm text-muted-foreground">{loginLabel(email.get(p.id))}</span>
                     </span>
                     <span className="flex shrink-0 flex-col items-end gap-1">
                       <StatusBadge tone={p.role === "teacher" ? "muted" : "good"}>
@@ -104,6 +107,13 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
                     )}
                     {p.role === "teacher" && (
                       <p className="text-sm text-muted-foreground">{classes ? `Teaches: ${classes}` : "No classes assigned yet."}</p>
+                    )}
+                    {me.is_owner && p.id !== me.id && (
+                      <RoleForm
+                        userId={p.id}
+                        name={p.full_name}
+                        current={p.is_owner ? "owner" : p.role === "teacher" ? "teacher" : "staff"}
+                      />
                     )}
                     {canManage ? (
                       <>
@@ -135,7 +145,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
 
         <h2 className="mt-8 font-semibold">Add an account</h2>
         <div className="mt-3 rounded-xl border p-4 bg-card shadow-sm">
-          <AddAccount canCreateStaff={me.is_owner} />
+          <AddAccount isOwner={me.is_owner} />
         </div>
       </div>
     </FreshOnVisit>

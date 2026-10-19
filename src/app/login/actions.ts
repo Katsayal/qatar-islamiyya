@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { admissionToEmail, homeFor, type Role } from "@/lib/auth";
+import { homeFor, type Role } from "@/lib/auth";
+import { loginToEmail } from "@/lib/login-id";
 
 const loginSchema = z.object({
   login: z.string().trim().min(1),
@@ -19,7 +20,7 @@ export async function login(_prev: string | null, formData: FormData): Promise<s
   if (!parsed.success) return "Enter your login and password.";
 
   const { login, password } = parsed.data;
-  const email = login.includes("@") ? login.toLowerCase() : admissionToEmail(login);
+  const email = loginToEmail(login);
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });

@@ -32,7 +32,7 @@ export function TeacherPicker({ people, initial }: { people: Person[]; initial: 
   return (
     <fieldset>
       <legend className="flex w-full items-baseline justify-between gap-2 text-sm">
-        <span>Teachers (Tahfiz and Ma&apos;ahad: one; Barnamaj: several). Staff who teach are listed too.</span>
+        <span>Teachers (one or more). Staff who teach are listed too.</span>
         <span className="shrink-0 text-muted-foreground">{selected.size} selected</span>
       </legend>
 
