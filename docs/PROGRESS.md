@@ -4,7 +4,7 @@
 > Remember: **SIMPLE IS KING** · mobile-first ·
 
 ## Current status
-- **Phase:** Phase 3 done and committed. 3.3 reviewed: keep staff-only delete, whole-year calendar pace, 90% tolerance. 3.3b class progress overview done. Phase 4 (4.1–4.7) done and committed. Phase 5 (5.1–5.5) and Phase 5b (B.1–B.6, student bio data & logins) done and committed; Phase 5c C.1 (teacher & staff accounts) and C.2 (salary tracking) done and committed. F.1 security review done and committed. Visual overhaul (public site, login, all portals) done and committed, see "Visual overhaul" below. L.1 activity log (owner only) done. F.2 performance & mobile polish done. S.1 real student import done. Live on Netlify since 2026-10-18. Round 2 (school's requests): R.1 several teachers per class and R.2 login codes / roles / owners done (not committed yet). Next: R.3 Arabic public site, then F.3 Go-live
+- **Phase:** Phase 3 done and committed. 3.3 reviewed: keep staff-only delete, whole-year calendar pace, 90% tolerance. 3.3b class progress overview done. Phase 4 (4.1–4.7) done and committed. Phase 5 (5.1–5.5) and Phase 5b (B.1–B.6, student bio data & logins) done and committed; Phase 5c C.1 (teacher & staff accounts) and C.2 (salary tracking) done and committed. F.1 security review done and committed. Visual overhaul (public site, login, all portals) done and committed, see "Visual overhaul" below. L.1 activity log (owner only) done. F.2 performance & mobile polish done. S.1 real student import done. Live on Netlify since 2026-10-18. Round 2 (school's requests): R.1 several teachers per class and R.2 login codes / roles / owners done and committed. Next: R.3 Arabic public site, then F.3 Go-live
 - **Last updated:** 2026-10-19
 
 ## Session prompt template
