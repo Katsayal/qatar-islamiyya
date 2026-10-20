@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import { NigeriaFlag, QatarFlag } from "@/components/flags";
 import { browserPath, href, otherLangPath, type Lang } from "@/lib/lang";
 
 type Props = { lang: Lang; className: string };
 
-// "العربية" on English pages, "English" on Arabic pages: the same page in the other language.
+// Shows only the other language: Qatar flag + "AR" on English pages, Nigeria flag + "EN" on Arabic pages
+// (owner's choice, SPEC §7). Screen readers hear the language name ("العربية" / "English").
 // usePathname() needs <Suspense> (Cache Components): until it streams in, the link goes to the other home page.
 export function LangSwitch(props: Props) {
   return (
@@ -23,13 +25,16 @@ function CurrentPageSwitch(props: Props) {
 }
 
 function SwitchLink({ lang, className, to }: Props & { to: string }) {
-  return lang === "en" ? (
-    <Link href={to} hrefLang="ar" lang="ar" className={`font-arabic ${className}`}>
-      العربية
-    </Link>
-  ) : (
-    <Link href={to} hrefLang="en" lang="en" className={`font-sans ${className}`}>
-      English
+  const toArabic = lang === "en";
+  return (
+    <Link
+      href={to}
+      hrefLang={toArabic ? "ar" : "en"}
+      aria-label={toArabic ? "العربية" : "English"}
+      className={`inline-flex items-center gap-1.5 font-sans ${className}`}
+    >
+      {toArabic ? <QatarFlag /> : <NigeriaFlag />}
+      <span>{toArabic ? "AR" : "EN"}</span>
     </Link>
   );
 }
