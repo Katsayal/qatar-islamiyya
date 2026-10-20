@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans, Noto_Naskh_Arabic, Amiri_Quran } from "next/font/google";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const notoSans = Noto_Sans({
@@ -23,6 +24,8 @@ const amiriQuran = Amiri_Quran({
 });
 
 export const metadata: Metadata = {
+  // Absolute URLs for canonical/hreflang links (NEXT_PUBLIC_SITE_URL on Netlify).
+  metadataBase: new URL(siteUrl),
   title: "Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre)",
   description: "Islamic school in Daura, Katsina State: Tahfiz, Ma'ahad and Barnamaj.",
 };

@@ -1,6 +1,6 @@
 // History and leadership are PLACEHOLDERS (the school still owes them, see PROGRESS.md).
-// Vision and mission are drafts: the school should approve or correct the wording.
-export const about = {
+// Vision and mission are drafts: the school should approve or correct the wording (both languages).
+const en = {
   intro:
     "Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre) is an Islamic school in Daura, Katsina State, dedicated to teaching the Qur'an and the basics of Islamic education.",
   sections: [
@@ -16,3 +16,22 @@ export const about = {
     { title: "Leadership", text: "Our school leadership will be introduced here soon, in shaa Allah." },
   ],
 };
+
+const ar: typeof en = {
+  intro:
+    "مدرسة الحاجة هندة (مركز قطر متعدد الأغراض) مدرسة إسلامية في دورا بولاية كاتسينا، تُعنى بتعليم القرآن الكريم وأساسيات العلوم الإسلامية.",
+  sections: [
+    { title: "تاريخنا", text: "سيُضاف تاريخ المدرسة هنا قريبًا إن شاء الله." },
+    {
+      title: "رؤيتنا",
+      text: "تنشئة مسلمين يتقون الله، أهلِ علمٍ، متمسكين بالقرآن والسنة، يخدمون أسرهم ومجتمعهم بحسن الخلق.",
+    },
+    {
+      title: "رسالتنا",
+      text: "تعليم القرآن الكريم وأساسيات العلوم الإسلامية بعناية وانضباط، ومساعدة كل طالب على الحفظ والفهم والعمل بما يتعلم.",
+    },
+    { title: "القيادة", text: "سنعرّف بقيادة المدرسة هنا قريبًا إن شاء الله." },
+  ],
+};
+
+export const about = { en, ar };

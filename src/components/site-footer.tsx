@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { school } from "@/content/school";
+import { ui } from "@/content/ui";
 import { href, type Lang } from "@/lib/lang";
 import { navLinks } from "./nav-links";
 
 export function SiteFooter({ lang }: { lang: Lang }) {
+  const t = ui[lang];
   return (
     <footer className="pattern-star border-t-4 border-t-gold bg-deep text-primary-foreground">
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 text-sm md:grid-cols-3">
@@ -14,28 +17,26 @@ export function SiteFooter({ lang }: { lang: Lang }) {
           <p lang="ar" dir="rtl" className={`font-arabic text-primary-foreground/80 ${lang === "en" ? "text-left" : ""}`}>
             مدرسة الحاجة هندة (قطر دورا)
           </p>
-          <p className="mt-1 text-primary-foreground/70">Qatar Multi-Purpose Centre</p>
+          <p className="mt-1 text-primary-foreground/70">{t.centre}</p>
         </div>
         <div>
-          <p className="font-semibold text-gold">Contact</p>
-          <p className="mt-2 text-primary-foreground/80">Zango Road, Daura, Katsina State, Nigeria</p>
-          <p className="mt-2 text-primary-foreground/80">
-            08038102495 · 09060456171 · 07038782451
-          </p>
+          <p className="font-semibold text-gold">{t.footer.contact}</p>
+          <p className="mt-2 text-primary-foreground/80">{lang === "ar" ? school.addressAr : school.address}</p>
+          <p className="mt-2 text-primary-foreground/80">{school.phones.join(" · ")}</p>
         </div>
         <div>
-          <p className="font-semibold text-gold">Links</p>
+          <p className="font-semibold text-gold">{t.footer.links}</p>
           <ul className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
             {navLinks.map((l) => (
               <li key={l.href}>
                 <Link href={href(lang, l.href)} className="text-primary-foreground/80 hover:text-gold">
-                  {l.label}
+                  {t.nav[l.key]}
                 </Link>
               </li>
             ))}
             <li>
               <Link href={href(lang, "/donate")} className="text-primary-foreground/80 hover:text-gold">
-                Donate
+                {t.nav.donate}
               </Link>
             </li>
           </ul>

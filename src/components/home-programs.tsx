@@ -1,15 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { href, type Lang } from "@/lib/lang";
 import { SectionHeading } from "@/components/section-heading";
-import { programs } from "@/content/home";
+import { home } from "@/content/home";
+import { ui } from "@/content/ui";
+import { href, type Lang } from "@/lib/lang";
 
 export function HomePrograms({ lang }: { lang: Lang }) {
+  const t = ui[lang];
   return (
     <section className="mx-auto max-w-5xl px-4 pt-14">
-      <SectionHeading label="What we teach" title="Our programs" />
+      <SectionHeading label={t.home.programsLabel} title={t.ourPrograms} />
       <ul className="mt-6 grid gap-4 md:grid-cols-3">
-        {programs.map((p) => (
+        {home[lang].programs.map((p) => (
           <li
             key={p.slug}
             className="relative overflow-hidden rounded-xl bg-linear-to-br from-primary to-deep text-white shadow-sm"
@@ -31,7 +33,7 @@ export function HomePrograms({ lang }: { lang: Lang }) {
                 href={href(lang, `/programs#${p.slug}`)}
                 className="mt-5 inline-block text-sm font-medium text-gold hover:underline"
               >
-                Learn more →
+                {t.home.learnMore}
               </Link>
             </div>
           </li>

@@ -5,7 +5,10 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArticleSkeleton } from "@/components/page-skeleton";
 import { PostBody } from "@/components/post-body";
-import { href, toLang } from "@/lib/lang";
+import { PostLangLabel } from "@/components/post-lang-label";
+import { ui } from "@/content/ui";
+import { formatDate, href, toLang } from "@/lib/lang";
+import { pageMeta } from "@/lib/page-meta";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,13 +26,17 @@ async function getPost(id: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPost((await params).id);
-  if (!post) return { title: "News" };
-  return { title: post.title, description: post.body.slice(0, 150) };
+  const { lang: l, id } = await params;
+  const lang = toLang(l);
+  const post = await getPost(id);
+  if (!post) return { title: ui[lang].meta.news };
+  return { ...pageMeta(lang, `/news/${id}`, post.title), description: post.body.slice(0, 150) };
 }
 
 async function Post({ params }: Props) {
-  const post = await getPost((await params).id);
+  const { lang: l, id } = await params;
+  const lang = toLang(l);
+  const post = await getPost(id);
   if (!post) notFound();
 
   return (
@@ -46,9 +53,13 @@ async function Post({ params }: Props) {
           className="aspect-video w-full rounded-xl object-cover shadow-sm"
         />
       )}
-      <h1 className="mt-5 text-3xl font-semibold">{post.title}</h1>
+      {/* The post keeps its own language and direction, also on the other language's page. */}
+      <h1 lang={post.lang} dir={post.lang === "ar" ? "rtl" : "ltr"} className="mt-5 text-3xl font-semibold">
+        {post.title}
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
+        {formatDate(lang, post.published_at!, "long")}
+        <PostLangLabel postLang={post.lang} lang={lang} />
       </p>
       <PostBody body={post.body} lang={post.lang} />
     </article>
@@ -57,12 +68,13 @@ async function Post({ params }: Props) {
 
 const backClass = "inline-flex h-10 items-center rounded-full border bg-card px-4 text-sm font-medium text-primary hover:border-primary";
 
-// Reads params, so it streams in (the article id is not known at build time); same-size placeholder meanwhile.
+// Reads params, so it streams in (the article id is not known at build time). The placeholder is an empty
+// pill of the same size: the prerendered shell does not know the page language, so it shows no word.
 async function BackLink({ params }: Props) {
   const lang = toLang((await params).lang);
   return (
     <Link href={href(lang, "/news")} className={backClass}>
-      ← All news
+      {ui[lang].newsPage.back}
     </Link>
   );
 }
@@ -70,7 +82,7 @@ async function BackLink({ params }: Props) {
 export default function PostPage({ params }: Props) {
   return (
     <section className="mx-auto max-w-3xl px-4 pt-8 pb-12">
-      <Suspense fallback={<span className={backClass}>← All news</span>}>
+      <Suspense fallback={<span aria-hidden className={`${backClass} w-28`} />}>
         <BackLink params={params} />
       </Suspense>
       <div className="mt-4">

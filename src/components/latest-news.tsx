@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { href, type Lang } from "@/lib/lang";
+import { PostLangLabel } from "@/components/post-lang-label";
+import { ui } from "@/content/ui";
+import { formatDate, href, type Lang } from "@/lib/lang";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,14 +10,14 @@ export async function LatestNews({ lang }: { lang: Lang }) {
   const supabase = await createClient();
   const { data: posts } = await supabase
     .from("posts")
-    .select("id, title, cover_path, published_at")
+    .select("id, title, lang, cover_path, published_at")
     // RLS already hides drafts and future-dated posts.
     .eq("audience", "public")
     .order("published_at", { ascending: false })
     .limit(3);
 
   if (!posts?.length) {
-    return <p className="mt-6 text-sm text-muted-foreground">No news yet. Please check back soon.</p>;
+    return <p className="mt-6 text-sm text-muted-foreground">{ui[lang].home.noNews}</p>;
   }
 
   return (
@@ -33,11 +35,14 @@ export async function LatestNews({ lang }: { lang: Lang }) {
             />
           )}
           <div className="p-4">
-            <Link href={href(lang, `/news/${p.id}`)} className="font-semibold hover:text-primary">
-              {p.title}
-            </Link>
+            <p lang={p.lang} dir={p.lang === "ar" ? "rtl" : "ltr"}>
+              <Link href={href(lang, `/news/${p.id}`)} className="font-semibold hover:text-primary">
+                {p.title}
+              </Link>
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}
+              {formatDate(lang, p.published_at!, "medium")}
+              <PostLangLabel postLang={p.lang} lang={lang} />
             </p>
           </div>
         </li>

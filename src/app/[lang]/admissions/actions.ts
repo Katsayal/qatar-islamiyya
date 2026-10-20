@@ -39,7 +39,9 @@ const schema = z.object({
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_PHOTO = 2 * 1024 * 1024;
 
-export type ApplyState = { ok: boolean; error: string | null };
+// The form shows the sentence for the code in the page language (ui.ts, applyForm.errors).
+export type ApplyError = "invalid" | "photo" | "upload" | "save";
+export type ApplyState = { ok: boolean; error: ApplyError | null };
 
 // Anon has no table or storage rights, so everything goes through the server-only admin client.
 export async function submitApplication(_prev: ApplyState, formData: FormData): Promise<ApplyState> {
@@ -49,14 +51,14 @@ export async function submitApplication(_prev: ApplyState, formData: FormData): 
   const raw = Object.fromEntries(formData);
   const parsed = schema.safeParse({ ...raw, entry_level: raw.entry_level || null });
   if (!parsed.success) {
-    return { ok: false, error: "Please check the form: fill all the required fields, use Nigerian phone numbers and tick the consent box." };
+    return { ok: false, error: "invalid" };
   }
   const { consent, ...fields } = parsed.data;
 
   const photo = formData.get("photo");
   const hasPhoto = photo instanceof File && photo.size > 0;
   if (hasPhoto && (!PHOTO_TYPES.includes(photo.type) || photo.size > MAX_PHOTO)) {
-    return { ok: false, error: "The photo must be a JPG, PNG or WebP image of at most 2 MB." };
+    return { ok: false, error: "photo" };
   }
 
   const supabase = createAdminClient();
@@ -67,7 +69,7 @@ export async function submitApplication(_prev: ApplyState, formData: FormData): 
     const { error } = await supabase.storage
       .from("student-photos")
       .upload(photo_path!, photo, { contentType: photo.type });
-    if (error) return { ok: false, error: "Could not upload the photo. Please try again." };
+    if (error) return { ok: false, error: "upload" };
   }
 
   const { error } = await supabase
@@ -75,7 +77,7 @@ export async function submitApplication(_prev: ApplyState, formData: FormData): 
     .insert({ id, ...fields, photo_path, consent: consent === "on" });
   if (error) {
     if (photo_path) await supabase.storage.from("student-photos").remove([photo_path]);
-    return { ok: false, error: "Could not send your application. Please call us instead." };
+    return { ok: false, error: "save" };
   }
 
   return { ok: true, error: null };

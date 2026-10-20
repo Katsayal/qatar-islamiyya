@@ -78,6 +78,7 @@ docs/
 - Security lives in **RLS policies**. UI hiding is convenience only, never the protection.
 - Use Tailwind logical classes (`ms-`, `me-`, `ps-`, `pe-`, `text-start`) so RTL works.
 - Arabic blocks: `<div lang="ar" dir="rtl" className="font-arabic">`. Hausa: `lang="ha"`.
+- Public site text lives in `src/content/*.ts` as `{ en, ar }` (`const ar: typeof en`); shared words in `src/content/ui.ts`. Never hard-code English on a public page (ARCHITECTURE §2a).
 - Qur'an text uses `font-quran`.
 - Dates: store ISO dates; display Gregorian (Hijri optional later).
 - Phone numbers: Nigerian format (+234 / 080...).

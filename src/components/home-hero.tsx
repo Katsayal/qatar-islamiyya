@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import { home } from "@/content/home";
+import { ui } from "@/content/ui";
 import { href, type Lang } from "@/lib/lang";
-import { facts } from "@/content/home";
 
 export function HomeHero({ lang }: { lang: Lang }) {
+  const t = ui[lang];
   return (
     <>
       <section className="pattern-star bg-deep text-white">
@@ -13,12 +15,8 @@ export function HomeHero({ lang }: { lang: Lang }) {
             بسم الله الرحمن الرحيم
           </p>
           <h1 className="mt-3 text-3xl font-semibold md:text-5xl">Madrasatu Hajiya Hindatu</h1>
-          <p className="mx-auto mt-1 max-w-xl text-white/80">
-            For Memorising the Qur&apos;an and learning the basics of Islam, with care and discipline.
-          </p>
-          <p className="mx-auto mt-1 max-w-xl text-white/80">
-            Qatar Multi-Purpose Centre, Zango Road, Daura, Katsina State.
-          </p>
+          <p className="mx-auto mt-1 max-w-xl text-white/80">{t.hero.tagline}</p>
+          <p className="mx-auto mt-1 max-w-xl text-white/80">{t.hero.place}</p>
           <p lang="ar" dir="rtl" className="font-arabic mt-5 text-xl text-white/80">
             مدرسة الحاجة هندة (قطر دورا)
           </p>
@@ -30,13 +28,13 @@ export function HomeHero({ lang }: { lang: Lang }) {
               href={href(lang, "/admissions")}
               className="inline-flex h-12 items-center justify-center rounded-lg bg-gold px-7 font-semibold text-deep hover:bg-gold/90"
             >
-              Apply now
+              {t.applyNow}
             </Link>
             <Link
               href={href(lang, "/programs")}
               className="inline-flex h-12 items-center justify-center rounded-lg border border-white/40 px-7 font-medium text-white hover:bg-white/10"
             >
-              Our programs
+              {t.ourPrograms}
             </Link>
           </div>
         </div>
@@ -45,7 +43,7 @@ export function HomeHero({ lang }: { lang: Lang }) {
       {/* Quick facts: overlaps the bottom edge of the hero */}
       <div className="mx-auto -mt-10 max-w-5xl px-4">
         <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border shadow-md md:grid-cols-4">
-          {facts.map((f) => (
+          {home[lang].facts.map((f) => (
             <li key={f.label} className="bg-card p-4 text-center">
               <p className="text-2xl font-semibold text-primary">{f.value}</p>
               <p className="mt-1 text-xs text-muted-foreground">{f.label}</p>

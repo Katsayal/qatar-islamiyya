@@ -9,7 +9,8 @@ const schema = z.object({
   message: z.string().trim().min(5).max(2000),
 });
 
-export type ContactState = { ok: boolean; error: string | null };
+// The form shows the sentence for the code in the page language (ui.ts, contactForm.errors).
+export type ContactState = { ok: boolean; error: "invalid" | "save" | null };
 
 // Anon has no table rights (RLS), so the insert goes through the server-only admin client.
 export async function sendMessage(_prev: ContactState, formData: FormData): Promise<ContactState> {
@@ -21,13 +22,13 @@ export async function sendMessage(_prev: ContactState, formData: FormData): Prom
     phone: formData.get("phone"),
     message: formData.get("message"),
   });
-  if (!parsed.success) return { ok: false, error: "Please enter your name and a message." };
+  if (!parsed.success) return { ok: false, error: "invalid" };
 
   const { name, phone, message } = parsed.data;
   const { error } = await createAdminClient()
     .from("contact_messages")
     .insert({ name, phone: phone || null, message });
-  if (error) return { ok: false, error: "Could not send your message. Please call us instead." };
+  if (error) return { ok: false, error: "save" };
 
   return { ok: true, error: null };
 }

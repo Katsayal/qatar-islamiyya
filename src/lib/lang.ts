@@ -22,6 +22,15 @@ export function href(lang: Lang, path: string) {
   return `/ar${path}`;
 }
 
+// A date for the public pages. English as before ("19 Oct 2026" / "19 October 2026");
+// Arabic always with the month name and Western digits ("19 أكتوبر 2026"): its "medium" style is all numbers.
+export function formatDate(lang: Lang, iso: string, style: "medium" | "long") {
+  const d = new Date(iso);
+  return lang === "ar"
+    ? d.toLocaleDateString("ar-u-nu-latn", { day: "numeric", month: "long", year: "numeric" })
+    : d.toLocaleDateString("en-GB", { dateStyle: style });
+}
+
 // The language of a browser path, and the same page in the other language (for the header switch).
 export function langOfPath(pathname: string): Lang {
   return pathname === "/ar" || pathname.startsWith("/ar/") ? "ar" : "en";
