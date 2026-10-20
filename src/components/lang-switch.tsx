@@ -29,6 +29,8 @@ function SwitchLink({ lang, className, to }: Props & { to: string }) {
   return (
     <Link
       href={to}
+      // Stay at the same height on the page instead of jumping to the top (same layout in both languages).
+      scroll={false}
       hrefLang={toArabic ? "ar" : "en"}
       aria-label={toArabic ? "العربية" : "English"}
       className={`inline-flex items-center gap-1.5 font-sans ${className}`}
