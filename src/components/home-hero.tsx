@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { href, type Lang } from "@/lib/lang";
 import { facts } from "@/content/home";
 
-export function HomeHero() {
+export function HomeHero({ lang }: { lang: Lang }) {
   return (
     <>
       <section className="pattern-star bg-deep text-white">
@@ -26,13 +27,13 @@ export function HomeHero() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
-              href="/admissions"
+              href={href(lang, "/admissions")}
               className="inline-flex h-12 items-center justify-center rounded-lg bg-gold px-7 font-semibold text-deep hover:bg-gold/90"
             >
               Apply now
             </Link>
             <Link
-              href="/programs"
+              href={href(lang, "/programs")}
               className="inline-flex h-12 items-center justify-center rounded-lg border border-white/40 px-7 font-medium text-white hover:bg-white/10"
             >
               Our programs

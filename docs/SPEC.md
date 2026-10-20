@@ -90,7 +90,8 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 | Login | One login page → redirects by role |
 
 - Page text lives in the code (simple TS/MD content files). News/gallery come from the database.
-- Arabic/Hausa sections are marked with `lang`/`dir`; no full translation for now.
+- **Two languages (R.3):** every public page exists in English at `/…` (the default, unchanged URLs) and in Arabic at `/ar/…` (right to left). A button in the header switches to the same page in the other language. No automatic redirect by browser language. The application and contact forms work in both (labels and messages translated; what people type is stored as typed). `/ar/news` lists all public posts; a post keeps its own language and direction and shows a small language label when it differs from the page. Arabic pages use Western digits (0–9, as on phones) and Arabic month names. Login and the portals stay English. The Arabic text is drafted in the code and must be proofread by the school before launch.
+- Hausa sections are marked with `lang="ha"`; no Hausa version of the site for now.
 
 ## 8. Teacher portal
 - **My classes** → class page → student page. Teachers see the classes they are assigned to. Staff see "Classes I teach" (classes they are assigned to) first, then "All other classes" (staff can open every class).

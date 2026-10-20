@@ -17,6 +17,10 @@
   --color-foreground: var(--foreground);
   --font-sans: "Naira Sign", var(--font-noto-sans), sans-serif;
   --font-arabic: var(--font-noto-naskh), serif;
+  /* Whole Arabic public pages (/ar): Latin letters, digits and ₦ in the normal UI font, Arabic letters in Naskh.
+     Noto Sans covers no Arabic, so Arabic falls through to Naskh; the two generated "… Fallback" faces (local fonts
+     without a character range) must come last, hence the literal family names next/font gives these fonts. */
+  --font-arabic-page: "Naira Sign", "Noto Sans", "Noto Naskh Arabic", "Noto Sans Fallback", "Noto Naskh Arabic Fallback", sans-serif;
   --font-quran: var(--font-amiri-quran), serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

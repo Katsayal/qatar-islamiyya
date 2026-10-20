@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { href, type Lang } from "@/lib/lang";
 import { SectionHeading } from "@/components/section-heading";
 import { programs } from "@/content/home";
 
-export function HomePrograms() {
+export function HomePrograms({ lang }: { lang: Lang }) {
   return (
     <section className="mx-auto max-w-5xl px-4 pt-14">
       <SectionHeading label="What we teach" title="Our programs" />
@@ -27,7 +28,7 @@ export function HomePrograms() {
               <h3 className="mt-2 text-lg font-semibold">{p.name}</h3>
               <p className="mt-2 flex-1 text-sm text-white/80">{p.text}</p>
               <Link
-                href={`/programs#${p.slug}`}
+                href={href(lang, `/programs#${p.slug}`)}
                 className="mt-5 inline-block text-sm font-medium text-gold hover:underline"
               >
                 Learn more →

@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArticleSkeleton } from "@/components/page-skeleton";
 import { PostBody } from "@/components/post-body";
+import { href, toLang } from "@/lib/lang";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ lang: string; id: string }> };
 
 async function getPost(id: string) {
   const supabase = await createClient();
@@ -54,15 +55,24 @@ async function Post({ params }: Props) {
   );
 }
 
+const backClass = "inline-flex h-10 items-center rounded-full border bg-card px-4 text-sm font-medium text-primary hover:border-primary";
+
+// Reads params, so it streams in (the article id is not known at build time); same-size placeholder meanwhile.
+async function BackLink({ params }: Props) {
+  const lang = toLang((await params).lang);
+  return (
+    <Link href={href(lang, "/news")} className={backClass}>
+      ← All news
+    </Link>
+  );
+}
+
 export default function PostPage({ params }: Props) {
   return (
     <section className="mx-auto max-w-3xl px-4 pt-8 pb-12">
-      <Link
-        href="/news"
-        className="inline-flex h-10 items-center rounded-full border bg-card px-4 text-sm font-medium text-primary hover:border-primary"
-      >
-        ← All news
-      </Link>
+      <Suspense fallback={<span className={backClass}>← All news</span>}>
+        <BackLink params={params} />
+      </Suspense>
       <div className="mt-4">
         <Suspense fallback={<ArticleSkeleton />}>
           <Post params={params} />

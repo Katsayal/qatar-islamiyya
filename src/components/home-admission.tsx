@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { href, type Lang } from "@/lib/lang";
 import { SectionHeading } from "@/components/section-heading";
 import { fees, schedule } from "@/content/admissions";
 import { admissionSteps } from "@/content/home";
 
-export function HomeAdmission() {
+export function HomeAdmission({ lang }: { lang: Lang }) {
   return (
     <section className="mx-auto max-w-5xl px-4 pt-14">
       <SectionHeading label="Joining us" title="How admission works" />
@@ -43,7 +44,7 @@ export function HomeAdmission() {
           </ul>
         </div>
       </div>
-      <Link href="/admissions" className="mt-4 inline-block text-sm font-medium text-primary hover:underline">
+      <Link href={href(lang, "/admissions")} className="mt-4 inline-block text-sm font-medium text-primary hover:underline">
         Read the full admission rules →
       </Link>
     </section>

@@ -3,9 +3,12 @@ import { CtaBand } from "@/components/cta-band";
 import { PageHeader } from "@/components/page-header";
 import { about } from "@/content/about";
 
+import { toLang } from "@/lib/lang";
+
 export const metadata: Metadata = { title: "About us" };
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = toLang((await params).lang);
   return (
     <>
       <PageHeader label="Who we are" title="About us" text={about.intro} />
@@ -19,7 +22,7 @@ export default function AboutPage() {
         ))}
       </div>
 
-      <CtaBand />
+      <CtaBand lang={lang} />
     </>
   );
 }

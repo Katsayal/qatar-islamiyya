@@ -7,9 +7,11 @@ import { CardsSkeleton } from "@/components/page-skeleton";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
+import { href, toLang, type Lang } from "@/lib/lang";
+
 export const metadata: Metadata = { title: "News & events" };
 
-async function NewsList() {
+async function NewsList({ lang }: { lang: Lang }) {
   const supabase = await createClient();
   // RLS hides drafts and future-dated posts; audience filter keeps staff from seeing internal posts here.
   const { data: posts } = await supabase
@@ -39,7 +41,7 @@ async function NewsList() {
             />
           )}
           <div className="p-4">
-            <Link href={`/news/${p.id}`} className="font-semibold hover:text-primary">
+            <Link href={href(lang, `/news/${p.id}`)} className="font-semibold hover:text-primary">
               {p.title}
             </Link>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -53,14 +55,15 @@ async function NewsList() {
   );
 }
 
-export default function NewsPage() {
+export default async function NewsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = toLang((await params).lang);
   return (
     <>
       <PageHeader label="What's happening" title="News & events" />
       {/* min-h: when the list is shorter than the skeleton, the footer would jump up into view (layout shift) */}
       <section className="mx-auto min-h-[70vh] max-w-4xl px-4 pt-8 pb-12">
         <Suspense fallback={<CardsSkeleton count={4} grid="md:grid-cols-2" image />}>
-          <NewsList />
+          <NewsList lang={lang} />
         </Suspense>
       </section>
     </>

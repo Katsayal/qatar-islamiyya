@@ -20,8 +20,7 @@ const schema = z.object({
 function revalidatePosts() {
   revalidatePath("/portal/posts");
   revalidatePath("/portal/news");
-  revalidatePath("/news");
-  revalidatePath("/");
+  revalidatePath("/[lang]", "layout"); // public home, news list and articles, both languages
   revalidatePath("/sitemap.xml");
 }
 

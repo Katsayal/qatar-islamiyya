@@ -52,7 +52,7 @@ No local Supabase / Docker. We develop against a free Supabase **cloud DEV proje
 ```
 src/
   app/
-    (public)/          # public website pages
+    [lang]/            # public website pages, English (/…) and Arabic (/ar/…), see ARCHITECTURE §2a
     login/
     portal/            # teacher + staff portal (role-checked)
       student/         # student portal (later)

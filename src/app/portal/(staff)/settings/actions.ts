@@ -32,7 +32,7 @@ export async function saveBank(_prev: SettingsResult, formData: FormData): Promi
   if (error) return { ok: false, message: "Could not save the bank details." };
 
   revalidatePath("/portal/settings");
-  revalidatePath("/admissions");
+  revalidatePath("/[lang]", "layout"); // bank details on the public admissions and donate pages, both languages
   return { ok: true, message: "Bank details saved." };
 }
 

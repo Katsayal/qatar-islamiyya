@@ -8,7 +8,7 @@ Browser (mobile first)
    │
    ▼
 Next.js app on Netlify
-   ├─ (public)/          public website — static where possible
+   ├─ [lang]/            public website, en at /… (proxy rewrite) + ar at /ar/… — static
    ├─ login/             Supabase Auth (email/password)
    ├─ portal/            teacher + staff (role checked)
    └─ portal/student/    student portal (later)
@@ -32,9 +32,16 @@ Supabase
 | Report cards = print-friendly HTML page | Browser "Save as PDF"; no PDF library |
 | CSV import/export | Staff save Excel as CSV; tiny parser, no heavy library |
 | Public page text in code files | Rarely changes; no CMS |
-| No i18n library | English UI; Arabic/Hausa blocks just use `lang`/`dir` |
+| No i18n library | Portals are English only; the public site's two languages (§2a) are plain content objects + a `[lang]` segment |
 | No offline mode | Plain mobile pages first; revisit only if network is a real problem |
 | Activity log = one table + one generic trigger | The database records every write, so no page or action can forget it; only account actions (service-role) need an explicit call |
+
+## 2a. Public site in two languages (R.3)
+- **Routes:** every public page lives in `app/[lang]/…` (`lang` = `en` | `ar`); `[lang]/layout.tsx` has `generateStaticParams` (both prerendered), answers 404 for any other value and wraps the page in `<div lang dir>` (`<html lang>` stays `en`: one root layout for the whole app). Arabic pages use the `font-arabic-page` stack (`globals.css`: Noto Sans for Latin/digits/₦, Noto Naskh for Arabic, generated fallbacks last).
+- **URLs:** English keeps the plain URLs. `src/proxy.ts` uses `publicRoute()` (`src/lib/lang.ts`, tested): `/about` → rewritten to `/en/about` (address bar unchanged), `/en/…` → 308 to the plain URL, `/ar/…`, portals, login, `/health`, `/api`, `/_next` and any path with a file extension are left alone. The rewrite goes through `updateSession(request, rewriteTo)`, so the session cookie refresh still happens.
+- **Links:** server components get `lang` from the page and build links with `href(lang, "/about")`. Client code that reads `usePathname()` must pass it through `browserPath()` first (prerendered English pages see `/en/about`, the browser `/about`; without it the server and client disagree). The header has `LangSwitch` (same page in the other language).
+- **Refreshing public pages from the portal:** use `revalidatePath("/[lang]/gallery", "page")` or `revalidatePath("/[lang]", "layout")`, never the plain URL (it is not a route any more).
+- A page whose params include something not known at build time (`/[lang]/news/[id]`) must read `params` inside `<Suspense>` (Cache Components), e.g. the article's back link.
 
 ## 3. Auth & roles
 - Supabase email/password auth. Default password settings (no strength rules, no MFA).
@@ -114,9 +121,9 @@ Context fields are never trusted from forms. Postgres `before insert` triggers s
 
 ## 7. Folder conventions
 ```
-src/app/(public)/page.tsx                 home
-src/app/(public)/programs/page.tsx         one page: #tahfiz #maahad #barnamaj
-src/app/(public)/admissions/page.tsx      + actions.ts (application form)
+src/app/[lang]/page.tsx                   home (lang = en | ar)
+src/app/[lang]/programs/page.tsx          one page: #tahfiz #maahad #barnamaj
+src/app/[lang]/admissions/page.tsx        + actions.ts (application form)
 src/app/portal/layout.tsx                 requireRole('teacher','staff') + mobile nav
 src/app/portal/classes/[id]/page.tsx      teacher class view
 src/app/portal/hifz/new/page.tsx          + actions.ts

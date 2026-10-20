@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { href, type Lang } from "@/lib/lang";
 import { school } from "@/content/school";
 
-export function CtaBand() {
+export function CtaBand({ lang }: { lang: Lang }) {
   return (
     <section className="pattern-star mt-14 bg-deep text-white">
       <div className="mx-auto max-w-5xl px-4 py-16 text-center">
@@ -11,7 +12,7 @@ export function CtaBand() {
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
-            href="/admissions"
+            href={href(lang, "/admissions")}
             className="inline-flex h-14 items-center justify-center rounded-lg bg-gold px-9 text-lg font-semibold text-deep hover:bg-gold/90"
           >
             Apply now

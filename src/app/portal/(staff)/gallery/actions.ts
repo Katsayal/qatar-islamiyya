@@ -14,7 +14,7 @@ const caption = z.string().trim().max(150, "The caption is too long (max 150).")
 
 function revalidateGallery() {
   revalidatePath("/portal/gallery");
-  revalidatePath("/gallery");
+  revalidatePath("/[lang]/gallery", "page"); // public gallery, both languages
 }
 
 export type UploadResult = { ok: boolean; message: string } | null;

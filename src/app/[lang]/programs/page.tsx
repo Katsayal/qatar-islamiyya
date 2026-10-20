@@ -4,9 +4,12 @@ import { CtaBand } from "@/components/cta-band";
 import { PageHeader } from "@/components/page-header";
 import { programDetails } from "@/content/programs";
 
+import { href, toLang } from "@/lib/lang";
+
 export const metadata: Metadata = { title: "Our programs" };
 
-export default function ProgramsPage() {
+export default async function ProgramsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = toLang((await params).lang);
   return (
     <>
       <PageHeader
@@ -15,7 +18,7 @@ export default function ProgramsPage() {
         text="Three programs, one school: memorising the Qur'an, and learning the basics of Islam."
       >
         <Link
-          href="/admissions"
+          href={href(lang, "/admissions")}
           className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-gold px-7 font-semibold text-deep hover:bg-gold/90"
         >
           Apply now
@@ -66,7 +69,7 @@ export default function ProgramsPage() {
                 ))}
               </ul>
               <Link
-                href="/admissions"
+                href={href(lang, "/admissions")}
                 className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-lg bg-gold px-7 font-semibold text-deep hover:bg-gold/90 sm:w-auto"
               >
                 Apply for {p.name}
@@ -76,7 +79,7 @@ export default function ProgramsPage() {
         ))}
       </div>
 
-      <CtaBand />
+      <CtaBand lang={lang} />
     </>
   );
 }

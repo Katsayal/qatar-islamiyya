@@ -4,8 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Refreshes the Supabase session cookie and keeps logged-out users out of /portal.
 // Role checks happen in lib/auth.ts and RLS; this only checks "is logged in".
-export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
+// rewriteTo: serve another path at the same URL (public English pages, see src/proxy.ts).
+export async function updateSession(request: NextRequest, rewriteTo?: URL) {
+  const pass = () => (rewriteTo ? NextResponse.rewrite(rewriteTo, { request }) : NextResponse.next({ request }));
+  let response = pass();
 
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +17,7 @@ export async function updateSession(request: NextRequest) {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request });
+          response = pass();
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );

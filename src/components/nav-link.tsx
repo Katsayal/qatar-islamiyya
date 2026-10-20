@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import { browserPath } from "@/lib/lang";
 
 // bar = public header (gold underline), menu = phone menu card (tint), pill = portal bar on dark green.
 type Props = { href: string; variant: "bar" | "menu" | "pill"; children: React.ReactNode };
 
 // These links are "home" pages: only an exact match counts (everything else starts with them).
-const exactOnly = ["/", "/portal", "/portal/student"];
+const exactOnly = ["/", "/ar", "/portal", "/portal/student"];
 
 // A header link that knows if it is the current page.
 // usePathname() needs <Suspense> (Cache Components): the plain link is prerendered, the highlight streams in.
@@ -21,7 +22,7 @@ export function NavLink(props: Props) {
 }
 
 function ActiveLink(props: Props) {
-  const pathname = usePathname();
+  const pathname = browserPath(usePathname());
   const active =
     pathname === props.href || (!exactOnly.includes(props.href) && pathname.startsWith(`${props.href}/`));
   return <StyledLink {...props} active={active} />;

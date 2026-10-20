@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { href, type Lang } from "@/lib/lang";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
-export async function LatestNews() {
+export async function LatestNews({ lang }: { lang: Lang }) {
   const supabase = await createClient();
   const { data: posts } = await supabase
     .from("posts")
@@ -32,7 +33,7 @@ export async function LatestNews() {
             />
           )}
           <div className="p-4">
-            <Link href={`/news/${p.id}`} className="font-semibold hover:text-primary">
+            <Link href={href(lang, `/news/${p.id}`)} className="font-semibold hover:text-primary">
               {p.title}
             </Link>
             <p className="mt-1 text-xs text-muted-foreground">
