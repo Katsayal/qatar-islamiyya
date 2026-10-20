@@ -10,7 +10,7 @@
 
 ## 1. Project
 Website + portals for **Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre)**, Zango Road, Daura, Katsina State, Nigeria.
-- Public website (English UI, some Arabic and Hausa content blocks)
+- Public website in English (`/…`) and Arabic (`/ar/…`), with some Hausa content blocks
 - Teacher & Staff portal (`/portal`)
 - Student portal (`/portal/student`) — built last
 - Programs: **Tahfiz**, **Ma'ahad**, **Barnamaj** (see `docs/SPEC.md`)
@@ -46,7 +46,7 @@ npx supabase migration new <name>          # create a migration file
 npx supabase db push                       # apply migrations to the linked project
 npx supabase gen types typescript --linked > src/lib/database.types.ts
 ```
-No local Supabase / Docker. We develop against a free Supabase **cloud DEV project**; a separate PROD project is created at go-live.
+No local Supabase / Docker. One Supabase cloud project (the former DEV project) is also the **live** database since 2026-10-18 (ARCHITECTURE §9): every `db push` and every test row hits live data, so keep throwaway rows small, prefixed `ZZ`, and delete them.
 
 ## 5. Folder structure (keep it flat)
 ```
@@ -89,7 +89,7 @@ docs/
 - `teacher`: own classes' students, record hifz / attendance / exam marks / comments, read posts & documents.
 - `staff`: everything teacher can + all students, CRUD records, classes, posts, documents, vault, fees, applications, report cards.
 - `staff` also creates teacher accounts and resets/disables teachers.
-- `is_owner` flag (staff only): manage staff accounts (create, reset, disable) and everything staff can do.
+- `is_owner` flag (staff only): manage staff accounts (create, reset, disable), create other owners, change anyone else's role (teacher ⇄ staff ⇄ owner), salaries, activity log, and everything staff can do. All owners are equal.
 - `student`: own data only (portal phase).
 - No public sign-up. Staff create all accounts. Plain passwords (no strength rules, no MFA for now).
 

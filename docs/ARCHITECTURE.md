@@ -11,7 +11,7 @@ Next.js app on Netlify
    ├─ [lang]/            public website, en at /… (proxy rewrite) + ar at /ar/… — static
    ├─ login/             Supabase Auth (email/password)
    ├─ portal/            teacher + staff (role checked)
-   └─ portal/student/    student portal (later)
+   └─ portal/student/    student portal
    │  proxy.ts (Next 16 name for middleware) → refresh session, block /portal for logged-out users
    │  Server Components read data · Server Actions write data
    ▼
@@ -39,7 +39,7 @@ Supabase
 ## 2a. Public site in two languages (R.3)
 - **Routes:** every public page lives in `app/[lang]/…` (`lang` = `en` | `ar`); `[lang]/layout.tsx` has `generateStaticParams` (both prerendered), answers 404 for any other value and wraps the page in `<div lang dir>` (`<html lang>` stays `en`: one root layout for the whole app). Arabic pages use the `font-arabic-page` stack (`globals.css`: Noto Sans for Latin/digits/₦, Noto Naskh for Arabic, generated fallbacks last).
 - **URLs:** English keeps the plain URLs. `src/proxy.ts` uses `publicRoute()` (`src/lib/lang.ts`, tested): `/about` → rewritten to `/en/about` (address bar unchanged), `/en/…` → 308 to the plain URL, `/ar/…`, portals, login, `/health`, `/api`, `/_next` and any path with a file extension are left alone. The rewrite goes through `updateSession(request, rewriteTo)`, so the session cookie refresh still happens.
-- **Links:** server components get `lang` from the page and build links with `href(lang, "/about")`. Client code that reads `usePathname()` must pass it through `browserPath()` first (prerendered English pages see `/en/about`, the browser `/about`; without it the server and client disagree). The header has `LangSwitch` (same page in the other language).
+- **Links:** server components get `lang` from the page and build links with `href(lang, "/about")`. Client code that reads `usePathname()` must pass it through `browserPath()` first (prerendered English pages see `/en/about`, the browser `/about`; without it the server and client disagree). The header has `LangSwitch` (same page in the other language): it shows only the other language, Qatar flag + "AR" or Nigeria flag + "EN" (inline SVG in `components/flags.tsx`, no image files; Windows draws no flag emojis), and uses `scroll={false}` so switching keeps the scroll height (exact on the home page; pages whose Arabic is shorter land in the same section, about 165 px higher on /programs).
 - **Text:** public page text lives in `src/content/*.ts` as `{ en, ar }` with `const ar: typeof en` (TypeScript refuses a missing or extra Arabic field); shared words (menu, buttons, page titles, form labels and messages) in `src/content/ui.ts`. Pages read `ui[lang]` / `content[lang]`; client forms get their language's words as one prop `t`. Server actions return an error code (`"invalid"`, `"photo"`…), never a sentence, and the form shows `t.errors[code]`.
 - **Posts and captions keep their own language:** news lists and articles set `lang`/`dir` from `posts.lang` (`PostBody` always sets `dir`, so an English post on an Arabic page stays left to right) and show `PostLangLabel` when it differs from the page; gallery captions use `dir="auto"`.
 - **Dates:** `formatDate(lang, iso, style)` in `lib/lang.ts` (English `en-GB` as before; Arabic always with the month name and Western digits).
@@ -174,7 +174,6 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 - DB changes go through migrations only: `supabase migration new` → `supabase db push` (to the single live project: push the migration before the code that needs it). Never change tables by clicking in the dashboard.
 
 ## 10. Later additions (designed to slot in)
-- Student portal: `profiles.role = 'student'` + `students.user_id` + student RLS policies — already in schema.
 - Online payments: add `payments` table + Paystack webhook route; `student_fees` stays.
 - Guardian accounts: add `guardian` role + `guardian_students` link table.
-- Full Arabic UI: add next-intl; layouts already use logical classes.
+- Arabic portals: the public site is already English + Arabic without a library (§2a); the portals would follow the same `{ en, ar }` pattern, layouts already use logical classes.
