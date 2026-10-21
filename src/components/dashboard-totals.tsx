@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Collapsible } from "@/components/collapsible";
 import { createClient } from "@/lib/supabase/server";
 
 const programs = [
@@ -43,24 +44,26 @@ export async function DashboardTotals() {
       </ul>
 
       {perClass.length > 0 && (
-        <ul className="mt-3 divide-y rounded-xl border bg-card text-sm shadow-sm">
-          {perClass.map((c) => (
-            <li key={c.id}>
-              <Link href={`/portal/classes/${c.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
-                <span className="min-w-0 truncate">
-                  {c.name} <span className="text-xs capitalize text-muted-foreground">· {c.program}</span>
-                </span>
-                <span className="font-medium">{c.count}</span>
-              </Link>
-            </li>
-          ))}
-          {unassigned > 0 && (
-            <li className="flex items-center justify-between gap-3 p-3 text-muted-foreground">
-              <span>No class</span>
-              <span className="font-medium">{unassigned}</span>
-            </li>
-          )}
-        </ul>
+        <Collapsible title={`Classes (${perClass.length})`}>
+          <ul className="divide-y">
+            {perClass.map((c) => (
+              <li key={c.id}>
+                <Link href={`/portal/classes/${c.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
+                  <span className="min-w-0 truncate">
+                    {c.name} <span className="text-xs capitalize text-muted-foreground">· {c.program}</span>
+                  </span>
+                  <span className="font-medium">{c.count}</span>
+                </Link>
+              </li>
+            ))}
+            {unassigned > 0 && (
+              <li className="flex items-center justify-between gap-3 p-3 text-muted-foreground">
+                <span>No class</span>
+                <span className="font-medium">{unassigned}</span>
+              </li>
+            )}
+          </ul>
+        </Collapsible>
       )}
     </section>
   );

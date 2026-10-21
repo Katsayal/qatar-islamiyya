@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Collapsible } from "@/components/collapsible";
 import { linesToPages, maahadPace } from "@/lib/hifz-progress";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
@@ -56,20 +57,22 @@ export async function DashboardPace() {
             this year&apos;s pace.
           </p>
           {behind.length > 0 && (
-            <ul className="mt-3 divide-y rounded-xl border bg-card text-sm shadow-sm">
-              {behind.slice(0, SHOWN).map((s) => (
-                <li key={s.id}>
-                  <Link href={`/portal/classes/${s.classId}/students/${s.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
-                    <span className="min-w-0">
-                      <span className="block truncate font-medium">{s.name}</span>
-                      <span className="text-xs text-muted-foreground">{s.className}</span>
-                    </span>
-                    <span className="shrink-0 text-destructive">Behind by {Math.abs(s.pace.diff)}</span>
-                  </Link>
-                </li>
-              ))}
-              {behind.length > SHOWN && <li className="p-3 text-xs text-muted-foreground">Showing the {SHOWN} furthest behind. Open a class to see everyone.</li>}
-            </ul>
+            <Collapsible title={`Furthest behind (${Math.min(behind.length, SHOWN)})`}>
+              <ul className="divide-y">
+                {behind.slice(0, SHOWN).map((s) => (
+                  <li key={s.id}>
+                    <Link href={`/portal/classes/${s.classId}/students/${s.id}`} className="flex items-center justify-between gap-3 p-3 hover:bg-muted">
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium">{s.name}</span>
+                        <span className="text-xs text-muted-foreground">{s.className}</span>
+                      </span>
+                      <span className="shrink-0 text-destructive">Behind by {Math.abs(s.pace.diff)}</span>
+                    </Link>
+                  </li>
+                ))}
+                {behind.length > SHOWN && <li className="p-3 text-xs text-muted-foreground">Showing the {SHOWN} furthest behind. Open a class to see everyone.</li>}
+              </ul>
+            </Collapsible>
           )}
         </>
       )}

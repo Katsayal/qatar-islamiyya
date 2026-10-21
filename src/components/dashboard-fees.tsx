@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Collapsible } from "@/components/collapsible";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
 
@@ -48,32 +49,34 @@ export async function DashboardFees() {
       <p className="text-sm text-muted-foreground">
         {term.academic_years?.name} · Term {term.number}
       </p>
-      <ul className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <li>
-          <Link href={link("unpaid")} className={tile}>
-            <p className="text-2xl font-semibold text-destructive">{unpaid.count ?? 0}</p>
-            <p className="text-xs text-muted-foreground">Unpaid</p>
-          </Link>
-        </li>
-        <li>
-          <Link href={link("part")} className={tile}>
-            <p className="text-2xl font-semibold text-amber-600">{part.count ?? 0}</p>
-            <p className="text-xs text-muted-foreground">Part-paid</p>
-          </Link>
-        </li>
-        <li>
-          <Link href={link("paid")} className={tile}>
-            <p className="text-2xl font-semibold text-primary">{paid.count ?? 0}</p>
-            <p className="text-xs text-muted-foreground">Paid</p>
-          </Link>
-        </li>
-        <li>
-          <Link href={link("none")} className={tile}>
-            <p className="text-2xl font-semibold">{noRecord}</p>
-            <p className="text-xs text-muted-foreground">No fee record</p>
-          </Link>
-        </li>
-      </ul>
+      <Collapsible title="Fee status">
+        <ul className="grid grid-cols-2 gap-3 p-3 md:grid-cols-4">
+          <li>
+            <Link href={link("unpaid")} className={tile}>
+              <p className="text-2xl font-semibold text-destructive">{unpaid.count ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Unpaid</p>
+            </Link>
+          </li>
+          <li>
+            <Link href={link("part")} className={tile}>
+              <p className="text-2xl font-semibold text-amber-600">{part.count ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Part-paid</p>
+            </Link>
+          </li>
+          <li>
+            <Link href={link("paid")} className={tile}>
+              <p className="text-2xl font-semibold text-primary">{paid.count ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Paid</p>
+            </Link>
+          </li>
+          <li>
+            <Link href={link("none")} className={tile}>
+              <p className="text-2xl font-semibold">{noRecord}</p>
+              <p className="text-xs text-muted-foreground">No fee record</p>
+            </Link>
+          </li>
+        </ul>
+      </Collapsible>
     </section>
   );
 }

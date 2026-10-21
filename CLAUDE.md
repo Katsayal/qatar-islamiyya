@@ -64,6 +64,7 @@ src/
     auth.ts            # getProfile(), requireRole()
     database.types.ts  # generated — never edit by hand
     quran.ts           # hifz range → pages/lines helpers
+    hijri.ts           # Hijri dates (Umm al-Qura + staff offsets), see ARCHITECTURE §6a
 supabase/
   migrations/          # SQL migrations = source of truth for the DB
   seed.sql
@@ -100,7 +101,7 @@ docs/
 - **Prefer CLIs over MCP tools** (`supabase`, `netlify`, `git`, `gh`).
 - Read only files the task needs. Don't scan the whole repo.
 - Run `npm run typecheck` and `npm run lint` before saying a task is done.
-- Commit after each working slice with a clear message.
+- After each working slice: update the docs (PROGRESS status + task note, and SPEC/ARCHITECTURE/SCHEMA if affected). Commit or push only when the owner says so, with a clear message.
 - Sonnet for normal work. Suggest switching to Opus only for: schema/RLS, auth, hifz calculations, hard bugs.
 - Batch small fixes into one pass.
 - If stuck after 2 attempts, stop and explain instead of looping.
