@@ -72,6 +72,7 @@ export const AREAS: Record<string, { label: string; name: (c: Rec, look: Lookups
   correction_requests: { label: "Correction request", name: (c, look) => named(look, "students", c.student_id) },
   profiles: { label: "Account", name: (c) => (c.role ? `${str(c.full_name)} (${str(c.role)})` : str(c.full_name)) },
   school_settings: { label: "Settings", name: () => "" },
+  hijri_offsets: { label: "Hijri date", name: () => "" },
   salary_rates: { label: "Salary amount", name: (c, look) => named(look, "people", c.profile_id) },
   salary_months: { label: "Salary record", name: (c, look) => join(named(look, "people", c.profile_id), c.month ? monthLabel(str(c.month).slice(0, 7)) : "") },
 };

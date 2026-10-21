@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -18,6 +21,7 @@ export default async function NewsPage() {
     .limit(50);
   const posts = data ?? [];
 
+  const hijri = await getHijriOffsets();
   return (
     <div>
       <h1 className="text-2xl font-semibold gold-bar">News</h1>
@@ -29,10 +33,10 @@ export default async function NewsPage() {
             <li key={p.id}>
               <Link href={`/portal/news/${p.id}`} className="block p-3 hover:bg-muted">
                 <p className="font-medium">{p.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                <div className="flex flex-wrap items-end gap-1 text-xs text-muted-foreground">
+                  <DualDate iso={lagosDate(p.published_at!)} offsets={hijri} style="medium" className="font-medium text-foreground" />
                   {p.audience === "internal" && " · Teachers & staff"}
-                </p>
+                </div>
               </Link>
             </li>
           ))}

@@ -6,7 +6,7 @@
 - **Name:** Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre) — مدرسة الحاجة هندة (قطر دورا)
 - **Address:** Zango Road, Daura, Katsina State, Nigeria
 - **Phones:** 08038102495 · 09060456171 · 07038782451
-- Pending: logo, brand colours, class names, about content, bank details, director signature, domain, photos.
+- Logo received 2026-10-11 (brand colours taken from it). Pending: class names, about content (history, leadership), bank details, director signature, domain, photos.
 
 ## 2. Surfaces
 1. **Public website** — open to everyone.
@@ -119,7 +119,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - **Accounts:** two tabs. **Student logins:** create (one by one, or in bulk with one shared password, 10 students per click), set a new password, disable/enable. **Teachers & staff:** a directory of everyone (filter by role, active/disabled, search; teachers show their classes; login ID (code or email) and phone visible); staff can create teacher accounts and reset password / disable a teacher; only an owner creates staff and owner accounts, manages staff and owners, and changes roles (not their own). Teachers, staff and the owner change their own password on "My account" (plain, min 6 characters); a forgotten password is reset by staff (teachers) or the owner (staff).
 - **Salaries (owner only):** record-keeping for teachers, staff and the owner, not payroll (no tax, pension, deductions or payslips). Each person has a **fixed monthly salary** the owner can change (a change affects future months only). Per month: amount due, total paid so far (part payments allowed, overpaying counts as paid), status Unpaid / Part-paid / Paid (derived), and a note. "Set salaries for this month" creates unpaid records for active people who have a salary and no record yet. Totals per month, filters, CSV export. Staff and teachers cannot see any of it, not even their own.
 - **Activity log (owner only):** who created, edited or deleted what, and when, for audit and records. Logged automatically by the database (nothing in the app can skip it): academic years, terms, classes and teacher assignments, students, books, fees, posts, gallery, documents, settings, salaries (create, edit, delete); hifz, attendance, exam marks, term comments, payment proofs, applications, messages, correction requests and accounts' profiles (edit and delete only: new entries already store who recorded them). Account actions are logged with the staff member who did them: login/account created, password reset (never the password itself), disabled/enabled. Not logged: sign-ins and people changing their own password. Edits store only the changed fields (old → new); deletes keep the whole old row. Kept forever; the app can never edit or delete log rows (the owner can prune old rows in the Supabase SQL editor). One page with filters by person, area, action and month.
-- **Settings:** bank details, director signature. (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
+- **Settings:** bank details, director signature, Hijri date offset (§11a). (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
 
 ## 10. Student portal (last phase)
 - Dashboard: photo, class, teacher(s), term, fee status, announcements.
@@ -136,11 +136,23 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - Donations (`/donate`): same bank account, same manual approach; no donation records are kept in the app.
 - Later: Paystack/Flutterwave (Stripe does not serve Nigerian merchants directly). Add a `payments` table then; nothing else changes.
 
+## 11a. Hijri dates (decided 2026-10-21)
+- **Hijri is the primary date, Gregorian the secondary**: the Hijri date on top, the Gregorian date smaller underneath. Dates are still stored as Gregorian ISO dates; the Hijri date is computed only for display.
+- **Calendar:** Umm al-Qura (built into browsers and Node, `Intl` `islamic-umalqura`, no library), adjusted by a **staff-set offset** so it matches Nigeria's announced moon sighting. Offsets are kept as a **history**: each change says "from this date, shift by N days" (−2 to +2); a date uses the latest change on or before it, dates before the first change use 0. So past dates stay right when the offset changes later. The Hijri day follows the normal Lagos calendar day (not sunset).
+- **Names:** English pages and the portals use the Hausa spelling of the month names: Muharram, Safar, Rabi'ul Awwal, Rabi'ul Akhir, Jimada Ula, Jimada Akhir, Rajab, Sha'aban, Ramadan, Shawwal, Zul Ki'ida, Zul Hajji, with the suffix "AH" (e.g. "9 Jimada Ula 1448 AH"). Arabic pages (`/ar`) use the Arabic month names, Western digits and "هـ". Weekdays, where shown, are Hausa: Lahadi, Litinin, Talata, Laraba, Alhamis, Juma'a, Asabar.
+- **Where (first scope):**
+  - Portal homes (staff/teacher, student): today's date in the green banner, Hijri with the Hausa weekday ("Talata, 9 Jimada Ula 1448 AH"), Gregorian with the English weekday underneath.
+  - Record hifz and Barnamaj attendance: the chosen date shown as Hijri + Gregorian next to the (Gregorian) date picker, updating as soon as the date changes.
+  - Report cards: the "Issued" line only (no term dates, no Hijri year).
+  - News dates: public news list, article and home latest news (English and Arabic pages) and the portal and student-portal news readers.
+- **Settings → Hijri date** (staff): today's date with the offset in force; a form "From date" (default today) + offset (−2…+2) with a live preview of that date; saving again on the same date replaces it; a list of past changes with Delete (on-page confirm). Changes are recorded in the activity log.
+- Not in scope: the public header/footer, Hijri date entry (pickers stay Gregorian), Hijri term dates, dates of birth, hifz/attendance history lists, an Islamic events calendar.
+
 ## 12. Non-functional
 - Mobile-first, light pages (optimised images via `next/image`).
 - RLS on every table. Private storage for student photos, documents, vault, signature.
 - Nigeria Data Protection Act 2023: consent checkbox on application form; collect only needed data.
-- Daily Supabase backups (built-in).
+- Backups: the free Supabase plan has none; decided at go-live (paid plan with daily backups, or a regular manual export), see F.3.
 - Change tracking: `updated_at` / `updated_by` on editable tables, plus the owner-only activity log (§9).
 - Health check: `GET /health` answers `{"ok":true}` after one database read (503 if the read fails). Not linked anywhere; an uptime monitor calls it to keep the free hosting awake and to email the owner when the site is down.
 

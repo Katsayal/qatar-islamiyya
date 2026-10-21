@@ -89,7 +89,7 @@ Pattern per table:
 
 - **Hidden columns:** RLS is per row, so a column a role must not see (students' `notes`, `medical_notes`) is hidden with column privileges plus a security-definer reader (`student_notes()`); see SCHEMA §8a.
 
-Other protections (F.1): `lib/supabase/admin.ts` imports `server-only` (built into Next) so the service-role client can never reach a client bundle; `next.config.ts` sends `X-Frame-Options: DENY`, `nosniff` and a referrer policy; CSV exports put `'` before cells starting with `= + - @` (formula injection; plain numbers like `+234…` are left alone); buckets have size/type limits. Supabase Auth sign-up must be **off** in the dashboard (DEV and PROD): accounts are created only by staff.
+Other protections (F.1): `lib/supabase/admin.ts` imports `server-only` (built into Next) so the service-role client can never reach a client bundle; `next.config.ts` sends `X-Frame-Options: DENY`, `nosniff` and a referrer policy; CSV exports put `'` before cells starting with `= + - @` (formula injection; plain numbers like `+234…` are left alone); buckets have size/type limits. Supabase Auth sign-up must be **off** in the dashboard (of the single live project): accounts are created only by staff.
 
 **Activity log (L.1):** `audit_log` is filled by the AFTER trigger `audit_row()` (security definer) on the tables listed in SCHEMA §8a: actor = `auth.uid()` + their name at that moment; edits store only changed fields and write nothing when nothing changed. Writes made with the service-role key have no `auth.uid()`, so the account actions in `accounts/actions.ts` call `rpc("log_action", …)` with the staff member's own session (staff only, actor taken from the session, never from the form). Read: owner only (`/portal/audit`); nobody can insert/update/delete rows through the API. **A new table must be added to the trigger list in a migration** (mode `full` or `edits`). Pruning: the owner runs `delete from audit_log where at < '…'` in the Supabase SQL editor.
 
@@ -118,10 +118,16 @@ Context fields are never trusted from forms. Postgres `before insert` triggers s
 
 ## 6. Hifz calculation
 - Table `quran_ayahs` (6,236 rows): surah, ayah, start page/line, end page/line, juz — Madinah 15-line mushaf.
-- Data lives in a generated migration (so PROD gets it via `db push`), built once by `scripts/build-quran-data.mjs` from the quran.com API v4 word positions. Same script generates `lib/surahs.ts` (114 names ar/en + ayah counts).
+- Data lives in a generated migration (applied with every other migration by `db push`), built once by `scripts/build-quran-data.mjs` from the quran.com API v4 word positions. Same script generates `lib/surahs.ts` (114 names ar/en + ayah counts).
 - `lib/quran.ts` (pure, no imports): `amountForRange(startAyah, endAyah)` and `amountForPages(start, end)` → start/end page, `lines`, `pages` (= lines/15, 2 dp). Line index = (page−1)×15 + line. Ranges crossing a surah include its header/basmalah lines (agreed simplification). End-before-start throws; the 3.2 form should swap reversed Juz 'Amma ranges.
 - Hifz entry form (3.2, `classes/[id]/students/[studentId]/hifz`): amount is always computed in the server action from `quran_ayahs`, never from the form. A reversed range (e.g. An-Nas → Ad-Duhaa) is swapped with `swapIfReversed` (pages mode: min/max). **Page mode** still stores surah/ayah (DB check): start = first ayah whose `end_page >= start page`, end = last ayah whose `page <= end page`. "Today" and the date limit use Africa/Lagos (`lib/today.ts`).
 - Values are stored on the hifz row so reports are simple queries. Tests: `npm test` (Node built-in runner, `src/lib/*.test.ts`).
+
+## 6a. Hijri dates (H.1, SPEC §11a)
+- No library: `Intl.DateTimeFormat` with `islamic-umalqura` (Node and every current browser have it). Dates stay Gregorian ISO in the database.
+- `lib/hijri.ts` (pure, tested, also used in client forms): `offsetFor` (latest `hijri_offsets` row on or before the date, else 0), `hijriDate(iso, offsets, lang)` (shift the date by the offset, then format: Hausa month names + "AH" for English pages and portals, Arabic names + "هـ" on `/ar`), `hausaWeekday`, `gregorianDate`. Days are handled as UTC midnight of the ISO date, so the server's time zone never moves a date.
+- `lib/hijri-offsets.ts` `getHijriOffsets()` reads the whole (tiny) table once per request (React `cache`). Pages pass the list to `components/dual-date.tsx` (`DualDate`: Hijri on top, Gregorian smaller underneath; no hooks, so it works in server and client components).
+- Timestamps (`posts.published_at`) go through `lagosDate()` (`lib/today.ts`) first, so a post's day is its Nigerian day.
 
 ## 7. Folder conventions
 ```
@@ -162,7 +168,7 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 
 ## 9. Environments & deploy
 - **No local Supabase / Docker** (simpler on Windows).
-- Dev: `npm run dev` on your machine, connected to a free Supabase cloud **DEV project** (`.env.local`).
+- Dev: `npm run dev` on your machine, connected to the free Supabase cloud project (`.env.local`), which is also the live database (see "Single live project" below): test rows are real rows, prefix them `ZZ` and delete them.
 - **Stale dev cache:** on this machine Turbopack's dev cache can keep serving an old compiled copy of a CSS or component file after it changed on disk (seen three times). Symptom: the source is right but the page shows the old styling. Fix: stop the dev server, delete `.next/dev` (gitignored), start it again, refresh the phone.
 - Testing in a browser: pages cannot be loaded in an iframe (`X-Frame-Options: DENY`, F.1), so check each page by navigating to it. Do not submit a login form before the page has hydrated (a native submit puts the login and password in the URL).
 - Phone testing: open the "Network:" address the dev server prints (e.g. `http://192.168.x.x:3000`) on a phone on the same Wi-Fi/hotspot. `allowedDevOrigins` in `next.config.ts` allows the private ranges (`192.168.*.*`, `172.*.*.*`, `10.*.*.*`); without it Next blocks the dev scripts and client features (menu outside-tap, forms) don't run. Restart the dev server after changing it.

@@ -41,7 +41,7 @@ npm run lint         # eslint
 npm run typecheck    # tsc --noEmit
 npm test             # node --test on src/lib/*.test.ts
 npx supabase login                         # once
-npx supabase link --project-ref <dev-ref>  # once, links the cloud DEV project
+npx supabase link --project-ref <dev-ref>  # once, links the cloud project (= live database)
 npx supabase migration new <name>          # create a migration file
 npx supabase db push                       # apply migrations to the linked project
 npx supabase gen types typescript --linked > src/lib/database.types.ts
@@ -80,7 +80,7 @@ docs/
 - Arabic blocks: `<div lang="ar" dir="rtl" className="font-arabic">`. Hausa: `lang="ha"`.
 - Public site text lives in `src/content/*.ts` as `{ en, ar }` (`const ar: typeof en`); shared words in `src/content/ui.ts`. Never hard-code English on a public page (ARCHITECTURE §2a).
 - Qur'an text uses `font-quran`.
-- Dates: store ISO dates; display Gregorian (Hijri optional later).
+- Dates: store ISO (Gregorian) dates; where SPEC §11a lists them, display Hijri first with Gregorian underneath.
 - Phone numbers: Nigerian format (+234 / 080...).
 - No `any`. Use generated DB types.
 - Keep components under ~150 lines; split when bigger.

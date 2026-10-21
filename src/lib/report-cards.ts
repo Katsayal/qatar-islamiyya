@@ -2,6 +2,7 @@ import type { CardData } from "@/components/report-card";
 import { linesToPages } from "@/lib/hifz-progress";
 import type { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
 
 type Db = Awaited<ReturnType<typeof createClient>>;
 
@@ -49,7 +50,7 @@ export async function loadCards(supabase: Db, { classRow: c, term, students }: I
   }
 
   const termLabel = `${term.academic_years?.name ?? ""} · Term ${term.number}`;
-  const issued = new Date(`${todayInLagos()}T00:00:00Z`).toLocaleDateString("en-GB", { dateStyle: "long", timeZone: "UTC" });
+  const issued = { iso: todayInLagos(), offsets: await getHijriOffsets() };
 
   return students.map((s) => {
     const st = statsById.get(s.id);

@@ -501,6 +501,78 @@ begin
     raise exception 'FAIL: teacher hifz edit not logged with only the changed fields'; end if;
 end $$;
 
+-- ---------- Hijri offsets (H.1): everyone reads, only staff write ----------
+-- fixture rows use 1900 dates so real rows on the live project do not matter
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
+do $$
+declare n int;
+begin
+  insert into public.hijri_offsets (starts_on, days) values ('1900-01-01', -1);
+  update public.hijri_offsets set days = 1 where starts_on = '1900-01-01';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: staff could not edit a hijri offset'; end if;
+  insert into public.hijri_offsets (starts_on, days) values ('1900-01-02', 0);
+  delete from public.hijri_offsets where starts_on = '1900-01-02';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: staff could not delete a hijri offset'; end if;
+  begin
+    insert into public.hijri_offsets (starts_on, days) values ('1900-01-03', 3);
+    raise exception 'FAIL: a hijri offset of 3 days was accepted';
+  exception when check_violation then null;
+  end;
+end $$;
+reset role;
+
+-- teacher A and the student: read, but cannot write
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$
+declare n int;
+begin
+  if (select count(*) from public.hijri_offsets where starts_on = '1900-01-01') <> 1 then raise exception 'FAIL: teacher cannot read hijri offsets'; end if;
+  begin
+    insert into public.hijri_offsets (starts_on, days) values ('1900-01-04', 0);
+    raise exception 'FAIL: teacher added a hijri offset';
+  exception when insufficient_privilege then null;
+  end;
+  update public.hijri_offsets set days = 0 where starts_on = '1900-01-01';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: teacher edited a hijri offset'; end if;
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$
+declare n int;
+begin
+  if (select count(*) from public.hijri_offsets where starts_on = '1900-01-01') <> 1 then raise exception 'FAIL: student cannot read hijri offsets'; end if;
+  delete from public.hijri_offsets where starts_on = '1900-01-01';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: student deleted a hijri offset'; end if;
+end $$;
+reset role;
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$ begin
+  if (select count(*) from public.hijri_offsets where starts_on = '1900-01-01') <> 1 then raise exception 'FAIL: anon cannot read hijri offsets'; end if;
+  begin
+    insert into public.hijri_offsets (starts_on, days) values ('1900-01-05', 0);
+    raise exception 'FAIL: anon added a hijri offset';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+do $$ begin
+  -- create + edit + create + delete by staff = 4 log rows
+  if (select count(*) from public.audit_log where table_name = 'hijri_offsets'
+        and actor_id = '00000000-0000-0000-0000-000000000002' and at >= now()) <> 4 then
+    raise exception 'FAIL: hijri offset changes not in the activity log'; end if;
+end $$;
+
 -- ---------- bucket limits (F.1) ----------
 do $$ begin
   if (select count(*) from storage.buckets where file_size_limit is null) <> 0 then raise exception 'FAIL: a bucket has no size limit'; end if;

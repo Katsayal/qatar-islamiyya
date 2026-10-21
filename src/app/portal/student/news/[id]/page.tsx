@@ -5,6 +5,9 @@ import { PostBody } from "@/components/post-body";
 import { requireRole } from "@/lib/auth";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 export default async function StudentNewsPostPage({ params }: { params: Promise<{ id: string }> }) {
   await requireRole("student");
@@ -19,6 +22,7 @@ export default async function StudentNewsPostPage({ params }: { params: Promise<
     .maybeSingle();
   if (!post) notFound();
 
+  const hijri = await getHijriOffsets();
   return (
     <article className="max-w-3xl">
       <Link
@@ -31,9 +35,7 @@ export default async function StudentNewsPostPage({ params }: { params: Promise<
         <Image src={siteImageUrl(post.cover_path)} alt="" width={960} height={540} className="mt-4 aspect-video w-full rounded-xl object-cover shadow-sm" />
       )}
       <h1 className="mt-4 text-2xl font-semibold gold-bar">{post.title}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {new Date(post.published_at!).toLocaleDateString("en-GB", { dateStyle: "long" })}
-      </p>
+      <DualDate iso={lagosDate(post.published_at!)} offsets={hijri} className="mt-1 text-sm font-medium" />
       <PostBody body={post.body} lang={post.lang} />
     </article>
   );

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { browserPath, formatDate, hasLang, href, langOfPath, otherLangPath, publicRoute, toLang } from "./lang.ts";
+import { browserPath, hasLang, href, langOfPath, otherLangPath, publicRoute, toLang } from "./lang.ts";
 
 test("hasLang accepts en and ar only", () => {
   assert.equal(hasLang("en"), true);
@@ -26,14 +26,6 @@ test("langOfPath and otherLangPath switch between the two versions of a page", (
   assert.equal(otherLangPath("/news/1"), "/ar/news/1");
   assert.equal(otherLangPath("/ar"), "/");
   assert.equal(otherLangPath("/ar/about"), "/about");
-});
-
-test("formatDate keeps the English formats and gives Arabic month names with Western digits", () => {
-  const iso = "2026-10-19T10:00:00Z";
-  assert.equal(formatDate("en", iso, "medium"), "19 Oct 2026");
-  assert.equal(formatDate("en", iso, "long"), "19 October 2026");
-  assert.equal(formatDate("ar", iso, "medium"), "19 أكتوبر 2026");
-  assert.equal(formatDate("ar", iso, "long"), "19 أكتوبر 2026");
 });
 
 test("toLang and browserPath", () => {

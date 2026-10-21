@@ -9,6 +9,8 @@ import { AttendanceForm } from "./attendance-form";
 import { controlClass } from "@/components/form-parts";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 import { PickerForm } from "@/components/picker-form";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -53,6 +55,7 @@ export default async function AttendancePage({
         <PickerForm action={`/portal/classes/${id}/attendance`} className="mt-4 flex gap-2">
           <input name="date" type="date" max={today} defaultValue={date} required className={`${input} min-w-0 flex-1`} />
         </PickerForm>
+        <DualDate iso={date} offsets={await getHijriOffsets()} weekday className="mt-2 font-semibold" />
 
         {list.some((s) => initial[s.id]) && (
           <p className="mt-3 text-sm text-muted-foreground">Attendance was already taken for this day. Saving updates it.</p>

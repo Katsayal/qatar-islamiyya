@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { TOTAL_PAGES } from "@/lib/quran";
 import { school } from "@/content/school";
+import { DualDate } from "@/components/dual-date";
+import type { HijriOffset } from "@/lib/hijri";
 
 export type CardData = {
   studentName: string;
@@ -8,7 +10,8 @@ export type CardData = {
   className: string;
   program: string;
   termLabel: string;
-  issued: string;
+  /** Issue date (ISO) + the Hijri offsets: shown Hijri first, Gregorian underneath. */
+  issued: { iso: string; offsets: HijriOffset[] };
   hifz: {
     termPages: number;
     totalPages: number;
@@ -59,7 +62,7 @@ export function ReportCard({ d }: { d: CardData }) {
         <Row label="Student" value={d.studentName} />
         <Row label="Admission no." value={d.admissionNo} />
         <Row label="Class" value={d.className} />
-        <Row label="Issued" value={d.issued} />
+        <Row label="Issued" value={<DualDate iso={d.issued.iso} offsets={d.issued.offsets} className="items-end" />} />
       </section>
 
       {h && (

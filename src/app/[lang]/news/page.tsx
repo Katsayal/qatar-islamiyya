@@ -6,10 +6,13 @@ import { PageHeader } from "@/components/page-header";
 import { CardsSkeleton } from "@/components/page-skeleton";
 import { PostLangLabel } from "@/components/post-lang-label";
 import { ui } from "@/content/ui";
-import { formatDate, href, toLang, type Lang } from "@/lib/lang";
+import { href, toLang, type Lang } from "@/lib/lang";
 import { pageMeta } from "@/lib/page-meta";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const lang = toLang((await params).lang);
@@ -30,6 +33,7 @@ async function NewsList({ lang }: { lang: Lang }) {
     return <p className="rounded-xl border bg-card p-6 text-muted-foreground">{ui[lang].home.noNews}</p>;
   }
 
+  const hijri = await getHijriOffsets();
   return (
     <ul className="grid gap-4 md:grid-cols-2">
       {posts.map((p, i) => (
@@ -52,10 +56,10 @@ async function NewsList({ lang }: { lang: Lang }) {
                 {p.title}
               </Link>
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {formatDate(lang, p.published_at!, "medium")}
+            <div className="mt-1 flex flex-wrap items-end gap-1 text-xs text-muted-foreground">
+              <DualDate iso={lagosDate(p.published_at!)} offsets={hijri} lang={lang} style="medium" className="font-medium text-foreground" />
               <PostLangLabel postLang={p.lang} lang={lang} />
-            </p>
+            </div>
             <p lang={p.lang} dir={p.lang === "ar" ? "rtl" : "ltr"} className="mt-2 line-clamp-3 text-sm text-muted-foreground">
               {p.body}
             </p>

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { surahs } from "@/lib/surahs";
 import { todayInLagos } from "@/lib/today";
 import { HifzForm } from "./hifz-form";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -47,7 +48,7 @@ export default async function RecordHifzPage({ params }: { params: Promise<{ id:
         </p>
 
         <div className="mt-4">
-          <HifzForm studentId={student.id} today={todayInLagos()} defaultMode={c.hifz_unit === "pages" ? "page" : "ayah"} />
+          <HifzForm studentId={student.id} today={todayInLagos()} defaultMode={c.hifz_unit === "pages" ? "page" : "ayah"} offsets={await getHijriOffsets()} />
         </div>
 
         {nextId && (

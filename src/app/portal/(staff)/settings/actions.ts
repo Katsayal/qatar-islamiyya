@@ -75,3 +75,44 @@ export async function removeSignature(): Promise<SettingsResult> {
   revalidatePath("/portal/settings");
   return { ok: true, message: "Signature removed." };
 }
+
+// Hijri date offset (SPEC §11a): "from this date, shift the Umm al-Qura date by N days". Same date again = replaced.
+const isoDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Please choose a date.")
+  .refine((v) => new Date(`${v}T00:00:00Z`).toISOString().slice(0, 10) === v, "Please choose a real date.");
+const hijriSchema = z.object({
+  starts_on: isoDate,
+  days: z.coerce.number().int().min(-2, "The shift must be between -2 and +2 days.").max(2, "The shift must be between -2 and +2 days."),
+});
+
+function refreshDates() {
+  revalidatePath("/portal", "layout"); // portal banners, pickers, report cards, portal news
+  revalidatePath("/[lang]", "layout"); // public news dates, both languages
+}
+
+export async function saveHijriOffset(_prev: SettingsResult, formData: FormData): Promise<SettingsResult> {
+  await requireRole("staff");
+  const parsed = hijriSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the form." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("hijri_offsets").upsert(parsed.data, { onConflict: "starts_on" });
+  if (error) return { ok: false, message: "Could not save the Hijri date change." };
+
+  refreshDates();
+  return { ok: true, message: "Hijri date change saved." };
+}
+
+export async function deleteHijriOffset(_prev: SettingsResult, formData: FormData): Promise<SettingsResult> {
+  await requireRole("staff");
+  const id = z.string().uuid().safeParse(formData.get("id"));
+  if (!id.success) return { ok: false, message: "Could not delete the change." };
+
+  const supabase = await createClient();
+  const { error, count } = await supabase.from("hijri_offsets").delete({ count: "exact" }).eq("id", id.data);
+  if (error || !count) return { ok: false, message: "Could not delete the change." };
+
+  refreshDates();
+  return { ok: true, message: "Change deleted." };
+}

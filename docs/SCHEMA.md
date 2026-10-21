@@ -153,6 +153,10 @@ Unique: (profile_id, month). Profiles are never deleted (accounts are disabled),
 | id = 1 | bank_name | account_name | account_number | signature_path |
 Exactly one row, `id = 1` (check constraint). The app only ever updates it (staff have no insert policy), so **never delete it**: a missing row makes "Save bank details" and "Upload signature" match nothing and still say "saved". The live row went missing and was re-created on 2026-10-18 by migration `…_restore_school_settings_row` (`insert … on conflict do nothing`).
 
+### hijri_offsets  (H.1, one row per offset change)
+| id | starts_on date (unique) | days smallint (−2…2) | created_at | updated_at | updated_by |
+"From `starts_on`, shift the Umm al-Qura date by `days`." A date uses the row with the latest `starts_on` on or before it; dates before the first row use 0 (SPEC §11a). Column is `days` because `offset` is an SQL keyword. Read: everyone (anon too: public news dates); write: staff.
+
 ## 8. Server-set fields (triggers)
 A `before insert` trigger fills these; values sent from forms are ignored:
 - `hifz_entries`: `term_id`, `class_id`, `teacher_id`
@@ -186,7 +190,7 @@ Insert fails with a clear error if no term contains the date.
 | id bigint identity | at timestamptz | actor_id → profiles (null = website/system) | actor_name text (copied at the time) | action (`create` · `edit` · `delete` · `account`) | table_name | row_id text | old jsonb | new jsonb | summary text (account entries) |
 Indexes: (at desc), (actor_id, at desc), (table_name, at desc).
 - `audit_row()` AFTER trigger (security definer). create → `new` = whole row; delete → `old` = whole row; edit → only changed keys in `old`/`new` (ignores `updated_at`, `updated_by`, `created_at`), no row when nothing changed. `row_id` = `id`, or `class_id` (class_teachers), `profile_id` (salary_rates).
-- **Full (insert/update/delete):** academic_years, terms, classes, class_teachers, students, books, student_fees, posts, gallery_items, documents, school_settings, salary_rates, salary_months.
+- **Full (insert/update/delete):** academic_years, terms, classes, class_teachers, students, books, student_fees, posts, gallery_items, documents, school_settings, salary_rates, salary_months, hijri_offsets (H.1).
 - **Edits only (update/delete):** hifz_entries, attendance, exam_results, report_comments, payment_proofs, applications, contact_messages, correction_requests, profiles.
 - `log_action(p_summary, p_table, p_row)` (security definer, authenticated, refuses unless `is_staff()`): explicit `account` entries from `accounts/actions.ts`.
 - RLS: select = `is_owner()`; no write policies and insert/update/delete revoked from anon/authenticated.
@@ -209,6 +213,7 @@ Indexes: (at desc), (actor_id, at desc), (table_name, at desc).
 | documents | – | `students` visibility | `general` + `students` | all incl. vault |
 | applications, contact_messages | none (inserted by server action) | – | – | all |
 | school_settings | select (bank details are public; signature file stays in a private bucket) | select | select | update |
+| hijri_offsets | select | select | select | all |
 | correction_requests | – | own (insert/select) | – | all |
 | salary_rates, salary_months | – | – | – | **owner only** (`is_owner()`); non-owner staff get nothing |
 | audit_log | – | – | – | **owner select only**; written only by `audit_row()` / `log_action()` |

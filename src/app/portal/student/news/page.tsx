@@ -2,6 +2,9 @@ import Link from "next/link";
 import { PortalTitle } from "@/components/portal-title";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 export default async function StudentNewsPage() {
   await requireRole("student");
@@ -16,6 +19,7 @@ export default async function StudentNewsPage() {
     .limit(50);
   const posts = data ?? [];
 
+  const hijri = await getHijriOffsets();
   return (
     <div className="max-w-xl">
       <PortalTitle title="News" />
@@ -27,10 +31,10 @@ export default async function StudentNewsPage() {
             <li key={p.id}>
               <Link href={`/portal/student/news/${p.id}`} className="block p-4 hover:bg-secondary">
                 <p className="font-medium">{p.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(p.published_at!).toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                <div className="flex flex-wrap items-end gap-1 text-xs text-muted-foreground">
+                  <DualDate iso={lagosDate(p.published_at!)} offsets={hijri} style="medium" className="font-medium text-foreground" />
                   {p.audience === "students" && " · For students"}
-                </p>
+                </div>
               </Link>
             </li>
           ))}

@@ -7,6 +7,8 @@ import { controlClass } from "@/components/form-parts";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { big, btn } from "@/components/buttons";
+import { DualDate } from "@/components/dual-date";
+import type { HijriOffset } from "@/lib/hijri";
 
 const input = controlClass;
 const label = "flex flex-col gap-1 text-sm";
@@ -30,14 +32,17 @@ export function HifzForm({
   studentId,
   today,
   defaultMode,
+  offsets,
 }: {
   studentId: string;
   today: string;
   defaultMode: "ayah" | "page";
+  offsets: HijriOffset[];
 }) {
   const [state, formAction, pending] = useActionState<Result, FormData>(saveHifz, { ok: false, message: null });
   const [absent, setAbsent] = useState(false);
   const [mode, setMode] = useState(defaultMode);
+  const [date, setDate] = useState(today);
 
   return (
     <form
@@ -50,7 +55,8 @@ export function HifzForm({
       <input type="hidden" name="student_id" value={studentId} />
       <label className={label}>
         Date
-        <input name="entry_date" type="date" required max={today} defaultValue={today} className={input} />
+        <input name="entry_date" type="date" required max={today} defaultValue={today} onChange={(e) => setDate(e.target.value)} className={input} />
+        {/^\d{4}-\d{2}-\d{2}$/.test(date) && <DualDate iso={date} offsets={offsets} weekday className="font-semibold" />}
       </label>
 
       <label className="flex h-11 items-center gap-3 text-base">

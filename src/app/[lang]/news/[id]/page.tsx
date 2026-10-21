@@ -7,10 +7,13 @@ import { ArticleSkeleton } from "@/components/page-skeleton";
 import { PostBody } from "@/components/post-body";
 import { PostLangLabel } from "@/components/post-lang-label";
 import { ui } from "@/content/ui";
-import { formatDate, href, toLang } from "@/lib/lang";
+import { href, toLang } from "@/lib/lang";
 import { pageMeta } from "@/lib/page-meta";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 type Props = { params: Promise<{ lang: string; id: string }> };
 
@@ -39,6 +42,7 @@ async function Post({ params }: Props) {
   const post = await getPost(id);
   if (!post) notFound();
 
+  const hijri = await getHijriOffsets();
   return (
     <article>
       {post.cover_path && (
@@ -57,10 +61,10 @@ async function Post({ params }: Props) {
       <h1 lang={post.lang} dir={post.lang === "ar" ? "rtl" : "ltr"} className="mt-5 text-3xl font-semibold">
         {post.title}
       </h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {formatDate(lang, post.published_at!, "long")}
+      <div className="mt-1 flex flex-wrap items-end gap-1 text-sm text-muted-foreground">
+        <DualDate iso={lagosDate(post.published_at!)} offsets={hijri} lang={lang} className="font-medium text-foreground" />
         <PostLangLabel postLang={post.lang} lang={lang} />
-      </p>
+      </div>
       <PostBody body={post.body} lang={post.lang} />
     </article>
   );

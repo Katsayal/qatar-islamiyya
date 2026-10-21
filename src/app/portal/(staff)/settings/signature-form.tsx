@@ -9,15 +9,7 @@ import { cn } from "@/lib/utils";
 import { big, btn } from "@/components/buttons";
 import { fileInputClass } from "@/components/form-parts";
 import { removeSignature, uploadSignature } from "./actions";
-
-function Message({ result }: { result: { ok: boolean; message: string } | null }) {
-  if (!result) return null;
-  return (
-    <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
-      {result.message}
-    </p>
-  );
-}
+import { Message } from "./message";
 
 export function SignatureForm({ currentUrl }: { currentUrl: string | null }) {
   const [uploadResult, uploadAction, uploading] = useActionState(uploadSignature, null);

@@ -2,9 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { PostLangLabel } from "@/components/post-lang-label";
 import { ui } from "@/content/ui";
-import { formatDate, href, type Lang } from "@/lib/lang";
+import { href, type Lang } from "@/lib/lang";
 import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { lagosDate } from "@/lib/today";
 
 export async function LatestNews({ lang }: { lang: Lang }) {
   const supabase = await createClient();
@@ -20,6 +23,7 @@ export async function LatestNews({ lang }: { lang: Lang }) {
     return <p className="mt-6 text-sm text-muted-foreground">{ui[lang].home.noNews}</p>;
   }
 
+  const hijri = await getHijriOffsets();
   return (
     <ul className="mt-6 grid gap-4 md:grid-cols-3">
       {posts.map((p) => (
@@ -40,10 +44,10 @@ export async function LatestNews({ lang }: { lang: Lang }) {
                 {p.title}
               </Link>
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {formatDate(lang, p.published_at!, "medium")}
+            <div className="mt-1 flex flex-wrap items-end gap-1 text-xs text-muted-foreground">
+              <DualDate iso={lagosDate(p.published_at!)} offsets={hijri} lang={lang} style="medium" className="font-medium text-foreground" />
               <PostLangLabel postLang={p.lang} lang={lang} />
-            </p>
+            </div>
           </div>
         </li>
       ))}

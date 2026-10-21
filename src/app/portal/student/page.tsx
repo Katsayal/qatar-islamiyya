@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PortalBanner } from "@/components/portal-banner";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayInLagos } from "@/lib/today";
@@ -47,6 +49,7 @@ export default async function StudentHome() {
       <PortalBanner
         title={`Assalamu alaykum, ${profile.full_name}`}
         subtitle={s ? `Admission no. ${s.admission_no}` : undefined}
+        date={<DualDate iso={todayInLagos()} offsets={await getHijriOffsets()} weekday subClassName="font-normal text-white/75" />}
         photo={
           photoUrl ? (
             <Image

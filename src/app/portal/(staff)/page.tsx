@@ -6,6 +6,9 @@ import { DashboardTotals } from "@/components/dashboard-totals";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PortalBanner } from "@/components/portal-banner";
+import { DualDate } from "@/components/dual-date";
+import { getHijriOffsets } from "@/lib/hijri-offsets";
+import { todayInLagos } from "@/lib/today";
 import { menuFor } from "@/components/portal-menu";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
@@ -36,6 +39,7 @@ export default async function PortalHome() {
       <PortalBanner
         title={`Assalamu alaykum, ${profile.full_name}`}
         subtitle={profile.role === "staff" ? "Staff portal" : "Teacher portal"}
+        date={<DualDate iso={todayInLagos()} offsets={await getHijriOffsets()} weekday subClassName="font-normal text-white/75" />}
       />
 
       {profile.role === "staff" && (
