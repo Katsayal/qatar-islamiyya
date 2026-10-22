@@ -6,7 +6,7 @@
 - **Name:** Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre) — مدرسة الحاجة هندة (قطر دورا)
 - **Address:** Zango Road, Daura, Katsina State, Nigeria
 - **Phones:** 08038102495 · 09060456171 · 07038782451
-- Logo received 2026-10-11 (brand colours taken from it). Pending: class names, about content (history, leadership), bank details, director signature, domain, photos.
+- Logo received 2026-10-11 (brand colours taken from it). Pending: about content (history, leadership), bank details, director signature, domain, photos.
 
 ## 2. Surfaces
 1. **Public website** — open to everyone.
@@ -53,14 +53,14 @@
 A student belongs to **exactly one class** (therefore one program). A teacher can teach many classes. Classes are mixed boys & girls (gender stored for reports only).
 
 ### 5.1 Tahfiz
-- ~5 classes, Level 1 → 5+, each named after a famous qari (names pending). One or more teachers per class.
+- Six classes, each named after a famous qari: Imam Warsh, Qalun, Khalaf, Nafi'u, Hafs and Shu'ubah (Shu'ubah has no students yet). The level order (Level 1 → 5+) is still to be confirmed by the school, so levels are empty for now. One or more teachers per class.
 - Daily hifz entry: **New hifz** or **Muraja'ah** (teacher chooses).
 - Amount unit set per class: **lines** (lower levels) or **pages** (higher levels).
 - End of year: promotion to next level.
 
 ### 5.2 Ma'ahad (flagship)
 - Full Qur'an memorisation in **one year** (3 terms), students and teachers in the mosque.
-- Students grouped in **Halqas**; one or more teachers per halqa.
+- Students grouped in **Halqas** (seven classes, named `Ma'ahad-Imam …`: Aasim, Hamza, Ibn Aameer, Ibn Amru, Ibn Kathir, Kisa'i, Nafi'); one or more teachers per halqa.
 - Daily hifz entry, unit = pages. **Minimum 2 pages**; entries below 2 pages are flagged.
 - Progress view: pages memorised / 604, % of Qur'an, simple pace indicator. Pages memorised = lines of all *new* entries ÷ 15. Pace (current academic year, calendar days): expected = 604 × days elapsed ÷ days in the year; "on track" at ≥ 90% of expected; projected finish = at the current rate.
 
@@ -118,7 +118,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 - **Posts:** audience = Public / Internal (teachers+staff) / Students.
 - **Gallery:** upload 1–10 photos at once with one optional caption for the batch. Several photos must be **selected together** in the picker (choosing again replaces the earlier selection); the page says so and lists the chosen files. Photos are shrunk in the browser and sent **one per request** with progress ("Uploading 3 of 10…"), so a big batch never hits the hosting time limit; a file that is not a readable JPG/PNG/WebP image is refused by name (checked in the browser and by its first bytes on the server). The photo grid is a closed card "Photos (n)" under the upload form (D.2; photos load only when it is opened). Per photo: edit caption ("Caption saved."), delete with confirm. No albums, reordering, per-photo captions in a batch, paging or duplicate check for now (R.4).
 - **Documents:** General (teachers+staff), **Students** (also shown to students under "Resources": timetable, notes…) and **Vault** (staff only).
-- **Accounts:** two tabs. **Student logins:** create (one by one, or in bulk with one shared password, 10 students per click), set a new password, disable/enable. **Teachers & staff:** a directory of everyone (filter by role, active/disabled, search; teachers show their classes; login ID (code or email) and phone visible); staff can create teacher accounts and reset password / disable a teacher; only an owner creates staff and owner accounts, manages staff and owners, and changes roles (not their own). Teachers, staff and the owner change their own password on "My account" (plain, min 6 characters); a forgotten password is reset by staff (teachers) or the owner (staff).
+- **Accounts:** (a hidden support account is never listed, see §3) two tabs. **Student logins:** create (one by one, or in bulk with one shared password, 10 students per click), set a new password, disable/enable. **Teachers & staff:** a directory of everyone (filter by role, active/disabled, search; teachers show their classes; login ID (code or email) and phone visible); staff can create teacher accounts and reset password / disable a teacher; only an owner creates staff and owner accounts, manages staff and owners, and changes roles (not their own). Teachers, staff and the owner change their own password on "My account" (plain, min 6 characters); a forgotten password is reset by staff (teachers) or the owner (staff).
 - **Salaries (owner only):** record-keeping for teachers, staff and the owner, not payroll (no tax, pension, deductions or payslips). Each person has a **fixed monthly salary** the owner can change (a change affects future months only). Per month: amount due, total paid so far (part payments allowed, overpaying counts as paid), status Unpaid / Part-paid / Paid (derived), and a note. "Set salaries for this month" creates unpaid records for active people who have a salary and no record yet. Totals per month, filters, CSV export. Staff and teachers cannot see any of it, not even their own.
 - **Activity log (owner only):** who created, edited or deleted what, and when, for audit and records. Logged automatically by the database (nothing in the app can skip it): academic years, terms, classes and teacher assignments, students, books, fees, posts, gallery, documents, settings, salaries (create, edit, delete); hifz, attendance, exam marks, term comments, payment proofs, applications, messages, correction requests and accounts' profiles (edit and delete only: new entries already store who recorded them). Account actions are logged with the staff member who did them: login/account created, password reset (never the password itself), disabled/enabled. Not logged: sign-ins and people changing their own password. Edits store only the changed fields (old → new); deletes keep the whole old row. Kept forever; the app can never edit or delete log rows (the owner can prune old rows in the Supabase SQL editor). One page with filters by person, area, action and month.
 - **Settings:** bank details, director signature, Hijri date offset (§11a). (Current term is automatic from term dates. School name, address and phones are page text in `src/content/school.ts`, edited in code, not in Settings.)
