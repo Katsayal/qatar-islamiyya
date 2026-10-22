@@ -31,14 +31,17 @@ async function GalleryGrid({ lang }: { lang: Lang }) {
     <ul className="grid grid-cols-2 gap-3 md:grid-cols-3">
       {items.map((g) => (
         <li key={g.id} className="overflow-hidden rounded-xl border bg-card shadow-sm">
-          <Image
-            src={siteImageUrl(g.image_path)}
-            alt={g.caption ?? t.photoAlt}
-            width={480}
-            height={480}
-            sizes="(min-width: 768px) 320px, 50vw"
-            className="aspect-square w-full object-cover"
-          />
+          {/* Tiles are square crops: tapping one opens the whole photo; Back returns. */}
+          <a href={siteImageUrl(g.image_path)} className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            <Image
+              src={siteImageUrl(g.image_path)}
+              alt={g.caption ?? t.photoAlt}
+              width={480}
+              height={480}
+              sizes="(min-width: 768px) 320px, 50vw"
+              className="aspect-square w-full object-cover"
+            />
+          </a>
           {/* Captions are typed by staff in any language: their direction follows their own text. */}
           {g.caption && <p dir="auto" className="p-3 text-xs text-muted-foreground">{g.caption}</p>}
         </li>

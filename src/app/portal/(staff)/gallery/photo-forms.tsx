@@ -9,7 +9,7 @@ import { big, btn } from "@/components/buttons";
 import { controlClass, Field } from "@/components/form-parts";
 
 export function CaptionForm({ id, caption }: { id: string; caption: string }) {
-  const [error, formAction, pending] = useActionState(saveCaption, null);
+  const [result, formAction, pending] = useActionState(saveCaption, null);
 
   return (
     <form
@@ -21,11 +21,11 @@ export function CaptionForm({ id, caption }: { id: string; caption: string }) {
     >
       <input type="hidden" name="id" value={id} />
       <Field label="Caption">
-        <input name="caption" maxLength={150} defaultValue={caption} className={`${controlClass} w-full`} />
+        <input name="caption" maxLength={150} defaultValue={caption} dir="auto" className={`${controlClass} w-full`} />
       </Field>
-      {error && (
-        <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
+      {result && (
+        <p role="alert" className={`rounded-lg border p-3 text-sm ${result.ok ? "border-primary/30 bg-secondary text-primary" : "border-destructive/40 bg-destructive/10 text-destructive"}`}>
+          {result.message}
         </p>
       )}
       <button disabled={pending} className={cn(btn.save, big)}>

@@ -104,6 +104,8 @@ RLS is checked by `supabase/rls-checks.sql`: one transaction that creates fake o
 | `vault` | private | sensitive docs | staff only |
 | `private` | private | director signature (`signature/…`), payment proofs (`proofs/<student_id>/<uuid>.<ext>`: jpg, png, webp or pdf, ≤ 2 MB) | staff: all · students: read the one signature file named in `school_settings`, add + read files in their own `proofs/<own id>/` folder (no update/delete) |
 
+**Gallery uploads (R.4):** the form shrinks every photo in the browser (`resizeImage`; a file it cannot read comes back unchanged, so the form refuses it by name before sending anything), then calls the server action `uploadPhoto` **once per photo** ("Uploading 3 of 10…") and `refreshGallery()` once at the end. One request with 10 photos took ~22 s, over Netlify's ~10 s function limit; one photo per request takes 1–3 s, and revalidating only at the end keeps each request from re-rendering the page. The server also checks the file's first bytes (`lib/image-bytes.ts` `isImageBytes`: JPEG / PNG / WebP signatures), because the reported type only follows the file name. Use the same pattern for any future multi-file upload.
+
 ## 5a. Public forms (application, contact)
 1. Form posts to a Server Action. Zod validates fields; photo must be jpg/png/webp, max 2 MB. Simple honeypot field against bots.
 2. Server Action (server-only service-role client) uploads the photo to `student-photos/applications/<application_id>.jpg` and inserts the row.

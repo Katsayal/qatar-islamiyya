@@ -20,13 +20,17 @@ export default async function EditPhotoPage({ params }: { params: Promise<{ id: 
         <Link href="/portal/gallery" className="text-sm text-primary underline-offset-4 hover:underline">
           ← Gallery
         </Link>
-        <Image
-          src={siteImageUrl(g.image_path)}
-          alt={g.caption ?? "School photo"}
-          width={640}
-          height={640}
-          className="mt-3 max-h-96 w-full rounded-lg object-contain"
-        />
+        {/* Fixed-height box: the form below must not jump down when the image arrives. */}
+        <div className="mt-3 h-72 overflow-hidden rounded-lg bg-muted md:h-96">
+          <Image
+            src={siteImageUrl(g.image_path)}
+            alt={g.caption ?? "School photo"}
+            width={640}
+            height={640}
+            loading="eager"
+            className="size-full object-contain"
+          />
+        </div>
         <div className="mt-4">
           <CaptionForm id={g.id} caption={g.caption ?? ""} />
         </div>
