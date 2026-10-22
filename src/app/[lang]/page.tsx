@@ -7,6 +7,7 @@ import { HomeHero } from "@/components/home-hero";
 import { HomePrograms } from "@/components/home-programs";
 import { LatestNews } from "@/components/latest-news";
 import { CardsSkeleton } from "@/components/page-skeleton";
+import { SchoolJsonLd } from "@/components/school-json-ld";
 import { SectionHeading } from "@/components/section-heading";
 import { ui } from "@/content/ui";
 import type { Metadata } from "next";
@@ -23,6 +24,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const t = ui[lang].home;
   return (
     <>
+      <SchoolJsonLd lang={lang} />
       <HomeHero lang={lang} />
       <HomePrograms lang={lang} />
       <HomeAdmission lang={lang} />

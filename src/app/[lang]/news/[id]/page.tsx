@@ -33,7 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = toLang(l);
   const post = await getPost(id);
   if (!post) return { title: ui[lang].meta.news };
-  return { ...pageMeta(lang, `/news/${id}`, post.title), description: post.body.slice(0, 150) };
+  const meta = pageMeta(lang, `/news/${id}`, post.title);
+  // The cover photo is the link preview; without one the site-wide image from pageMeta stays.
+  const cover = post.cover_path ? siteImageUrl(post.cover_path) : null;
+  const openGraph = { ...meta.openGraph, type: "article" as const, ...(cover ? { images: [cover] } : {}) };
+  const twitter = { ...meta.twitter, ...(cover ? { images: [cover] } : {}) };
+  return { ...meta, openGraph, twitter, description: post.body.slice(0, 150) };
 }
 
 async function Post({ params }: Props) {

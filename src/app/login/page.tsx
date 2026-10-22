@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { getProfile, homeFor } from "@/lib/auth";
 import { LoginForm } from "./login-form";
 
-export const metadata: Metadata = { title: "Login · Madrasatu Hajiya Hindatu" };
+export const metadata: Metadata = { title: "Login · Madrasatu Hajiya Hindatu", robots: { index: false } };
 
 // Already logged in → go to your portal.
 async function RedirectIfLoggedIn() {
