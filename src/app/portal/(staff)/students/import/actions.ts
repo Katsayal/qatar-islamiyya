@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
-import { importStudentSchema } from "@/lib/student-schema";
+import { studentSchema } from "@/lib/student-schema";
 import { COLUMNS, REQUIRED_COLUMNS, cleanCell, columnFor, fixBloodGroup, fixDate, fixGender, fixPhone, parseCsv } from "@/lib/students-csv";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,7 +10,7 @@ const MAX_ROWS = 500;
 
 export type Report = { rowCount: number; errors: string[] };
 
-type StudentRow = ReturnType<typeof importStudentSchema.parse>;
+type StudentRow = ReturnType<typeof studentSchema.parse>;
 
 // Checks the whole file and returns the rows to insert plus every problem found.
 async function validate(text: string) {
@@ -53,7 +53,7 @@ async function validate(text: string) {
     if (className && !ids?.length) return void errors.push(`Row ${row}: class "${rec.class}" not found.`);
     if (ids && ids.length > 1) return void errors.push(`Row ${row}: more than one class is named "${rec.class}".`);
 
-    const parsed = importStudentSchema.safeParse({
+    const parsed = studentSchema.safeParse({
       ...rec,
       gender: fixGender(rec.gender),
       date_of_birth: fixDate(rec.date_of_birth),

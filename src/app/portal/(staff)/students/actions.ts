@@ -19,7 +19,6 @@ export async function saveStudent(_prev: string | null, formData: FormData): Pro
   const get = (k: string) => String(formData.get(k) ?? "");
   const parsed = schema.safeParse({
     ...Object.fromEntries(formData),
-    date_of_birth: get("date_of_birth") || null,
     admitted_on: get("admitted_on") || null,
     class_id: get("class_id") || null,
     entry_level: get("entry_level") || null,
@@ -30,7 +29,7 @@ export async function saveStudent(_prev: string | null, formData: FormData): Pro
     if (field === "guardian_phone" || field === "student_phone") {
       return "Phone numbers must be Nigerian numbers, e.g. 08012345678.";
     }
-    return "Please check the form: admission number, name, gender, date of birth, blood group, address, local government and previous Islamiyya are required.";
+    return "Please check the form: admission number, full name and gender are required, and the date of birth and blood group must be valid if filled.";
   }
 
   const photo = formData.get("photo");

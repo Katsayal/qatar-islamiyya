@@ -24,11 +24,11 @@ Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timest
 | full_name | text | |
 | full_name_ar | text | nullable |
 | gender | text | `male` · `female` |
-| date_of_birth | date | nullable in the DB (old rows); required by forms/CSV |
+| date_of_birth | date | nullable; required in the public application form only (the staff form and the CSV may leave it empty, T.5) |
 | photo_path | text | path in private `student-photos` bucket: `students/<id>.jpg`, or `applications/<application_id>.jpg` when created from an application (file is reused, not copied) |
-| address, local_government | text | required by forms/CSV (was `town`) |
-| previous_islamiyya | text | required by forms/CSV (was `previous_school`) |
-| blood_group | text | `A+` `A-` `B+` `B-` `AB+` `AB-` `O+` `O-` `Unknown`; required by forms/CSV |
+| address, local_government | text | required in the public application form only (was `town`) |
+| previous_islamiyya | text | required in the public application form only (was `previous_school`) |
+| blood_group | text | `A+` `A-` `B+` `B-` `AB+` `AB-` `O+` `O-` `Unknown`; required in the public application form only |
 | student_phone | text | optional |
 | entry_level | text | `hadda` · `sauka` · nullable |
 | medical_notes | text | "larura" |

@@ -62,10 +62,10 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           <option value="female">Female</option>
         </select>
       </Field>
-      {text("date_of_birth", "Date of birth *", { type: "date", required: true })}
-      <Field label="Blood group *">
-        <select name="blood_group" required defaultValue={d.blood_group} className={input}>
-          <option value="" disabled>Choose</option>
+      {text("date_of_birth", "Date of birth", { type: "date" })}
+      <Field label="Blood group">
+        <select name="blood_group" defaultValue={d.blood_group} className={input}>
+          <option value="">Not set</option>
           {BLOOD_GROUPS.map((g) => (
             <option key={g} value={g}>{g}</option>
           ))}
@@ -93,9 +93,9 @@ export function StudentForm({ defaults: d, classes }: { defaults: StudentDefault
           </select>
         </Field>
       )}
-      {text("address", "Address *", { required: true })}
-      {text("local_government", "Local government *", { required: true })}
-      {text("previous_islamiyya", "Previous Islamiyya *", { required: true })}
+      {text("address", "Address")}
+      {text("local_government", "Local government")}
+      {text("previous_islamiyya", "Previous Islamiyya")}
       {text("student_phone", "Student phone (optional, e.g. 08012345678)", { type: "tel" })}
       <Field label="Level of study">
         <select name="entry_level" defaultValue={d.entry_level} className={input}>
