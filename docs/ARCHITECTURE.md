@@ -87,6 +87,14 @@ Pattern per table:
 - **Owner only:** `salary_rates` and `salary_months` (`is_owner()`): not even other staff see a row. Their amounts are in separate tables, not columns on `profiles`, because RLS works per row and staff may read every profile.
 - **Public (anon):** select posts where audience = 'public', gallery. **No** insert/storage rights: application and contact forms go through Server Actions (see §5a).
 
+- **Table grants (Supabase change, 2026-10-30):** from that date Supabase no longer gives new `public` tables to `anon` / `authenticated` / `service_role` automatically; a table without grants answers "permission denied" through the API whatever its RLS says. The 25 tables created before then keep their automatic grants. **Every new table's migration grants what it needs, next to `enable row level security` and its policies:**
+  ```sql
+  grant select on public.x to anon;                                        -- only if the public site reads it
+  grant select, insert, update, delete on public.x to authenticated;      -- trim to what the app does
+  grant select, insert, update, delete on public.x to service_role;
+  ```
+  Grants decide which API role may touch the table at all, RLS decides which rows: both are needed. Same applies to a new view (and use `security_invoker = on`) or a `serial` column's sequence (`grant usage`); uuid/identity keys need nothing. Existing grants changed on purpose (`students` notes columns, `audit_log`) stay as they are.
+  **Replay risk:** running our migrations on a fresh project (disaster recovery, a second project) creates the old tables **without** grants, so the whole app would fail. Before relying on that, add one migration that writes out today's grants exactly (keeping the `students` column grants and `audit_log` read-only, never a blind "grant all"). A full database dump/restore carries the grants with it (check once with a test restore). Decided at F.3 with backups.
 - **Hidden columns:** RLS is per row, so a column a role must not see (students' `notes`, `medical_notes`) is hidden with column privileges plus a security-definer reader (`student_notes()`); see SCHEMA §8a.
 
 Other protections (F.1): `lib/supabase/admin.ts` imports `server-only` (built into Next) so the service-role client can never reach a client bundle; `next.config.ts` sends `X-Frame-Options: DENY`, `nosniff` and a referrer policy; CSV exports put `'` before cells starting with `= + - @` (formula injection; plain numbers like `+234…` are left alone); buckets have size/type limits. Supabase Auth sign-up must be **off** in the dashboard (of the single live project): accounts are created only by staff.
@@ -180,7 +188,7 @@ src/content/*.ts                          public page text (en / ar / ha blocks)
 - **"Powered by Netlify" badge:** Netlify injects it (iframe `nl-badge-frame`, script `/.netlify/scripts/hud`) on Free-plan projects created after 2026-08-19; it covered the pagers' Next button. Switched **off** on 2026-10-21 in Netlify: Project configuration → General → Powered by Netlify badge (no code change). If it ever comes back, use that switch, not CSS.
 - **Keep-alive (UptimeRobot):** a monitor requests `GET /health` (`src/app/health/route.ts`: one `school_settings` read, `{"ok":true}` or 503, no data in the body) every 5 minutes. Two reasons: the free Supabase project pauses after about a week without activity, and the first request after idle hits a Netlify cold start (about 5 s). The database alone would need only about one request a day; the short interval is for the cold start and for failure emails. Relax it to 15-30 minutes if Netlify usage looks high.
 - Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` (server only), `NEXT_PUBLIC_SITE_URL` (the site's public address; set on Netlify, change it when the domain arrives, then redeploy).
-- DB changes go through migrations only: `supabase migration new` → `supabase db push` (to the single live project: push the migration before the code that needs it). Never change tables by clicking in the dashboard.
+- DB changes go through migrations only: `supabase migration new` → `supabase db push` (to the single live project: push the migration before the code that needs it). Never change tables by clicking in the dashboard. A migration that creates a table also grants it (§4 "Table grants").
 
 ## 10. Later additions (designed to slot in)
 - Online payments: add `payments` table + Paystack webhook route; `student_fees` stays.

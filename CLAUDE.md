@@ -110,6 +110,7 @@ docs/
 - Never disable RLS or use the service-role key in client code.
 - Never put student data in public storage buckets.
 - Never edit `database.types.ts` or old migrations by hand (create a new migration).
+- Never create a table without explicit grants in the same migration (Supabase stopped automatic grants on 2026-10-30; ARCHITECTURE §4 "Table grants").
 - Never add a dependency without a one-line justification.
 - Never build features not in SPEC.md without asking.
 - Never read or commit `.env*` files.

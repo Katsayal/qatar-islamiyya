@@ -2,7 +2,7 @@
 
 > **SIMPLE IS KING**: fewest tables that meet the SPEC. Source of truth = `supabase/migrations/` (first: `20261008213115_init_schema.sql`, 21 tables). Keep this file in sync.
 
-Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timestamptz default now()`. Editable tables also have `updated_at timestamptz` and `updated_by uuid → profiles.id`. Enum-like columns use `text` + `check (...)`.
+Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timestamptz default now()`. Editable tables also have `updated_at timestamptz` and `updated_by uuid → profiles.id`. Enum-like columns use `text` + `check (...)`. **New tables (from 2026-10-30) need explicit grants** to `anon` (only if public), `authenticated` and `service_role` in the same migration, besides RLS, its policies and the audit trigger list (ARCHITECTURE §4 "Table grants"); the existing 25 tables keep their automatic grants.
 
 ## 1. People
 ### profiles  (1 row per auth user)
