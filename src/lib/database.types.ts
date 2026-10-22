@@ -1467,6 +1467,7 @@ export type Database = {
         }[]
       }
       my_student_id: { Args: never; Returns: string }
+      set_my_phone: { Args: { p_phone: string }; Returns: undefined }
       student_notes: {
         Args: never
         Returns: {

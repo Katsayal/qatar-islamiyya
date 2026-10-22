@@ -18,8 +18,8 @@ const isoDate = z
 
 const text = (max: number) => z.string().trim().max(max).transform((v) => v || null);
 
-// Nigerian number, or empty. Used for the guardian's and the student's own phone.
-const phone = z
+// Nigerian number, or empty. Used for the guardian's and the student's own phone, and for My account (P.2).
+export const phone = z
   .string()
   .trim()
   .transform((v) => v.replace(/[\s-]/g, ""))

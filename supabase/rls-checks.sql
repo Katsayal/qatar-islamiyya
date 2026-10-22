@@ -573,6 +573,76 @@ do $$ begin
     raise exception 'FAIL: hijri offset changes not in the activity log'; end if;
 end $$;
 
+-- ---------- own phone: set_my_phone (P.2) ----------
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $$
+begin
+  -- teacher A: spaces and dashes are removed, only the own phone changes
+  perform public.set_my_phone('0801 234-5678');
+  if (select phone from public.profiles where id = auth.uid()) <> '08012345678' then raise exception 'FAIL: teacher could not set own phone'; end if;
+  if (select role || full_name || active::text from public.profiles where id = auth.uid()) <> 'teacherTeacher Atrue' then raise exception 'FAIL: set_my_phone changed more than the phone'; end if;
+  begin
+    perform public.set_my_phone('12345');
+    raise exception 'FAIL: bad phone accepted';
+  exception when raise_exception then
+    if sqlerrm like 'FAIL%' then raise; end if;
+  end;
+  perform public.set_my_phone(null);
+  if (select phone from public.profiles where id = auth.uid()) is not null then raise exception 'FAIL: teacher could not clear own phone'; end if;
+  perform public.set_my_phone('+2348012345678');
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
+do $$
+begin
+  perform public.set_my_phone('08022223333');
+  if (select phone from public.profiles where id = auth.uid()) <> '08022223333' then raise exception 'FAIL: staff could not set own phone'; end if;
+end $$;
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
+do $$
+begin
+  perform public.set_my_phone('08033334444');
+  if (select phone || is_owner::text from public.profiles where id = auth.uid()) <> '08033334444true' then raise exception 'FAIL: owner own phone / owner flag'; end if;
+end $$;
+reset role;
+
+-- a student and an inactive teacher change nothing
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000005","role":"authenticated"}', true);
+do $$ begin perform public.set_my_phone('08044445555'); end $$;
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000006","role":"authenticated"}', true);
+do $$ begin perform public.set_my_phone('08044445555'); end $$;
+reset role;
+do $$
+begin
+  if (select count(*) from public.profiles where phone = '08044445555') <> 0 then raise exception 'FAIL: a student or inactive user set a phone'; end if;
+  if (select phone from public.profiles where id = '00000000-0000-0000-0000-000000000004') is not null then raise exception 'FAIL: set_my_phone touched another person'; end if;
+  -- the edit is in the activity log under the teacher
+  if (select count(*) from public.audit_log where table_name = 'profiles' and action = 'edit'
+        and actor_id = '00000000-0000-0000-0000-000000000003' and new ? 'phone' and at >= now()) < 1 then
+    raise exception 'FAIL: own phone change not in the activity log'; end if;
+end $$;
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$
+begin
+  begin
+    perform public.set_my_phone('08055556666');
+    raise exception 'FAIL: anon called set_my_phone';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
 -- ---------- bucket limits (F.1) ----------
 do $$ begin
   if (select count(*) from storage.buckets where file_size_limit is null) <> 0 then raise exception 'FAIL: a bucket has no size limit'; end if;

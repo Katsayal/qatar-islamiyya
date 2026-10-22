@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { studentSchema } from "./student-schema.ts";
+import { phone, studentSchema } from "./student-schema.ts";
 
 const base = {
   admission_no: "qa26ta001", full_name: "Abubakar Musa", gender: "male", date_of_birth: "", blood_group: "",
@@ -27,4 +27,14 @@ test("admission number, full name and gender are still required", () => {
   assert.ok(!studentSchema.safeParse({ ...base, admission_no: "" }).success);
   assert.ok(!studentSchema.safeParse({ ...base, full_name: "A" }).success);
   assert.ok(!studentSchema.safeParse({ ...base, gender: "" }).success);
+});
+
+test("phone: Nigerian numbers are cleaned, empty means none", () => {
+  assert.equal(phone.parse("0801 234-5678"), "08012345678");
+  assert.equal(phone.parse("+2348012345678"), "+2348012345678");
+  assert.equal(phone.parse("  "), null);
+});
+
+test("phone: wrong numbers are rejected", () => {
+  for (const bad of ["12345", "080123456789", "+1 202 555 0100", "abc"]) assert.equal(phone.safeParse(bad).success, false);
 });

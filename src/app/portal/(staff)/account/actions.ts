@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { phone } from "@/lib/student-schema";
 
 export type PasswordResult = { ok: boolean; message: string } | null;
 
@@ -28,4 +29,20 @@ export async function changeOwnPassword(_prev: PasswordResult, formData: FormDat
 
   revalidatePath("/portal");
   return { ok: true, message: "Password changed. Use it the next time you sign in." };
+}
+
+// A teacher, staff member or the owner sets, changes or clears their own phone (P.2). The database function
+// set_my_phone changes only the caller's own row; the activity log records the edit.
+export async function saveOwnPhone(_prev: PasswordResult, formData: FormData): Promise<PasswordResult> {
+  await requireRole("teacher", "staff");
+  const parsed = phone.safeParse(formData.get("phone") ?? "");
+  if (!parsed.success) return { ok: false, message: "Phone must be a Nigerian number, e.g. 08012345678." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_my_phone", { p_phone: parsed.data ?? "" });
+  if (error) return { ok: false, message: "Could not save the phone number. Please try again." };
+
+  revalidatePath("/portal/account");
+  revalidatePath("/portal/accounts/staff");
+  return { ok: true, message: parsed.data ? "Phone number saved." : "Phone number removed." };
 }

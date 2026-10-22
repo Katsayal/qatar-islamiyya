@@ -1,9 +1,10 @@
-import { KeyRound, UserRound } from "lucide-react";
+import { KeyRound, Phone, UserRound } from "lucide-react";
 import { PasswordChangeForm } from "@/components/password-change-form";
 import { StatusBadge } from "@/components/status-badge";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { changeOwnPassword } from "./actions";
+import { changeOwnPassword, saveOwnPhone } from "./actions";
+import { PhoneForm } from "./phone-form";
 import { loginLabel } from "@/lib/login-id";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
 
@@ -15,6 +16,7 @@ export default async function MyAccountPage() {
   const me = await requireRole("teacher", "staff");
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  const { data: mine } = await supabase.from("profiles").select("phone").eq("id", me.id).single();
   const role = me.is_owner ? "Owner" : me.role === "teacher" ? "Teacher" : "Staff";
 
   return (
@@ -36,6 +38,16 @@ export default async function MyAccountPage() {
             <dt className="text-muted-foreground">Login</dt>
             <dd className="col-span-2 break-all">{loginLabel(data.user?.email)}</dd>
           </dl>
+        </section>
+
+        <section id="phone" className="scroll-mt-4 rounded-xl border bg-card p-4 shadow-sm">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <Phone aria-hidden className="size-4 text-primary" /> My phone number
+          </h2>
+          <p className="mb-3 mt-1 text-sm text-muted-foreground">
+            Only the office (staff) and the owner can see it. Leave the box empty and save to remove it.
+          </p>
+          <PhoneForm action={saveOwnPhone} phone={mine?.phone ?? ""} />
         </section>
 
         <section id="password" className="scroll-mt-4 rounded-xl border bg-card p-4 shadow-sm">
