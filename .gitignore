@@ -45,6 +45,7 @@ next-env.d.ts
 
 # scripts
 /scripts/unt/seed-users.mjs
+/scripts/unt/add-teachers.mjs
 
 # Real student data (never commit or serve)
 /data/
