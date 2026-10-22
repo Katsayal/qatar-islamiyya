@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Collapsible } from "@/components/collapsible";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -62,9 +63,19 @@ export default async function MyClassesPage() {
         </section>
       )}
 
-      {isStaff && (
+      {/* Staff who teach: the other classes wait in a closed card. Staff who teach none: open list. */}
+      {isStaff && taught.length > 0 && (
+        <Collapsible title={`All other classes (${others.length})`} className="mt-6">
+          {others.length ? (
+            <ClassList classes={others} counts={counts} className="p-3 text-base" />
+          ) : (
+            <p className="p-3 text-muted-foreground">No other active classes.</p>
+          )}
+        </Collapsible>
+      )}
+      {isStaff && !taught.length && (
         <section className="mt-6">
-          <h2 className="font-semibold">{taught.length ? "All other classes" : "All classes"}</h2>
+          <h2 className="font-semibold">All classes</h2>
           <ClassList classes={others} counts={counts} />
           {!others.length && <p className="mt-2 text-sm text-muted-foreground">No other active classes.</p>}
         </section>
@@ -73,10 +84,10 @@ export default async function MyClassesPage() {
   );
 }
 
-function ClassList({ classes, counts }: { classes: Klass[]; counts: Map<string, number> }) {
+function ClassList({ classes, counts, className = "mt-2" }: { classes: Klass[]; counts: Map<string, number>; className?: string }) {
   if (!classes.length) return null;
   return (
-    <ul className="mt-2 grid gap-3 md:grid-cols-2">
+    <ul className={`${className} grid gap-3 md:grid-cols-2`}>
       {classes.map((c) => {
         const n = counts.get(c.id) ?? 0;
         return (

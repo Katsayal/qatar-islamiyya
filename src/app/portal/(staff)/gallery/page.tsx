@@ -6,6 +6,7 @@ import { siteImageUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { UploadForm } from "./upload-form";
 import { FreshOnVisit } from "@/components/fresh-on-visit";
+import { Collapsible } from "@/components/collapsible";
 
 // Navigations here must show the loading skeleton at once (checked in dev).
 export const instant = true;
@@ -30,29 +31,41 @@ export default async function GalleryAdminPage() {
           <UploadForm />
         </div>
 
-        <h2 className="mt-8 flex items-center gap-2 font-semibold">
-          <Images aria-hidden className="size-4 text-primary" /> Photos <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
-        </h2>
         {items.length === 0 ? (
-          <p className="mt-3 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No photos yet.</p>
+          <>
+            <h2 className="mt-8 flex items-center gap-2 font-semibold">
+              <Images aria-hidden className="size-4 text-primary" /> Photos <span className="text-sm font-normal text-muted-foreground">(0)</span>
+            </h2>
+            <p className="mt-3 rounded-xl border p-4 text-sm text-muted-foreground bg-card shadow-sm">No photos yet.</p>
+          </>
         ) : (
-          <ul className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
-            {items.map((g) => (
-              <li key={g.id}>
-                <Link href={`/portal/gallery/${g.id}`} className="block">
-                  <Image
-                    src={siteImageUrl(g.image_path)}
-                    alt={g.caption ?? "School photo"}
-                    width={320}
-                    height={320}
-                    sizes="(min-width: 768px) 320px, 50vw"
-                    className="aspect-square w-full rounded-lg object-cover"
-                  />
-                  <p dir="auto" className="mt-1 truncate text-xs text-muted-foreground">{g.caption ?? "No caption"}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          // Closed card: the photos (lazy images) load only when it is opened.
+          <Collapsible
+            className="mt-8"
+            title={
+              <span className="flex items-center gap-2">
+                <Images aria-hidden className="size-4 text-primary" /> Photos ({items.length})
+              </span>
+            }
+          >
+            <ul className="grid grid-cols-2 gap-3 p-3 md:grid-cols-3">
+              {items.map((g) => (
+                <li key={g.id}>
+                  <Link href={`/portal/gallery/${g.id}`} className="block">
+                    <Image
+                      src={siteImageUrl(g.image_path)}
+                      alt={g.caption ?? "School photo"}
+                      width={320}
+                      height={320}
+                      sizes="(min-width: 768px) 320px, 50vw"
+                      className="aspect-square w-full rounded-lg object-cover"
+                    />
+                    <p dir="auto" className="mt-1 truncate text-xs text-muted-foreground">{g.caption ?? "No caption"}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Collapsible>
         )}
       </div>
     </FreshOnVisit>
