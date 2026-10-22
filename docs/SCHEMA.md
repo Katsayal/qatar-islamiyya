@@ -135,6 +135,7 @@ Unique: (profile_id, month). Profiles are never deleted (accounts are disabled),
 
 ### gallery_items
 | id | image_path | caption | sort_order |
+`image_path` = `gallery/<id>.jpg` in the public `site` bucket (a JPEG shrunk in the browser by the upload form). `sort_order` is unused (default 0; no reordering, R.4): lists sort by `created_at` newest first.
 
 ### documents
 | id | title | file_path | category | visibility (`general` · `vault` · `students`) | uploaded_by |
