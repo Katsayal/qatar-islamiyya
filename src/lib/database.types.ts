@@ -951,6 +951,7 @@ export type Database = {
           active: boolean
           created_at: string
           full_name: string
+          hidden: boolean
           id: string
           is_owner: boolean
           phone: string | null
@@ -962,6 +963,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           full_name: string
+          hidden?: boolean
           id: string
           is_owner?: boolean
           phone?: string | null
@@ -973,6 +975,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           full_name?: string
+          hidden?: boolean
           id?: string
           is_owner?: boolean
           phone?: string | null

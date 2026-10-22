@@ -52,7 +52,7 @@ export default async function SalariesPage({ searchParams }: { searchParams: Pro
   const supabase = await createClient();
 
   const [{ data: people }, { data: rates }, { data: records }] = await Promise.all([
-    supabase.from("profiles").select("id, full_name, role, is_owner, active").in("role", ["teacher", "staff"]).order("full_name"),
+    supabase.from("profiles").select("id, full_name, role, is_owner, active").in("role", ["teacher", "staff"]).eq("hidden", false).order("full_name"),
     supabase.from("salary_rates").select("profile_id, monthly_amount"),
     supabase.from("salary_months").select("*").eq("month", monthDate),
   ]);

@@ -47,7 +47,7 @@ export async function setMonthSalaries(_prev: Result, formData: FormData): Promi
 
   const supabase = await createClient();
   const [{ data: people }, { data: rates }, { data: existing }] = await Promise.all([
-    supabase.from("profiles").select("id").in("role", ["teacher", "staff"]).eq("active", true),
+    supabase.from("profiles").select("id").in("role", ["teacher", "staff"]).eq("active", true).eq("hidden", false),
     supabase.from("salary_rates").select("profile_id, monthly_amount"),
     supabase.from("salary_months").select("profile_id").eq("month", monthDate),
   ]);

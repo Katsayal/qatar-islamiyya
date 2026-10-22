@@ -14,7 +14,7 @@ export default async function EditBookPage({ params }: { params: Promise<{ id: s
 
   const [{ data: b }, { data: teachers }] = await Promise.all([
     supabase.from("books").select("*").eq("id", id).maybeSingle(),
-    supabase.from("profiles").select("id, full_name, role").in("role", ["teacher", "staff"]).eq("active", true).order("full_name"),
+    supabase.from("profiles").select("id, full_name, role").in("role", ["teacher", "staff"]).eq("active", true).eq("hidden", false).order("full_name"),
   ]);
   if (!b) notFound();
 

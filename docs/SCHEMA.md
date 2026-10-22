@@ -14,6 +14,7 @@ Conventions: `id uuid primary key default gen_random_uuid()`, `created_at timest
 | role | text | `teacher` · `staff` · `student` |
 | is_owner | boolean | default false (staff only) |
 | active | boolean | default true |
+| hidden | boolean | default false; a hidden account is left out of the app's lists (directory, class and book teacher pickers, Salaries) but not out of the Activity log; set by hand in the database (SPEC §3) |
 
 ### students
 | column | type | notes |

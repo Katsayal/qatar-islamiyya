@@ -18,7 +18,7 @@ export default async function SalaryRatesPage({ searchParams }: { searchParams: 
   const supabase = await createClient();
 
   const [{ data: people }, { data: rates }] = await Promise.all([
-    supabase.from("profiles").select("id, full_name, role, is_owner, active").in("role", ["teacher", "staff"]).order("full_name"),
+    supabase.from("profiles").select("id, full_name, role, is_owner, active").in("role", ["teacher", "staff"]).eq("hidden", false).order("full_name"),
     supabase.from("salary_rates").select("profile_id, monthly_amount"),
   ]);
   const rate = new Map((rates ?? []).map((r) => [r.profile_id, r.monthly_amount]));

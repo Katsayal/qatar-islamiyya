@@ -24,7 +24,7 @@ export default async function ClassesPage() {
       .select("id, name, name_ar, program, level, hifz_unit, active, class_teachers(teacher_id)")
       .order("sort_order")
       .order("name"),
-    supabase.from("profiles").select("id, full_name").in("role", ["teacher", "staff"]),
+    supabase.from("profiles").select("id, full_name").in("role", ["teacher", "staff"]).eq("hidden", false),
   ]);
   const teacherName = new Map((teachers ?? []).map((t) => [t.id, t.full_name]));
 

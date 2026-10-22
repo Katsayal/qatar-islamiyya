@@ -15,6 +15,7 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
     .select("id, full_name, role")
     .in("role", ["teacher", "staff"]) // some staff also teach
     .eq("active", true)
+    .eq("hidden", false)
     .order("full_name");
 
   let defaults: ClassDefaults = {

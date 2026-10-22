@@ -45,6 +45,7 @@ export default async function StaffAccountsPage({ searchParams }: { searchParams
     .from("profiles")
     .select("id, full_name, role, is_owner, active, phone, class_teachers(classes(name))")
     .in("role", role === "all" ? ["teacher", "staff"] : [role])
+    .eq("hidden", false)
     .order("full_name");
   if (status !== "all") query = query.eq("active", status === "active");
   if (q) query = query.ilike("full_name", `%${q}%`);

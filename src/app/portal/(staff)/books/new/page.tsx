@@ -8,7 +8,7 @@ import { FreshOnVisit } from "@/components/fresh-on-visit";
 export default async function NewBookPage() {
   await requireRole("staff");
   const supabase = await createClient();
-  const { data: teachers } = await supabase.from("profiles").select("id, full_name, role").in("role", ["teacher", "staff"]).eq("active", true).order("full_name");
+  const { data: teachers } = await supabase.from("profiles").select("id, full_name, role").in("role", ["teacher", "staff"]).eq("active", true).eq("hidden", false).order("full_name");
 
   return (
     <FreshOnVisit>
