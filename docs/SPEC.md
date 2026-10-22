@@ -6,7 +6,7 @@
 - **Name:** Madrasatu Hajiya Hindatu (Qatar Multi-Purpose Centre) — مدرسة الحاجة هندة (قطر دورا)
 - **Address:** Zango Road, Daura, Katsina State, Nigeria
 - **Phones:** 08038102495 · 09060456171 · 07038782451
-- Logo received 2026-10-11 (brand colours taken from it). Pending: about content (history, leadership), bank details, director signature, domain, photos.
+- Logo received 2026-10-11 (brand colours taken from it). Pending: about content (history, leadership), bank details, director signature, photos. The site stays on qatar-islamiyya.netlify.app for now (no domain bought, decided 2026-10-22).
 
 ## 2. Surfaces
 1. **Public website** — open to everyone.
@@ -93,6 +93,7 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 | Login | One login page → redirects by role |
 
 - Page text lives in the code (simple TS/MD content files). News/gallery come from the database.
+- **Search appearance (G.1, 2026-10-22):** `/robots.txt` allows the public pages and blocks `/portal`, `/health` and `/api` (the login page is not blocked but marked `noindex`, because a blocked page cannot be read, so Google would never see its `noindex`); it points to `/sitemap.xml`. Sharing a link (WhatsApp, Facebook) shows a preview: one image for both languages (the logo on deep green with the school's names), the page title, and for a news article its cover photo when it has one. The home page carries structured data describing the school (name in both languages, address, phones, logo). The school has no social media accounts, so none are listed. The site is to be submitted to Google Search Console (HTML-file verification, done by the owner) and the school sets up its own Google Business Profile (the Maps listing) separately.
 - **Two languages (R.3):** every public page exists in English at `/…` (the default, unchanged URLs) and in Arabic at `/ar/…` (right to left). A button in the header switches to the same page in the other language; it shows the other language only: the Qatar flag + "AR" on English pages, the Nigeria flag + "EN" on Arabic pages (owner's choice, 2026-10-20). No automatic redirect by browser language. The application and contact forms work in both (labels and messages translated; what people type is stored as typed). `/ar/news` lists all public posts; a post keeps its own language and direction and shows a small language label when it differs from the page. Arabic pages use Western digits (0–9, as on phones) and Arabic month names. Login and the portals stay English. The Arabic text is drafted in the code and must be proofread by the school before launch.
 - Hausa sections are marked with `lang="ha"`; no Hausa version of the site for now.
 
@@ -162,3 +163,4 @@ A student belongs to **exactly one class** (therefore one program). A teacher ca
 
 ## 13. Deliberately deferred (keep simple)
 - Offline/PWA mode · full Arabic/Hausa translation & i18n library · sign-in log · MFA / password rules · absence alerts · guardian accounts · online payments · SMS/WhatsApp notifications · certificates · recitation audio.
+- Photos for teachers and staff (decided not wanted, 2026-10-22; students keep theirs) · a custom domain (the site stays on qatar-islamiyya.netlify.app for now; see PROGRESS F.3 for the steps when one comes).

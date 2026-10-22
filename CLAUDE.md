@@ -39,6 +39,7 @@ npm run dev          # local dev
 npm run build        # production build
 npm run lint         # eslint
 npm run typecheck    # tsc --noEmit
+npm audit --omit=dev # security check of what ships: run before every push
 npm test             # node --test on src/lib/*.test.ts
 npx supabase login                         # once
 npx supabase link --project-ref <dev-ref>  # once, links the cloud project (= live database)
@@ -100,7 +101,8 @@ docs/
 - **Let tools generate boilerplate**: `create-next-app`, `npx shadcn add`, `supabase gen types`, `supabase migration new`. Never hand-write generated code.
 - **Prefer CLIs over MCP tools** (`supabase`, `netlify`, `git`, `gh`).
 - Read only files the task needs. Don't scan the whole repo.
-- Run `npm run typecheck` and `npm run lint` before saying a task is done.
+- Run `npm run typecheck` and `npm run lint` before saying a task is done, and `npm audit --omit=dev` before every push.
+- Stop the dev server before `npm install` / upgrades (Windows locks files and npm hangs), and delete `.next/dev` before restarting it (ARCHITECTURE §9).
 - After each working slice: update the docs (PROGRESS status + task note, and SPEC/ARCHITECTURE/SCHEMA if affected). Commit or push only when the owner says so, with a clear message.
 - Sonnet for normal work. Suggest switching to Opus only for: schema/RLS, auth, hifz calculations, hard bugs.
 - Batch small fixes into one pass.
